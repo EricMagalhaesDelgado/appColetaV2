@@ -1,0 +1,56 @@
+{
+  "openGL": "Hardware Full",
+  "userpath": "C:\\P&D",
+  "layout": {
+    "theme": "cyan",
+    "lightColor": [
+      0.9,
+      0.9,
+      0.9
+    ],
+    "cyanColor": [
+      0.38,
+      0.6,
+      0.73
+    ],
+    "position": "Center"
+  },
+  "Image": {
+    "Visibility": "on",
+    "Format": "jpeg",
+    "Resolution": 120
+  },
+  "Colors": [
+    [
+      0.38,
+      0.6,
+      0.73
+    ],
+    [
+      0.39,
+      0.83,
+      0.07
+    ],
+    [
+      1,
+      0.07,
+      0.65
+    ],
+    [
+      0.93,
+      0.69,
+      0.13
+    ]
+  ],
+  "Waterfall": "winter",
+  "FileSize": 1.0E+8,
+  "HistoryDepth": 128,
+  "AverageFactor": 10,
+  "SampleTimeFactor": 10,
+  "logger": {
+    "ConnectionTime": 30,
+    "HandshakePause": 1,
+    "Timeout": 5
+  },
+  "EB500_udpPort": 24001
+}

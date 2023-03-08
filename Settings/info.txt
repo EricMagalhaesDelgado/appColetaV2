@@ -1,0 +1,82 @@
+<winMain_General>
+<font style="font-size:12;">Aplicação de coleta de dados gerados em monitorações desenvolvida no âmbito dos projetos 3A e RFlook - Processos nºs 53554.000939/2020-26 e 53500.063493/2020-76 - e evoluída no âmbito do Sentinela - Processo nº 53500.004826/2022-97.</font>
+</winMain_General>
+
+
+<winMain_task>
+<font style="font-size:12;">O modo "<b>TAREFA SCPI</b>" possibilita o controle de diversos tipos de instrumentos - analisador de espectro, receptor e GPS, em especial -, registrando em arquivos monitorações do espectro de radiofrequências.
+
+<b>• Tarefa plot (referenciada como WPT - <i>Waterfall Plot Task</i>)</b>
+Trata-se de tarefa que possibilita uma visualização rápida das faixas de frequêcias inclusas em um <i>script</i>, podendo ser feito o registro em arquivo apenas da faixa selecionada. Essa tarefa consiste no controle do analisador de espectro ou receptor no modo "melhor esforço", não tendo influência o tempo de revisita estabelecido no <i>script</i> ou o gatilho para escrita em arquivo (rompimento de máscara espectral, por exemplo). Por fim, essa tarefa não viabiliza reconexão com o instrumento, caso ocorra perda momentânea da conectividade.
+
+<b>• Tarefa regular (referenciada como RT - <i>Regular Task</i>)</b>
+Trata-se de tarefa que possibilita o registro em arquivo das faixa de frequência inclusas em um <i>script</i>, podendo ser definido um gatilho para escrita em arquivo (rompimento de máscara espectral, por exemplo). Essa tarefa consiste no controle do analisador de espectro ou receptor no modo "melhor esforço", buscando atender o tempo de revisita estabelecido no <i>script</i> e, também, fazendo a gestão da tarefa, o que envolve registro em LOG e tentatividade de reconexão com o instrumento, caso necessário.
+</font>
+</winMain_task>
+
+
+<winMain_logger>
+<font style="font-size:12;">O modo "<b>TAREFA LOGGER</b>" possibilita a leitura de fluxo UDP gerado pelo Logger, caso habilitado no <i>script</i>.
+
+<b>• Registro em arquivo</b>
+Essa funcionalidade possibilita o registro em arquivo no formato CRFS Bin de gravações conduzidas no Logger, controlando um RFeye Node 20-6. 
+
+Útil quando o <i>script</i> estabelece um tempo de escrita em arquivo muito superior ao tempo de revisita (e disponibilização dessa informação pelo fluxo UDP, por exemplo) ou quando não é feito registro em arquivo, sendo a monitoração apenas disponibilizada por meio do fluxo UDP.
+
+<b>• Máscara espectral</b>
+Essa funcionalidade possibilita a visualização da máscara espectral sobreposta àquilo que esta sendo capturado da faixa de frequência selecionada, trazendo subsídios para o processo de ajuste da máscara.</font>
+</winMain_logger>
+
+
+<winMain_misc>
+<font style="font-size:12;">O modo "<b>MISCELÂNEAS</b>" possibilitará a realização de atividades específicas, como a aferição de parâmetros técnicos de emissões, por exemplo.
+
+As primeiras funcionalidades deste modo deverão ser disponibilizadas até o final do ano de 2022.</font>
+</winMain_misc>
+
+
+<winTaskEdit>
+<font style="font-size:12;">A funcionalidade PARAMETRIZAÇÃO TAREFA SCPI possibilita a criação/edição de <i>scripts</i> de tarefas regulares.
+
+Qualquer alteração nas tarefas - inclusão, edição ou exclusão - já terá impacto na atual sessão do appColeta.</font>
+</winTaskEdit>
+
+
+<winScpiEdit>
+<font style="font-size:12;">A funcionalidade ANALISADOR DE ESPECTRO, RECEPTOR E GPS possibilita a criação/edição de objetos que representam instrumentos, testando a sua conectividade.</font>
+</winScpiEdit>
+
+
+<winRFeyeEdit>
+<font style="font-size:12;">A funcionalidade RFEYE NODE 20-6 possibilita a edição de parâmetros relacionados aos sensores RFeye, testando a sua conectividade.</font>
+</winRFeyeEdit>
+
+
+<winMonitor>
+<font style="font-size:12;">A funcionalidade MONITOR LOGGER + possibilita a análise de emissões desmascaradas e persistentes.</font>
+</winMonitor>
+
+
+<winSettings>
+<font style="font-size:12;">A funcionalidade "CONFIGURAÇÕES" possibilita o ajuste de diversos parâmetros do appColeta, além de atualização de módulos que os suportam, como a biblioteca <b>fiscaliza</b> e a base de dados <b>anateldb</b>.</font>
+</winSettings>
+
+
+<winAnatelDB>
+<font style="font-size:12;">A funcionalidade "<b>ANATELDB</b>" possibilita a realização de consultas à base de dados <i>offline</i> que suporta o appColeta, a qual consolida informações extraídas do MOSAICO, STEL, SRD, AISWEB, ICAO etc.
+
+No processo de tratamento dos dados, homogeneizando-os, adotam-se as seguintes premissas:
+• Registro cujo campo "Serviço" é igual a "-1" corresponde a estação não licenciada.
+
+• Registro cujo campo "Estação" é igual a "-1" corresponde a estação não licenciada ou licenciada, mas cujo número não foi identificado no MOSAICO, STEL ou SRD.
+
+• Registro cujo campo "Classe de designação" é igual a "NI" corresponde a estação não licenciada ou licenciada, mas cuja designação de emissão não foi identificada no MOSAICO, STEL ou SRD.
+
+• Registro cujo campo "Largura de banda (kHz)" é igual a "-1" corresponde a estação não licenciada ou licenciada, mas cuja designação de emissão não foi identificada no MOSAICO, STEL ou SRD. Exceção às estações de serviços de radiodifusão, para as quais foram considerados os valores 10 (AM), 256 (FM), 5700 (TVD) e 6000 (TV).
+
+• O campo "Descrição", de forma geral, contém diversas informações da estação, dentre elas a base de dados - [MOS], [STEL], [SRD], [AISW], [ICAO] etc -, o nome da entidade, o número da estação e a localidade.
+
+• Os registros extraídos de bases de dados que não são de responsabilidade da Anatel (AISWEB, ICAO etc) são comparados com os extraídos do MOSAICO, STEL e SRD. Dois ou mais registros são mesclados quando apresentem no campo "Frequência (MHz)" valores idênticos e a distância entre as estações relacionadas a esses registros não é superior a 10 quilômetros. O campo "Descrição" desse registro mesclado concatena as informações das diversas bases de dados. Por exemplo, o registro com o campo "Descrição" igual a "[STEL] L, FA, Comando Da Aeronautica (01020423498, 1002493363), São Paulo/SP | [AISW] SBMT-COM, TORRE MARTE, CAMPO DE MARTE | [ICAO] TWR 25/40, CAMPO DE MARTE" corresponde a uma concatenação de informações extraídas do STEL, AISWEB e ICAO.
+
+Inicialmente todo registro possui o campo "Distância" igual a "-1". Entretanto, caso essa funcionalidade tenha sido aberta após a leitura de arquivos com informações de monitorações do espectro de radiofrequências georeferenciadas, esse campo será calculado, mas apenas após aplicação de algum filtro que reduza a base de dados a no máximo 10 mil registros.</font>
+</winAnatelDB>

@@ -1,0 +1,111 @@
+[
+  {
+    "Name": "appColeta HOM_1",
+    "AntennaSwitch": "none",
+    "BitsPerSample": 8,
+    "Observation": {
+      "Type": "Duration",
+      "BeginTime": "",
+      "EndTime": "",
+      "Duration": 600,
+      "Samples": []
+    },
+    "GPS": {
+      "Type": "auto",
+      "Latitude": [],
+      "Longitude": [],
+      "RevisitTime": 600
+    },
+    "Band": [
+      {
+        "ThreadID": 1,
+        "Description": "Faixa 1 de 3",
+        "AntennaName": "",
+        "ObservationSamples": [],
+        "FreqStart": 7.6E+7,
+        "FreqStop": 1.08E+8,
+        "StepWidth": 5000,
+        "Resolution": 30000,
+        "RFMode": "Low Distortion",
+        "TraceMode": "ClearWrite",
+        "Detector": "Sample",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.1,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      },
+      {
+        "ThreadID": 2,
+        "Description": "Faixa 2 de 3",
+        "AntennaName": "",
+        "ObservationSamples": [],
+        "FreqStart": 1.08E+8,
+        "FreqStop": 1.37E+8,
+        "StepWidth": 12500,
+        "Resolution": 30000,
+        "RFMode": "Normal",
+        "TraceMode": "Average",
+        "Detector": "Average/RMS",
+        "LevelUnit": "dBm",
+        "RevisitTime": 1,
+        "IntegrationFactor": 5,
+        "Trigger": 0,
+        "Enable": 1
+      },
+      {
+        "ThreadID": 3,
+        "Description": "Faixa 3 de 3",
+        "AntennaName": "",
+        "ObservationSamples": [],
+        "FreqStart": 4.5E+8,
+        "FreqStop": 4.7E+8,
+        "StepWidth": 100000,
+        "Resolution": 100000,
+        "RFMode": "High Sensitivity",
+        "TraceMode": "ClearWrite",
+        "Detector": "Positive Peak",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.5,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      }
+    ]
+  },
+  {
+    "Name": "appColeta HOM_2",
+    "AntennaSwitch": "none",
+    "BitsPerSample": 16,
+    "Observation": {
+      "Type": "Samples",
+      "BeginTime": "",
+      "EndTime": "",
+      "Duration": []
+    },
+    "GPS": {
+      "Type": "manual",
+      "Latitude": -12.5,
+      "Longitude": -38.5,
+      "RevisitTime": -1
+    },
+    "Band": {
+      "ThreadID": 1,
+      "Description": "Faixa 1 de 1",
+      "AntennaName": "",
+      "ObservationSamples": 1000,
+      "FreqStart": 7.6E+7,
+      "FreqStop": 1.08E+8,
+      "StepWidth": 50000,
+      "Resolution": 100000,
+      "RFMode": "High Sensitivity",
+      "TraceMode": "Average",
+      "Detector": "Sample",
+      "LevelUnit": "dBμV",
+      "RevisitTime": 0.1,
+      "IntegrationFactor": 2,
+      "Trigger": 1,
+      "Enable": 1
+    }
+  }
+]
