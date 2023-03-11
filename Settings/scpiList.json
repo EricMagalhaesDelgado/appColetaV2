@@ -21,7 +21,20 @@
       "Timeout": 5
     },
     "Description": "GPS2IP (iOS)",
-    "Enable": 0,
+    "Enable": 1,
+    "LOG": ""
+  },
+  {
+    "Family": "Comutador de antenas",
+    "Name": "MSAT",
+    "Type": "TCPIP Socket",
+    "Parameters": {
+      "IP": "192.168.0.116",
+      "Port": "4000",
+      "Timeout": 5
+    },
+    "Description": "EMSAT",
+    "Enable": 1,
     "LOG": ""
   },
   {
@@ -44,7 +57,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSL",
+    "Name": "R&S FSL",
     "Type": "TCPIP Visa",
     "Parameters": {
       "IP": "10.21.204.212",
@@ -61,7 +74,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSW",
+    "Name": "R&S FSW",
     "Type": "TCPIP Visa",
     "Parameters": {
       "IP": "10.21.204.212",
@@ -78,7 +91,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSW",
+    "Name": "R&S FSW",
     "Type": "TCPIP Socket",
     "Parameters": {
       "IP": "10.21.204.212",
@@ -96,7 +109,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSW",
+    "Name": "R&S FSW",
     "Type": "TCPIP Socket",
     "Parameters": {
       "IP": "127.0.0.1",
@@ -109,7 +122,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz EB500",
+    "Name": "R&S EB500",
     "Type": "TCP/UDP IP Socket",
     "Parameters": {
       "IP": "172.24.3.59",
@@ -125,7 +138,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz EB500",
+    "Name": "R&S EB500",
     "Type": "TCP/UDP IP Socket",
     "Parameters": {
       "IP": "200.151.118.43",

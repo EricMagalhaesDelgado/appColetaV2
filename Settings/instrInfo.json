@@ -72,6 +72,42 @@
     "SyncOptions": ""
   },
   {
+    "Family": "Comutador de antenas",
+    "Name": "MSAT",
+    "Tag": "MSAT",
+    "Band": "",
+    "Logo": "LT_connect.png",
+    "Image": "LT_connect.png",
+    "Description": "Trata-se de comutador de antenas instalado na EMSAT.",
+    "connectType": [
+      "TCPIP Socket"
+    ],
+    "connectFlag": [],
+    "connectPort": "4000",
+    "StartUp": [],
+    "scpiReset": [],
+    "scpiGeneral": [],
+    "scpiAttenuation": [],
+    "scpiQuery": [],
+    "scpiQuery_IDs": [],
+    "scpiQuery_Attenuation": [],
+    "scpiTraceData": [],
+    "scpiGPS": [],
+    "scpiStatus": [],
+    "Trace_Values": [],
+    "AverageMode_Values": [],
+    "Detector_Items": [],
+    "Detector_Values": [],
+    "LevelUnit_Values": [],
+    "StepWidth_Values": [],
+    "DataPoints_Limits": [],
+    "Resolution_Values": [],
+    "Attenuation_Values": [],
+    "ResetPause": [],
+    "BandPause": [],
+    "SyncOptions": ""
+  },
+  {
     "Family": "Receptor",
     "Name": "Anritsu MS2720T",
     "Tag": "MS2720T",
@@ -240,7 +276,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz EB500",
+    "Name": "R&S EB500",
     "Tag": "EB500",
     "Band": "8 kHz - 6 GHz (ou 3.6 GHz)",
     "Logo": "Instr_R&S.png",
@@ -286,7 +322,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSL",
+    "Name": "R&S FSL",
     "Tag": "FSL",
     "Band": "9 kHz - 6 GHz",
     "Logo": "Instr_R&S.png",
@@ -340,7 +376,7 @@
   },
   {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSVR",
+    "Name": "R&S FSVR",
     "Tag": "FSVR",
     "Band": "10 Hz - 30 GHz",
     "Logo": "Instr_R&S.png",
@@ -394,7 +430,7 @@
   },
     {
     "Family": "Receptor",
-    "Name": "Rohde & Schwarz FSW",
+    "Name": "R&S FSW",
     "Tag": "FSW",
     "Band": "2 Hz - 43.5 GHz",
     "Logo": "Instr_R&S.png",
