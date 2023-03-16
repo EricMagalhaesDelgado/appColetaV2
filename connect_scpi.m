@@ -7,8 +7,10 @@ function scpiNode = connect_scpi(instrSelected, instrInfo, Band)
     end
 
     Type = instrSelected.Type;
-    IP   = instrSelected.IP;
     Port = instrSelected.Port;
+    IP   = instrSelected.IP;
+    if IP == "localhost"; IP = "127.0.0.1";
+    end
 
     if isfield(instrSelected, 'Timeout');     Timeout = instrSelected.Timeout;
     else;                                     Timeout = 10;

@@ -1,0 +1,46 @@
+[
+  {
+    "Satellite": "Star One C1",
+    "Designator": "2012-062A",
+    "Antennas": [
+      {
+        "Name": "MCL1_V",
+        "TrackingID": "T01"
+      },
+      {
+        "Name": "MCL1_H",
+        "TrackingID": "T02"
+      },
+      {
+        "Name": "MCL2_V",
+        "TrackingID": "T03"
+      },
+      {
+        "Name": "MCL2_H",
+        "TrackingID": "T04"
+      }
+    ]
+  },
+  {
+    "Satellite": "Star One C2",
+    "Designator": "2012-062B",
+    "Antennas": [
+      {
+        "Name": "MCL1_V",
+        "TrackingID": "T05"
+      },
+      {
+        "Name": "MCL1_H",
+        "TrackingID": "T06"
+      },
+      {
+        "Name": "MCL2_V",
+        "TrackingID": "T07"
+      },
+      {
+        "Name": "MCL2_H",
+        "TrackingID": "T08"
+      }
+    ]
+  }
+]

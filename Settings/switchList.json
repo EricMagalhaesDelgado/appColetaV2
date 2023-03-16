@@ -1,0 +1,57 @@
+[
+  {
+    "Receiver": "R&S EB500",
+    "Switch": "ETM",
+    "Antennas": [
+      "",
+      "R&S ADD107 (20 MHz - 1.3 GHz)",
+      "R&S ADD207 (600 MHz - 6 GHz)"
+    ]
+  },
+  {
+    "Receiver": "R&S FSW",
+    "Switch": "EMSAT",
+    "Antennas": [
+      "",
+      "MCL1_V",
+      "MCL1_H",
+      "MCL2_V",
+      "MCL2_H",
+      "MCL3_V",
+      "MCL3_H",
+      "MCC1_L",
+      "MCC1_R",
+      "MKU1_LO_V",
+      "MKU1_LO_H",
+      "MKU1_HI_V",
+      "MKU1_HI_H",
+      "MKU2_LO_V",
+      "MKU2_LO_H",
+      "MKU2_HI_V",
+      "MKU2_HI_H",
+      "MKA1_LO_L",
+      "MKA1_LO_R",
+      "MKA1_MID_L",
+      "MKA1_MID_R",
+      "MKA1_MID_HI_L",
+      "MKA1_MID_HI_R",
+      "MKA1_HI_L",
+      "MKA1_HI_R"
+    ]
+  },
+  {
+    "Receiver": "others",
+    "Switch": "none",
+    "Antennas": [
+      "",
+      "CRFS Low Band (10 MHz - 1.2 GHz)",
+      "CRFS High Band (750 MHz - 6 GHz)",
+      "R&S ADDx07 (EB500 GUI Auto)",
+      "R&S ADD107 (20 MHz - 1.3 GHz)",
+      "R&S ADD207 (600 MHz - 6 GHz)",
+      "Telescopic",
+      "Unlisted (Omni)",
+      "Unlisted (Directional)"
+    ]
+  }
+]

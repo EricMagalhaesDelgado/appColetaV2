@@ -1,14 +1,12 @@
 [
   {
     "Name": "appColeta HOM_1",
-    "AntennaSwitch": "ETM",
     "BitsPerSample": 8,
     "Observation": {
       "Type": "Duration",
       "BeginTime": "",
       "EndTime": "",
-      "Duration": 600,
-      "Samples": []
+      "Duration": 600
     },
     "GPS": {
       "Type": "auto",
@@ -20,7 +18,6 @@
       {
         "ThreadID": 1,
         "Description": "Faixa 1 de 3",
-        "AntennaName": "R&S ADD107 (20 MHz - 1.3 GHz)",
         "ObservationSamples": [],
         "FreqStart": 7.6E+7,
         "FreqStop": 1.08E+8,
@@ -38,7 +35,6 @@
       {
         "ThreadID": 2,
         "Description": "Faixa 2 de 3",
-        "AntennaName": "R&S ADD207 (600 MHz - 6 GHz)",
         "ObservationSamples": [],
         "FreqStart": 1.08E+8,
         "FreqStop": 1.37E+8,
@@ -56,7 +52,6 @@
       {
         "ThreadID": 3,
         "Description": "Faixa 3 de 3",
-        "AntennaName": "R&S ADD107 (20 MHz - 1.3 GHz)",
         "ObservationSamples": [],
         "FreqStart": 4.5E+8,
         "FreqStop": 4.7E+8,
@@ -75,7 +70,6 @@
   },
   {
     "Name": "appColeta HOM_2",
-    "AntennaSwitch": "",
     "BitsPerSample": 16,
     "Observation": {
       "Type": "Samples",
@@ -92,7 +86,6 @@
     "Band": {
       "ThreadID": 1,
       "Description": "Faixa 1 de 1",
-      "AntennaName": "",
       "ObservationSamples": 1000,
       "FreqStart": 7.6E+7,
       "FreqStop": 1.08E+8,
@@ -110,7 +103,6 @@
   },
   {
     "Name": "appColeta HOM_3",
-    "AntennaSwitch": "MSAT",
     "BitsPerSample": 32,
     "Observation": {
       "Type": "Time",
@@ -127,7 +119,6 @@
     "Band": {
       "ThreadID": 1,
       "Description": "Faixa 1 de 1",
-      "AntennaName": "MKU2_LO_H",
       "ObservationSamples": 850,
       "FreqStart": 7.6E+7,
       "FreqStop": 1.08E+8,
@@ -142,5 +133,74 @@
       "Trigger": 1,
       "Enable": 1
     }
+  },
+  {
+    "Name": "MSAT_HOM_1",
+    "BitsPerSample": 8,
+    "Observation": {
+      "Type": "Samples",
+      "BeginTime": "",
+      "EndTime": "",
+      "Duration": []
+    },
+    "GPS": {
+      "Type": "manual",
+      "Latitude": -22.8250942,
+      "Longitude": -43.1785755,
+      "RevisitTime": []
+    },
+    "Band": [
+      {
+        "ThreadID": 1,
+        "Description": "Faixa 1 de 3",
+        "ObservationSamples": 3600,
+        "FreqStart": 4.49E+9,
+        "FreqStop": 4.81E+9,
+        "StepWidth": 10000,
+        "Resolution": 10000,
+        "RFMode": "Low Distortion",
+        "TraceMode": "ClearWrite",
+        "Detector": "PositivePeak",
+        "LevelUnit": "dBm",
+        "RevisitTime": 10,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      },
+      {
+        "ThreadID": 2,
+        "Description": "Faixa 2 de 3",
+        "ObservationSamples": 3600,
+        "FreqStart": 11.2E+9,
+        "FreqStop": 11.44E+9,
+        "StepWidth": 10000,
+        "Resolution": 10000,
+        "RFMode": "Low Distortion",
+        "TraceMode": "ClearWrite",
+        "Detector": "PositivePeak",
+        "LevelUnit": "dBm",
+        "RevisitTime": 30,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      },
+      {
+        "ThreadID": 3,
+        "Description": "Faixa 3 de 3",
+        "ObservationSamples": 3600,
+        "FreqStart": 11.44E+9,
+        "FreqStop": 11.7E+9,
+        "StepWidth": 10000,
+        "Resolution": 10000,
+        "RFMode": "Low Distortion",
+        "TraceMode": "ClearWrite",
+        "Detector": "PositivePeak",
+        "LevelUnit": "dBm",
+        "RevisitTime": 60,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      }
+    ]
   }
 ]
