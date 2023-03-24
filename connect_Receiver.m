@@ -8,7 +8,6 @@ function output = connect_Receiver(instrHandles, instrSelected)
     Type = instrSelected.Type;
     Tag  = instrSelected.Tag;
     IP   = instrSelected.IP;
-    Port = instrSelected.Port;
     
     idx = find(contains(instrHandles.Socket, IP), 1);
     try
@@ -19,7 +18,9 @@ function output = connect_Receiver(instrHandles, instrSelected)
             idx = height(instrHandles)+1;
             switch Type
                 case {'TCPIP Socket', 'TCP/UDP IP Socket'}
+                    Port = instrSelected.Port;
                     instrNew = tcpclient(IP, Port);
+                    
                 case 'TCPIP Visa'
                     instrNew = visadev("TCPIP::" + IP + "::INSTR");
             end
