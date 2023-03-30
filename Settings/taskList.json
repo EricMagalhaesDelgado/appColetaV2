@@ -29,7 +29,7 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.1,
         "IntegrationFactor": 1,
-        "Trigger": 0,
+        "Trigger": 1,
         "Enable": 1
       },
       {
@@ -63,7 +63,7 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.5,
         "IntegrationFactor": 1,
-        "Trigger": 0,
+        "Trigger": 1,
         "Enable": 1
       }
     ]
@@ -94,7 +94,7 @@
       "RFMode": "High Sensitivity",
       "TraceMode": "Average",
       "Detector": "Sample",
-      "LevelUnit": "dBμV",
+      "LevelUnit": "dBµV",
       "RevisitTime": 0.1,
       "IntegrationFactor": 2,
       "Trigger": 1,
@@ -127,7 +127,7 @@
       "RFMode": "High Sensitivity",
       "TraceMode": "Average",
       "Detector": "Sample",
-      "LevelUnit": "dBμV",
+      "LevelUnit": "dBµV",
       "RevisitTime": 0.1,
       "IntegrationFactor": 2,
       "Trigger": 1,

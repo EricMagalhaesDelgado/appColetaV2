@@ -1,28 +1,70 @@
-function [taskSCPI, taskBand] = connect_Receiver_WriteReadTest(taskObj)
+function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
 
     hReceiver  = taskObj.Receiver.Handle;
     instrInfo  = taskObj.General.SCPI;
     rawBand    = taskObj.General.Task.Band;
-    
-    taskBand   = struct('scpiSet_Config', '', ...
-                        'Datagrams',      [], ...
-                        'DataPoints',     [], ...
-                        'SyncModeRef',    [], ...
-                        'Mask',           [], ...
-                        'Matrix',         [], ...
-                        'File', struct('Filename',        '', ...
-                                       'Filecount',       [], ...
-                                       'AlocatedSamples', [], ...
-                                       'WritedSamples',   [], ...
-                                       'Handle',          []));
 
-    % TraceMode, Average, Detector, LevelUnit, DataPoints possible values
+    taskSCPI   = struct('scpiSet_Reset',   '',                                 ...
+                        'scpiSet_Startup', instrInfo.StartUp{1},               ...
+                        'scpiSet_Sync',    '',                                 ...
+                        'scpiGet_Att',     instrInfo.scpiQuery_Attenuation{1}, ...
+                        'scpiGet_Data',    instrInfo.scpiTraceData{1});    
+    taskBand   = struct('scpiSet_Config',  '', ...
+                        'scpiSet_Att',     '', ...
+                        'scpiSet_Answer',  '', ...
+                        'Datagrams',       [], ...
+                        'DataPoints',      [], ...
+                        'SyncModeRef',     [], ...
+                        'Mask',            [], ...
+                        'Matrix',          [], ...
+                        'File',            [], ...
+                        'Antenna',         '');
+    warnMsg    = {};
+
+
+    % RECEIVER STARTUP
+    if taskObj.Receiver.Reset == "On"
+        taskSCPI.scpiSet_Reset = instrInfo.scpiReset{1};
+        writeline(hReceiver, instrInfo.scpiReset{1});
+
+        pause(instrInfo.ResetPause{1})
+    end
+    
+    writeline(hReceiver, instrInfo.StartUp{1});    
+
+    switch taskObj.Receiver.Sync
+        case 'Single Sweep';     scpiSet_Sync = 'INITiate:CONTinuous OFF';
+        case 'Continuous Sweep'; scpiSet_Sync = 'INITiate:CONTinuous ON';
+    end
+    taskSCPI.scpiSet_Sync = scpiSet_Sync;
+    writeline(hReceiver, scpiSet_Sync);
+
+
+    % CONFIG TEST FOR EACH BAND
     TraceMode_Values   = strsplit(instrInfo.Trace_Values{1}, ',');
     AverageMode_Values = instrInfo.AverageMode_Values{1};
     Detector_Values    = strsplit(instrInfo.Detector_Values{1},  ',');
     LevelUnit_Values   = strsplit(instrInfo.LevelUnit_Values{1}, ',');
-    
-    % Loop
+
+    rawFields = {'TraceMode',        ...
+                 'AverageMode',      ...
+                 'AveragCount',      ...
+                 'Detector',         ...
+                 'LevelUnit',        ...
+                 'FreqStart',        ...
+                 'FreqStop',         ...
+                 'DataPoints',       ...
+                 'StepWidth',        ...
+                 'ResolutionMode',   ...
+                 'ResolutionValue',  ...
+                 'Selectivity',      ...
+                 'SensitivityMode',  ...
+                 'Preamp',           ...
+                 'AttenuationMode',  ...
+                 'AttenuationValue', ...
+                 'SampleTimeMode'};
+    rawFields = rawFields(instrInfo.scpiQuery_IDs{1});
+
     for ii = 1:numel(rawBand)        
         ResolutionMode  = 0;
         SampleTimeMode  = 1;
@@ -54,8 +96,8 @@ function [taskSCPI, taskBand] = connect_Receiver_WriteReadTest(taskObj)
         
         % LevelUnit
         switch rawBand(ii).instrLevelUnit
-            case 'dBm'   ; LevelUnit = LevelUnit_Values{1};
-            case 'dBμV'  ; LevelUnit = LevelUnit_Values{2};
+            case 'dBm';  LevelUnit = LevelUnit_Values{1};
+            case 'dBμV'; LevelUnit = LevelUnit_Values{2};
         end                
         
         % FreqStart, FreqStop, DataPoints, StepWidth, Resolution,
@@ -107,19 +149,20 @@ function [taskSCPI, taskBand] = connect_Receiver_WriteReadTest(taskObj)
                        '%SampleTimeValue%',  num2str(SampleTimeValue)};
         
         scpiSet_Config = replace(instrInfo.scpiGeneral{1}, replaceCell(:,1), replaceCell(:,2));
+        scpiSet_Att    = replace(char(instrInfo.scpiAttenuation{1}), '%AttenuationValue%', num2str(AttenuationValue));
         
         % Tenta programar valores...
         writeline(hReceiver, scpiSet_Config);
         pause(instrInfo.BandPause{1})
         
-        if ~AttenuationMode && ~isempty(instrInfo.scpiAttenuation{1})
-            writeline(hReceiver, replace(instrInfo.scpiAttenuation{1}, '%AttenuationValue%', num2str(AttenuationValue)));
+        if ~AttenuationMode && ~isempty(scpiSet_Att)
+            writeline(hReceiver, scpiSet_Att);
         end
         
         % Confirma que foram programados corretamente os valores no sensor...
         tic
         t1 = toc;
-        while t1 < 10
+        while t1 < 5
             flush(hReceiver)
             rawAnswer = deblank(writeread(hReceiver, instrInfo.scpiQuery{1}));
             
@@ -128,44 +171,88 @@ function [taskSCPI, taskBand] = connect_Receiver_WriteReadTest(taskObj)
             end
         end
 
-        if isempty(rawAnswer); error('Empty string')
+        if isempty(rawAnswer); error(msgConstructor(1, 'Empty string', scpiSet_Config, ''))
         end
 
-        splitAnswer = strsplit(rawAnswer, ';');
+        splitAnswer    = strsplit(rawAnswer, ';');
+        scpiSet_Answer = [];
+
+        for jj = 1:numel(rawFields)
+            scpiSet_Answer.(rawFields{jj}) = splitAnswer{jj};
+        end
+        scpiSet_Answer = jsonencode(scpiSet_Answer);
+
         for jj = 1:numel(instrInfo.scpiQuery_IDs{1})
+            Trigger = rawFields{jj};
+
             switch instrInfo.scpiQuery_IDs{1}(jj)
-                case  1; if ~strcmp(splitAnswer{jj}, TraceMode);                                  error('%s\nTraceMode',       rawAnswer); end
-                case  2; if str2double(splitAnswer{jj}) ~= AverageMode;                           error('%s\nAverageMode',     rawAnswer); end
-                case  3; if str2double(splitAnswer{jj}) ~= AverageCount;                          warning('%s\nAverageCount',  rawAnswer); end % INSERIR NO LOG A IMPOSSIBILIDADE DE PROGRAMAR O VALOR
-                case  4; if ~strcmp(splitAnswer{jj}, Detector);                                   error('%s\nDetector',        rawAnswer); end
-                case  5; if ~strcmp(splitAnswer{jj}, LevelUnit);                                  error('%s\nLevelUnit',       rawAnswer); end                        
-                case  6; if str2double(splitAnswer{jj}) ~= FreqStart;                             error('%s\nFreqStart',       rawAnswer); end
-                case  7; if str2double(splitAnswer{jj}) ~= FreqStop;                              error('%s\nFreqStop',        rawAnswer); end
-                case  8; if str2double(splitAnswer{jj}) ~= DataPoints;                            error('%s\nDataPoints',      rawAnswer); end
-                case  9; if str2double(splitAnswer{jj}) ~= StepWidth;                             error('%s\nStepWidth',       rawAnswer); end
-                case 10; if str2double(splitAnswer{jj}) ~= ResolutionMode;                        error('%s\nResolutionMode',  rawAnswer); end
-                case 11; if str2double(splitAnswer{jj}) ~= ResolutionValue;                       error('%s\nResolutionValue', rawAnswer); end
-                case 12; if ~contains(Selectivity, splitAnswer{jj}, 'IgnoreCase', true);          error('%s\nSelectivity',     rawAnswer); end
-                case 13; if splitAnswer{jj}             ~= SensitivityMode;                       error('%s\nSensitivityMode', rawAnswer); end
-                case 14; if str2double(splitAnswer{jj}) ~= Preamp;                                warning('%s\nPreamp',        rawAnswer); end  % INSERIR NO LOG A IMPOSSIBILIDADE DE PROGRAMAR O VALOR
-                case 15; if str2double(splitAnswer{jj}) ~= AttenuationMode;                       error('%s\AttenuationMode',  rawAnswer); end
-                case 16; if ~AttenuationMode & (str2double(splitAnswer{jj}) ~= AttenuationValue); error('%s\AttenuationValue', rawAnswer); end
-                case 17; if str2double(splitAnswer{jj}) ~= SampleTimeMode;                        error('%s\SampleTimeMode',   rawAnswer); end
+                case  1; if ~strcmp(splitAnswer{jj}, TraceMode);                                  error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  2; if str2double(splitAnswer{jj}) ~= AverageMode;                           error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  3; if str2double(splitAnswer{jj}) ~= AverageCount;               warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
+                case  4; if ~strcmp(splitAnswer{jj}, Detector);                                   error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  5; if ~strcmp(splitAnswer{jj}, LevelUnit);                                  error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  6; if str2double(splitAnswer{jj}) ~= FreqStart;                             error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  7; if str2double(splitAnswer{jj}) ~= FreqStop;                              error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  8; if str2double(splitAnswer{jj}) ~= DataPoints;                            error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  9; if str2double(splitAnswer{jj}) ~= StepWidth;                             error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 10; if str2double(splitAnswer{jj}) ~= ResolutionMode;                        error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 11; if str2double(splitAnswer{jj}) ~= ResolutionValue;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 12; if ~contains(Selectivity, splitAnswer{jj}, 'IgnoreCase', true);          error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 13; if splitAnswer{jj}             ~= SensitivityMode;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 14; if str2double(splitAnswer{jj}) ~= Preamp;                     warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
+                case 15; if str2double(splitAnswer{jj}) ~= AttenuationMode;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 16; if ~AttenuationMode & (str2double(splitAnswer{jj}) ~= AttenuationValue); error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 17; if str2double(splitAnswer{jj}) ~= SampleTimeMode;                        error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
             end
         end
 
-
-        taskSCPI(ii) = struct('scpiSet_Reset',   instrInfo.scpiReset{1},                                                                       ...
-                              'scpiSet_Startup', instrInfo.StartUp{1},                                                                         ...
-                              'scpiSet_Att',     replace(char(instrInfo.scpiAttenuation{1}), '%AttenuationValue%', num2str(AttenuationValue)), ...
-                              'scpiGet_Att',     instrInfo.scpiQuery_Attenuation{1},                                                           ...
-                              'scpiGet_Data',    instrInfo.scpiTraceData{1});
-
         taskBand(ii).scpiSet_Config = scpiSet_Config;
+        taskBand(ii).scpiSet_Att    = scpiSet_Att;
+        taskBand(ii).scpiSet_Answer = scpiSet_Answer;
         taskBand(ii).DataPoints     = DataPoints;
-        taskBand(ii).Mask           = [];                           % PENDENTE
-        taskBand(ii).Matrix         = [];                           % PENDENTE k * ones(128, DataPoints, 'single')
-        taskBand(ii).File           = [];                           % PENDENTE
+        taskBand(ii).SyncModeRef    = -1;
+        taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
     end
+
+end
+
+
+function msg = msgConstructor(Type, Trigger, scpiSet_Config, scpiSet_Answer)
+
+    switch Type
+        case 1
+            msg = sprintf(['Trigger: "%s\n"' ...
+                           'scpiSet_Config: %s'], Trigger, ...
+                                                  scpiSet_Config);
+
+        otherwise                                                           % 'error' | 'warning'
+            msg = sprintf(['Trigger: "%s"\n'      ...
+                           'scpiSet_Config: %s\n' ...
+                           'scpiSet_Answer: %s'], Trigger,        ...
+                                                  scpiSet_Config, ...
+                                                  scpiSet_Answer);
+    end
+
+end
+
+
+function AntennaInfo = AntennaExtract(taskObj, idx1)
+
+    AntennaName     = taskObj.General.Task.Band(idx1).instrAntenna;
+
+    AntennaMetaData = rmfield(taskObj.Antenna.MetaData, 'Installation');
+    AntennaFields   = fieldnames(AntennaMetaData);
+
+    if ~isempty(AntennaName)
+        idx2 = find(strcmp({AntennaMetaData.Name}, AntennaName), 1);
+        AntennaMetaData = AntennaMetaData(idx2);
+    end
+
+    for ii = numel(AntennaFields):-1:1
+        if AntennaMetaData.(AntennaFields{ii}) == "NA"
+            AntennaMetaData = rmfield(AntennaMetaData, AntennaFields{ii});
+        end
+    end
+    AntennaInfo = jsonencode(AntennaMetaData);
 
 end

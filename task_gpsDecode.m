@@ -1,16 +1,12 @@
 function gps = task_gpsDecode(Instrument)
 
-    gps = struct('Status',     0, ...
-                 'Latitude',  -1, ...
-                 'Longitude', -1, ...
-                 'TimeStamp', []);
+    gps  = struct('Status',     0, ...
+                  'Latitude',  -1, ...
+                  'Longitude', -1, ...
+                  'TimeStamp', []);
 
-    try
-        Node = replace(deblank(writeread(Instrument, '*IDN?')), '"', '');
-        flush(Instrument)
-    catch
-        return
-    end
+    Node = Instrument.UserData.IDN;
+    flush(Instrument)
 
 % R&S EB500
 % Possíveis respostas à requisição ':SYSTem:GPS:DATA?':
