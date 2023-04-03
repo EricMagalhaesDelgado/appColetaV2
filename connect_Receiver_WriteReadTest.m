@@ -96,8 +96,8 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
         
         % LevelUnit
         switch rawBand(ii).instrLevelUnit
-            case 'dBm';  LevelUnit = LevelUnit_Values{1};
-            case 'dBμV'; LevelUnit = LevelUnit_Values{2};
+            case 'dBm';            LevelUnit = LevelUnit_Values{1};
+            case {'dBµV', 'dBμV'}; LevelUnit = LevelUnit_Values{2};
         end                
         
         % FreqStart, FreqStop, DataPoints, StepWidth, Resolution,

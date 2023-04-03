@@ -1,16 +1,18 @@
-function gps = task_gpsReader(gpsInstrument, Timeout)
+function gps = task_gpsReader(hGPS, Timeout)
     
-    gps = struct('Status',     0, 'Latitude',   -1, ...
-                 'Longitude', -1, 'TimeStamp',  []);
+    gps  = struct('Status',     0, ...
+                  'Latitude',  -1, ...
+                  'Longitude', -1, ...
+                  'TimeStamp', []);
 
-    flush(gpsInstrument)
+    flush(hGPS)
     lastwarn('')
     
     gpsTic = tic;
     t = toc(gpsTic);
     
     while t < Timeout
-        receivedData = char(deblank(readline(gpsInstrument)));
+        receivedData = char(deblank(readline(hGPS)));
         
         [msg, warnID] = lastwarn;
         if strcmp(warnID, 'MATLAB:serial:fscanf:unsuccessfulRead')

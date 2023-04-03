@@ -1,19 +1,19 @@
-function gps = task_gpsDecode(Instrument)
+function gps = task_gpsDecode(hReceiver)
 
     gps  = struct('Status',     0, ...
                   'Latitude',  -1, ...
                   'Longitude', -1, ...
                   'TimeStamp', []);
 
-    Node = Instrument.UserData.IDN;
-    flush(Instrument)
+    Node = hReceiver.UserData.IDN;
+    flush(hReceiver)
 
 % R&S EB500
 % Possíveis respostas à requisição ':SYSTem:GPS:DATA?':
 % - Uma string vazia '' (caso não haja conectividade); ou
 % - Uma string com o template 'GPS,1,1629933835,74,11,S,18,53,19.70,W,48,13,50.99,2021,8,25,23,23,55,0.00,0.00,338.50,940.00,1,-8.00'.
     if contains(Node, 'EB500')
-        gpsStr = deblank(writeread(Instrument, ':SYSTem:GPS:DATA?'));
+        gpsStr = deblank(writeread(hReceiver, ':SYSTem:GPS:DATA?'));
         
         if ~isempty(gpsStr) && contains(gpsStr, 'GPS')
             gpsStr = strsplit(gpsStr, ',');
@@ -39,7 +39,7 @@ function gps = task_gpsDecode(Instrument)
 % - Uma string 'NO FIX' (caso não exista informação válida); ou
 % - Uma string com o template 'GOOD FIX,WED AUG 25 23:10:29 2021,-0.2267732173,-0.6713082194' (caso exista informação válida).
     elseif contains(Node, 'MS2720T')
-        gpsStr = deblank(writeread(Instrument, ':FETCh:GPS?'));
+        gpsStr = deblank(writeread(hReceiver, ':FETCh:GPS?'));
         
         if ~isempty(gpsStr) && contains(gpsStr, 'GOOD FIX')
             gpsStr = strsplit(gpsStr, ',');
@@ -56,7 +56,7 @@ function gps = task_gpsDecode(Instrument)
 % - Uma string com o template '-38.463093,-12.993198,40,08252021,21:11:50' (caso exista informação válida); ou
 % - Uma string '0.000000,0.000000,0,02152009,00:12:19' (caso não exista informação válida).
     elseif contains(Node, 'N9344C')
-        gpsStr = deblank(writeread(Instrument, ':SYSTem:GPSinfo?'));
+        gpsStr = deblank(writeread(hReceiver, ':SYSTem:GPSinfo?'));
         
         if ~isempty(gpsStr) && ~contains(gpsStr, '0.000000')
             gpsStr = strsplit(gpsStr, ',');
@@ -73,7 +73,7 @@ function gps = task_gpsDecode(Instrument)
 % - Uma string com o template '"12 51.63421 S,38 18.50857 W,26,2021-08-27 19:29:34Z"' (caso exista informação válida); ou
 % - Uma string '"0,0,0,2021-08-27 19:33:18Z"' (caso não exista informação válida).
     elseif contains(Node, 'N9936B')
-        gpsStr = extractBetween(deblank(writeread(Instrument, ':SYSTem:GPS:DATA?')), '"', '"');
+        gpsStr = extractBetween(deblank(writeread(hReceiver, ':SYSTem:GPS:DATA?')), '"', '"');
         
         if ~isempty(gpsStr) && ~contains(gpsStr{1}, '0,0,0')
             gpsStr = strsplit(gpsStr{1}, ',');
@@ -98,7 +98,7 @@ function gps = task_gpsDecode(Instrument)
 % - Uma string vazia ''NAN,NAN" (caso não haja conectividade); ou
 % - Uma string com o template '45.4992483333333,-122.82315' (caso exista informação válida).
     elseif contains(Node, 'SA2500')
-        gpsStr = regexp(deblank(writeread(Instrument, ':SYSTem:GPS:STATus?;:SYSTem:GPS:POSition?')), '(?<status>\w+);(?<lat>[0-9.-]+),(?<long>[0-9.-]+)', 'names');
+        gpsStr = regexp(deblank(writeread(hReceiver, ':SYSTem:GPS:STATus?;:SYSTem:GPS:POSition?')), '(?<status>\w+);(?<lat>[0-9.-]+),(?<long>[0-9.-]+)', 'names');
         
         if ~isempty(gpsStr) && ismember(gpsStr.status, ["GOOD", "FAIR"])
             gps.Status    = 1;
