@@ -1,20 +1,16 @@
-function [udpPortArray, udpIndex] = connect_udpSockets(udpPortArray, Parameters)
+function [udpPortArray, idx] = connect_udpSockets(udpPortArray, Port)
 
-    Parameters = jsondecode(Parameters);
-    Port       = Parameters.Port;
-    Timeout    = Parameters.Timeout;
-
-    udpIndex = [];   
+    idx = [];   
     for ii = 1:numel(udpPortArray)
         if udpPortArray{ii}.LocalPort == Port
-            udpIndex = ii;
+            idx = ii;
             break
         end
     end
     
-    if isempty(udpIndex)
-        udpIndex = numel(udpPortArray)+1;
-        udpPortArray(udpIndex) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian', 'Timeout', Timeout)};
+    if isempty(idx)
+        idx = numel(udpPortArray)+1;
+        udpPortArray(idx) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian')};
     end
 
 end

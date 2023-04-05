@@ -15,10 +15,11 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
                         'Datagrams',       [], ...
                         'DataPoints',      [], ...
                         'SyncModeRef',     [], ...
+                        'Waterfall',       [], ...
                         'Mask',            [], ...
-                        'Matrix',          [], ...
                         'File',            [], ...
-                        'Antenna',         '');
+                        'Antenna',         '', ...
+                        'Status',          true);
     warnMsg    = {};
 
 
@@ -30,11 +31,11 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
         pause(instrInfo.ResetPause{1})
     end
     
-    writeline(hReceiver, instrInfo.StartUp{1});    
+    writeline(hReceiver, instrInfo.StartUp{1});
 
     switch taskObj.Receiver.Sync
-        case 'Single Sweep';     scpiSet_Sync = 'INITiate:CONTinuous OFF';
-        case 'Continuous Sweep'; scpiSet_Sync = 'INITiate:CONTinuous ON';
+        case 'Single Sweep'; scpiSet_Sync = 'INITiate:CONTinuous OFF';
+        otherwise;           scpiSet_Sync = 'INITiate:CONTinuous ON';       % 'Continuous Sweep' | 'Streaming'
     end
     taskSCPI.scpiSet_Sync = scpiSet_Sync;
     writeline(hReceiver, scpiSet_Sync);
@@ -149,13 +150,14 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
                        '%SampleTimeValue%',  num2str(SampleTimeValue)};
         
         scpiSet_Config = replace(instrInfo.scpiGeneral{1}, replaceCell(:,1), replaceCell(:,2));
-        scpiSet_Att    = replace(char(instrInfo.scpiAttenuation{1}), '%AttenuationValue%', num2str(AttenuationValue));
+        scpiSet_Att    = '';
         
         % Tenta programar valores...
         writeline(hReceiver, scpiSet_Config);
         pause(instrInfo.BandPause{1})
         
-        if ~AttenuationMode && ~isempty(scpiSet_Att)
+        if ~AttenuationMode & ~isempty(instrInfo.scpiAttenuation{1})
+            scpiSet_Att = replace(char(instrInfo.scpiAttenuation{1}), '%AttenuationValue%', num2str(AttenuationValue));
             writeline(hReceiver, scpiSet_Att);
         end
         
@@ -212,6 +214,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
         taskBand(ii).DataPoints     = DataPoints;
         taskBand(ii).SyncModeRef    = -1;
         taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
+        taskBand(ii).Status         = true;
     end
 
 end

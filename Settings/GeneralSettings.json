@@ -1,24 +1,9 @@
 {
   "openGL": "Hardware Full",
-  "userpath": "C:\\P&D",
-  "layout": {
-    "theme": "cyan",
-    "lightColor": [
-      0.9,
-      0.9,
-      0.9
-    ],
-    "cyanColor": [
-      0.38,
-      0.6,
-      0.73
-    ],
-    "position": "Center"
-  },
-  "Image": {
-    "Visibility": "on",
-    "Format": "jpeg",
-    "Resolution": 120
+  "userPath": "C:\\P&D\\appColeta_Task\\Temp",
+  "Waterfall": {
+    "Colormap": "winter",
+    "Depth": 512
   },
   "Colors": [
     [
@@ -42,15 +27,20 @@
       0.13
     ]
   ],
-  "Waterfall": "winter",
-  "FileSize": 1.0E+8,
-  "HistoryDepth": 128,
-  "AverageFactor": 10,
-  "SampleTimeFactor": 10,
-  "logger": {
-    "ConnectionTime": 30,
-    "HandshakePause": 1,
-    "Timeout": 5
+  "Integration": {
+    "Trace": 10,
+    "SampleTime": 10
   },
-  "EB500_udpPort": 24001
+  "File": {
+    "Version": "RFlookBin v.2/1",
+    "Size": 1.0E+8
+  },
+  "FindPeaks": {
+    "NPeaks": 10,
+    "THR": [],
+    "Proeminence": 30,
+    "Distance": 25,
+    "BW": 10
+  },
+  "udpPort": 24001
 }

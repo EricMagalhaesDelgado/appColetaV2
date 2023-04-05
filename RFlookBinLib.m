@@ -79,7 +79,7 @@ classdef RFlookBinLib
                 case 'RFlookBin v.2/1'
                     fileID = specObj.Band(idx).File.CurrentFile.Handle;
 
-                    if ftell(fileID) > appGeneral.Filesize
+                    if ftell(fileID) > appGeneral.File.Size
                         fclose(fileID);
 
                         [specObj.Band(idx).File.Filecount, ...
@@ -113,7 +113,7 @@ classdef RFlookBinLib
             MetaData        = Task.Band(idx);
             BitsPerSample   = Task.BitsPerSample;
             DataPoints      = MetaData.instrDataPoints;
-            AlocatedSamples = ceil(appGeneral.Filesize ./ (BitsPerSample * DataPoints));
+            AlocatedSamples = ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints));
         
             fwrite(fileID, 'RFlookBin v.1/1', 'char*1');
             fwrite(fileID, BitsPerSample);
