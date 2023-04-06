@@ -135,6 +135,39 @@
     }
   },
   {
+    "Name": "appColeta HOM_4",
+    "BitsPerSample": 16,
+    "Observation": {
+      "Type": "Samples",
+      "BeginTime": "",
+      "EndTime": "",
+      "Duration": []
+    },
+    "GPS": {
+      "Type": "manual",
+      "Latitude": -12.5,
+      "Longitude": -38.5,
+      "RevisitTime": []
+    },
+    "Band": {
+      "ThreadID": 1,
+      "Description": "Faixa 1 de 1",
+      "ObservationSamples": 1000,
+      "FreqStart": 4.5E+8,
+      "FreqStop": 4.7E+8,
+      "StepWidth": 100000,
+      "Resolution": 100000,
+      "RFMode": "High Sensitivity",
+      "TraceMode": "ClearWrite",
+      "Detector": "Sample",
+      "LevelUnit": "dBµV",
+      "RevisitTime": 0.1,
+      "IntegrationFactor": 1,
+      "Trigger": 1,
+      "Enable": 1
+    }
+  },
+  {
     "Name": "MSAT_HOM_1",
     "BitsPerSample": 8,
     "Observation": {

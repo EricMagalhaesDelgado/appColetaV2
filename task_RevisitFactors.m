@@ -16,6 +16,9 @@ function timeObj = task_RevisitFactors(specObj)
                                       'RevisitFactors', []);
             
             RevisitTimeArray = [RevisitTimeArray, [specObj(ii).taskObj.General.Task.Band.RevisitTime]];
+        else
+            timeObj.Band(ii) = struct('RevisitTimes',   [], ...
+                                      'RevisitFactors', []);
         end
     end
 

@@ -30,6 +30,7 @@ function output = connect_Receiver(instrHandles, instrSelected)
         
         flush(instrNew)
         IDN = replace(deblank(writeread(instrNew, '*IDN?')), '"', '');
+        drawnow nocallbacks
 
         if ~isempty(IDN)
             if contains(IDN, Tag, "IgnoreCase", true) 

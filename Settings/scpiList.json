@@ -145,8 +145,8 @@
       "Port": "5555",
       "Timeout": 5,
       "Localhost_Enable": 0,
-      "Localhost_localIP": "",
-      "Localhost_publicIP": ""
+      "Localhost_localIP": "10.0.0.114",
+      "Localhost_publicIP": "73.237.33.238"
     },
     "Description": "ETM Uberlândia/MG",
     "Enable": 1,
