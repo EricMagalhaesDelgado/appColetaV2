@@ -1,0 +1,199 @@
+{
+  "Antenna": [
+    {
+      "Name": "MCL-1",
+      "ACU": "GD-7200",
+      "IP": "10.21.205.45",
+      "Port": 4002,
+      "Target": []
+    },
+    {
+      "Name": "MCL-2",
+      "ACU": "GD-7200",
+      "IP": "10.21.205.45",
+      "Port": 4003,
+      "Target": []
+    },
+    {
+      "Name": "MCL-3",
+      "ACU": "",
+      "IP": "",
+      "Port": -1,
+      "Target": []
+    },
+    {
+      "Name": "MCC-1",
+      "ACU": "GD-7200",
+      "IP": "10.21.205.45",
+      "Port": 4006,
+      "Target": []
+    },
+    {
+      "Name": "MKU-1",
+      "ACU": "GD-7200",
+      "IP": "10.21.205.45",
+      "Port": 4004,
+      "Target": []
+    },
+    {
+      "Name": "MKU-2",
+      "ACU": "GD-7200",
+      "IP": "10.21.205.45",
+      "Port": 4005,
+      "Target": []
+    },
+    {
+      "Name": "MKA-1",
+      "ACU": "GD-123T",
+      "IP": "",
+      "Port": -1,
+      "Target": []
+    }
+  ],
+  "LNB": [
+    {
+      "Name": "MCL-1 V",
+      "Offset": 5150000050,
+      "Inverted": 1,
+      "Port": 1
+    },
+    {
+      "Name": "MCL-1 H",
+      "Offset": 5150000050,
+      "Inverted": 1,
+      "Port": 2
+    },
+    {
+      "Name": "MCL-2 V",
+      "Offset": 5150000050,
+      "Inverted": 1,
+      "Port": 3
+    },
+    {
+      "Name": "MCL-2 H",
+      "Offset": 5150000050,
+      "Inverted": 1,
+      "Port": 4
+    },
+    {
+      "Name": "MCC-1 L",
+      "Offset": 5150000050,
+      "Inverted": 1,
+      "Port": 5
+    },
+    {
+      "Name": "MCC-1 R",
+      "Offset": 5150000050,
+      "Inverted": 1,
+      "Port": 6
+    },
+    {
+      "Name": "MCL-3 V",
+      "Offset": 5760000050,
+      "Inverted": 1,
+      "Port": 7
+    },
+    {
+      "Name": "MCL-3 H",
+      "Offset": 5760000050,
+      "Inverted": 1,
+      "Port": 8
+    },
+    {
+      "Name": "MKU-1 LO_V",
+      "Offset": 9750000000,
+      "Inverted": 0,
+      "Port": 9
+    },
+    {
+      "Name": "MKU-1 HI_V",
+      "Offset": 10750000000,
+      "Inverted": 0,
+      "Port": 10
+    },
+    {
+      "Name": "MKU-1 LO_H",
+      "Offset": 9750000000,
+      "Inverted": 0,
+      "Port": 11
+    },
+    {
+      "Name": "MKU-1 HI_H",
+      "Offset": 10750000000,
+      "Inverted": 0,
+      "Port": 12
+    },
+    {
+      "Name": "MKU-2 LO_V",
+      "Offset": 9750000000,
+      "Inverted": 0,
+      "Port": 13
+    },
+    {
+      "Name": "MKU-2 HI_V",
+      "Offset": 10750000000,
+      "Inverted": 0,
+      "Port": 14
+    },
+    {
+      "Name": "MKU-2 LO_H",
+      "Offset": 9750000000,
+      "Inverted": 0,
+      "Port": 15
+    },
+    {
+      "Name": "MKU-2 HI_H",
+      "Offset": 10750000000,
+      "Inverted": 0,
+      "Port": 16
+    },
+    {
+      "Name": "MKA-1 LO_R",
+      "Offset": 16200000000,
+      "Inverted": 0,
+      "Port": 23
+    },
+    {
+      "Name": "MKA-1 MID_R",
+      "Offset": 17200000000,
+      "Inverted": 0,
+      "Port": 23
+    },
+    {
+      "Name": "MKA-1 MID_HI_R",
+      "Offset": 18200000000,
+      "Inverted": 0,
+      "Port": 23
+    },
+    {
+      "Name": "MKA-1 HI_R",
+      "Offset": 19200000000,
+      "Inverted": 0,
+      "Port": 23
+    },
+    {
+      "Name": "MKA-1 LO_L",
+      "Offset": 16200000000,
+      "Inverted": 0,
+      "Port": 24
+    },
+    {
+      "Name": "MKA-1 MID_L",
+      "Offset": 17200000000,
+      "Inverted": 0,
+      "Port": 24
+    },
+    {
+      "Name": "MKA-1 MID_HI_L",
+      "Offset": 18200000000,
+      "Inverted": 0,
+      "Port": 24
+    },
+    {
+      "Name": "MKA-1 HI_L",
+      "Offset": 19200000000,
+      "Inverted": 0,
+      "Port": 24
+    }
+  ]
+}

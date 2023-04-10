@@ -1,7 +1,6 @@
 [
   {
     "Satellite": "Star One C1",
-    "Designator": "2012-062A",
     "Antennas": [
       {
         "Name": "MCL1_V",
@@ -23,7 +22,6 @@
   },
   {
     "Satellite": "Star One C2",
-    "Designator": "2012-062B",
     "Antennas": [
       {
         "Name": "MCL1_V",

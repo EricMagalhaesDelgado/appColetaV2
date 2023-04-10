@@ -1,6 +1,7 @@
 {
-  "openGL": "Hardware Full",
+  "RootFolder": "",
   "userPath": "C:\\P&D\\appColeta_Task\\Temp",
+  "openGL": "Hardware Full",
   "Waterfall": {
     "Colormap": "winter",
     "Depth": 512
@@ -41,6 +42,5 @@
     "Proeminence": 30,
     "Distance": 25,
     "BW": 10
-  },
-  "udpPort": 24001
+  }
 }
