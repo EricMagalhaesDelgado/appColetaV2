@@ -5,49 +5,1087 @@
       "ACU": "GD-7200",
       "IP": "10.21.205.45",
       "Port": 4002,
-      "Target": []
+      "Target": [
+        {
+          "ID": "T02",
+          "Name": "IS-11",
+          "Azimuth": 0.461,
+          "Elevation": 63.305,
+          "Polarization": 0.4
+        },
+        {
+          "ID": "T03",
+          "Name": "IS-14",
+          "Azimuth": 355.309,
+          "Elevation": 63.227,
+          "Polarization": 355.7
+        },
+        {
+          "ID": "T04",
+          "Name": "IS-1R",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T05",
+          "Name": "IS-805",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T06",
+          "Name": "IS-21",
+          "Azimuth": 325.675,
+          "Elevation": 58.494,
+          "Polarization": 328.7
+        },
+        {
+          "ID": "T07",
+          "Name": "HM-AMAZONAS3",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T08",
+          "Name": "SC-C2",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T09",
+          "Name": "SO-B2",
+          "Azimuth": 317.074,
+          "Elevation": 55.193,
+          "Polarization": 321.1
+        },
+        {
+          "ID": "T10",
+          "Name": "SO-D2",
+          "Azimuth": 307.468,
+          "Elevation": 49.756,
+          "Polarization": 313
+        },
+        {
+          "ID": "T11",
+          "Name": "!SO-C3",
+          "Azimuth": 301.982,
+          "Elevation": 45.488,
+          "Polarization": 308.6
+        },
+        {
+          "ID": "T12",
+          "Name": "!SO-B4",
+          "Azimuth": 294.157,
+          "Elevation": 37.347,
+          "Polarization": 302.8
+        },
+        {
+          "ID": "T13",
+          "Name": "!IS-GALAX 28",
+          "Azimuth": 290.629,
+          "Elevation": 31.882,
+          "Polarization": 300.4
+        },
+        {
+          "ID": "T14",
+          "Name": "!SO-B3",
+          "Azimuth": 288.719,
+          "Elevation": 29.857,
+          "Polarization": 299.2
+        },
+        {
+          "ID": "T15",
+          "Name": "!TS-ANIK G1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T16",
+          "Name": "IS-9",
+          "Azimuth": 0.203,
+          "Elevation": 63.306,
+          "Polarization": 0.2
+        },
+        {
+          "ID": "T17",
+          "Name": "IS-34",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T18",
+          "Name": "!TS-ANIK F1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T19",
+          "Name": "IS-29",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T20",
+          "Name": "SO-D1",
+          "Azimuth": 294.2,
+          "Elevation": 37.3,
+          "Polarization": 302.8
+        },
+        {
+          "ID": "T21",
+          "Name": "SS-SES 4",
+          "Azimuth": 44.994,
+          "Elevation": 54.202,
+          "Polarization": 40.6
+        },
+        {
+          "ID": "T22",
+          "Name": "IS-907",
+          "Azimuth": 35.915,
+          "Elevation": 57.972,
+          "Polarization": 32.7
+        },
+        {
+          "ID": "T23",
+          "Name": "ES-65W",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T24",
+          "Name": "!IS-10-02",
+          "Azimuth": 66.849,
+          "Elevation": 36.088,
+          "Polarization": 58
+        },
+        {
+          "ID": "T25",
+          "Name": "IS-23",
+          "Azimuth": 335.93,
+          "Elevation": 61.088,
+          "Polarization": 337.9
+        },
+        {
+          "ID": "T26",
+          "Name": "SS-NSS 806",
+          "Azimuth": 348.967,
+          "Elevation": 62.862,
+          "Polarization": 349.8
+        },
+        {
+          "ID": "T27",
+          "Name": "IS 35e",
+          "Azimuth": 21.497,
+          "Elevation": 61.559,
+          "Polarization": 19.7
+        },
+        {
+          "ID": "T28",
+          "Name": "SS-SES 6",
+          "Azimuth": 6.883,
+          "Elevation": 63.135,
+          "Polarization": 6.3
+        },
+        {
+          "ID": "T29",
+          "Name": "!ES-8 WEST B",
+          "Azimuth": 61.202,
+          "Elevation": 42.505,
+          "Polarization": 53.9
+        },
+        {
+          "ID": "T30",
+          "Name": "HM-AMAZONAS2",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T31",
+          "Name": "SS-AMC 12",
+          "Azimuth": 14.39,
+          "Elevation": 62.544,
+          "Polarization": 13.2
+        },
+        {
+          "ID": "T32",
+          "Name": "!IS-901",
+          "Azimuth": 50.501,
+          "Elevation": 51.098,
+          "Polarization": 45.3
+        },
+        {
+          "ID": "T33",
+          "Name": "E65WA",
+          "Azimuth": 313.7,
+          "Elevation": 53.5,
+          "Polarization": 318.2
+        },
+        {
+          "ID": "T48",
+          "Name": "Test Sat",
+          "Azimuth": 290,
+          "Elevation": 36,
+          "Polarization": 310
+        },
+        {
+          "ID": "T50",
+          "Name": "teste",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 324.032
+        }
+      ],
+      "LOG": ""
     },
     {
       "Name": "MCL-2",
       "ACU": "GD-7200",
       "IP": "10.21.205.45",
       "Port": 4003,
-      "Target": []
+      "Target": [
+        {
+          "ID": "T02",
+          "Name": "IS-11",
+          "Azimuth": 0.461,
+          "Elevation": 63.205,
+          "Polarization": 321.048
+        },
+        {
+          "ID": "T03",
+          "Name": "IS-14",
+          "Azimuth": 355.309,
+          "Elevation": 63.227,
+          "Polarization": 355.7
+        },
+        {
+          "ID": "T04",
+          "Name": "IS-1R",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T05",
+          "Name": "IS-805",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T06",
+          "Name": "IS-21",
+          "Azimuth": 325.675,
+          "Elevation": 58.494,
+          "Polarization": 328.7
+        },
+        {
+          "ID": "T07",
+          "Name": "HM-AMAZONAS3",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 332.3
+        },
+        {
+          "ID": "T08",
+          "Name": "SO-C2",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 314.945
+        },
+        {
+          "ID": "T09",
+          "Name": "SO-B2",
+          "Azimuth": 317.074,
+          "Elevation": 55.193,
+          "Polarization": 321.1
+        },
+        {
+          "ID": "T10",
+          "Name": "SO-D2",
+          "Azimuth": 307.473,
+          "Elevation": 49.756,
+          "Polarization": 312.951
+        },
+        {
+          "ID": "T11",
+          "Name": "!SO-C3",
+          "Azimuth": 301.982,
+          "Elevation": 45.488,
+          "Polarization": 308.546
+        },
+        {
+          "ID": "T12",
+          "Name": "!SO-B4",
+          "Azimuth": 294.157,
+          "Elevation": 37.347,
+          "Polarization": 302.8
+        },
+        {
+          "ID": "T13",
+          "Name": "!IS-GALAX 28",
+          "Azimuth": 290.994,
+          "Elevation": 33.504,
+          "Polarization": 300.454
+        },
+        {
+          "ID": "T14",
+          "Name": "!SO-B3",
+          "Azimuth": 288.719,
+          "Elevation": 29.857,
+          "Polarization": 299.2
+        },
+        {
+          "ID": "T15",
+          "Name": "!TS-ANIK F1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T16",
+          "Name": "SO-D1",
+          "Azimuth": 294.2,
+          "Elevation": 37.3,
+          "Polarization": 302.8
+        },
+        {
+          "ID": "T17",
+          "Name": "E65WA",
+          "Azimuth": 313.7,
+          "Elevation": 53.5,
+          "Polarization": 318.2
+        },
+        {
+          "ID": "T18",
+          "Name": "IS-34",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T19",
+          "Name": "IS-29",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T20",
+          "Name": "!TS-ANIK G1",
+          "Azimuth": 280.531,
+          "Elevation": 15.758,
+          "Polarization": 295.181
+        },
+        {
+          "ID": "T21",
+          "Name": "SS-SES 4",
+          "Azimuth": 44.994,
+          "Elevation": 54.202,
+          "Polarization": 40.7
+        },
+        {
+          "ID": "T22",
+          "Name": "IS-907",
+          "Azimuth": 35.915,
+          "Elevation": 57.972,
+          "Polarization": 32.7
+        },
+        {
+          "ID": "T23",
+          "Name": "ES-65W",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T24",
+          "Name": "!IS-10-02",
+          "Azimuth": 66.849,
+          "Elevation": 36.088,
+          "Polarization": 58
+        },
+        {
+          "ID": "T25",
+          "Name": "IS-23",
+          "Azimuth": 335.93,
+          "Elevation": 61.088,
+          "Polarization": 337.9
+        },
+        {
+          "ID": "T26",
+          "Name": "SS-NSS 806",
+          "Azimuth": 348.967,
+          "Elevation": 62.862,
+          "Polarization": 349.8
+        },
+        {
+          "ID": "T27",
+          "Name": "IS 35e",
+          "Azimuth": 21.497,
+          "Elevation": 61.559,
+          "Polarization": 19.7
+        },
+        {
+          "ID": "T28",
+          "Name": "SS-SES 6",
+          "Azimuth": 6.883,
+          "Elevation": 63.135,
+          "Polarization": 6.3
+        },
+        {
+          "ID": "T29",
+          "Name": "!ES-8 WEST B",
+          "Azimuth": 61.202,
+          "Elevation": 42.505,
+          "Polarization": 53.9
+        },
+        {
+          "ID": "T30",
+          "Name": "HM-AMAZONAS2",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T31",
+          "Name": "SS-AMC 12",
+          "Azimuth": 14.397,
+          "Elevation": 61.691,
+          "Polarization": 13.173
+        },
+        {
+          "ID": "T32",
+          "Name": "!IS-901",
+          "Azimuth": 50.501,
+          "Elevation": 51.098,
+          "Polarization": 45.3
+        },
+        {
+          "ID": "T33",
+          "Name": "!VS-VENESAT1",
+          "Azimuth": 299.121,
+          "Elevation": 42.826,
+          "Polarization": 306.4
+        },
+        {
+          "ID": "T34",
+          "Name": "SS-NSS10",
+          "Azimuth": 14.39,
+          "Elevation": 62.544,
+          "Polarization": 13.2
+        },
+        {
+          "ID": "T35",
+          "Name": "SIMON 78W",
+          "Azimuth": 299.308,
+          "Elevation": 42.968,
+          "Polarization": 4.724
+        },
+        {
+          "ID": "T49",
+          "Name": "teste2",
+          "Azimuth": 280.798,
+          "Elevation": 18.464,
+          "Polarization": 324.08
+        }
+      ],
+      "LOG": ""
     },
     {
       "Name": "MCL-3",
       "ACU": "",
       "IP": "",
       "Port": -1,
-      "Target": []
+      "Target": [],
+      "LOG": [
+        "Expected input number 1, ADDRESS, to be nonempty."
+      ]
     },
     {
       "Name": "MCC-1",
       "ACU": "GD-7200",
       "IP": "10.21.205.45",
       "Port": 4006,
-      "Target": []
+      "Target": [
+        {
+          "ID": "T02",
+          "Name": "NSS-806",
+          "Azimuth": 348.956,
+          "Elevation": 62.861,
+          "Polarization": 275.065
+        },
+        {
+          "ID": "T03",
+          "Name": "IS-37e",
+          "Azimuth": 50.501,
+          "Elevation": 51.098,
+          "Polarization": 275.065
+        },
+        {
+          "ID": "T04",
+          "Name": "SES 6",
+          "Azimuth": 6.883,
+          "Elevation": 63.135,
+          "Polarization": 275.065
+        },
+        {
+          "ID": "T05",
+          "Name": "AM3",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 275.065
+        },
+        {
+          "ID": "T06",
+          "Name": "SES4",
+          "Azimuth": 45,
+          "Elevation": 54.206,
+          "Polarization": 284.612
+        },
+        {
+          "ID": "T07",
+          "Name": "NSS7",
+          "Azimuth": 47.8,
+          "Elevation": 52.7,
+          "Polarization": 250.071
+        },
+        {
+          "ID": "T46",
+          "Name": "NSS7 OPT",
+          "Azimuth": 51.865,
+          "Elevation": 51.76,
+          "Polarization": 275.065
+        },
+        {
+          "ID": "T48",
+          "Name": "905 OPT",
+          "Azimuth": 43.024,
+          "Elevation": 56.176,
+          "Polarization": 275.065
+        }
+      ],
+      "LOG": ""
     },
     {
       "Name": "MKU-1",
       "ACU": "GD-7200",
       "IP": "10.21.205.45",
       "Port": 4004,
-      "Target": []
+      "Target": [
+        {
+          "ID": "T02",
+          "Name": "!SS-SES 4",
+          "Azimuth": 44.994,
+          "Elevation": 54.202,
+          "Polarization": 40.7
+        },
+        {
+          "ID": "T03",
+          "Name": "IS-35e",
+          "Azimuth": 21.497,
+          "Elevation": 61.559,
+          "Polarization": 19.7
+        },
+        {
+          "ID": "T04",
+          "Name": "SS-SES 6",
+          "Azimuth": 6.883,
+          "Elevation": 63.135,
+          "Polarization": 6.3
+        },
+        {
+          "ID": "T05",
+          "Name": "IS-11",
+          "Azimuth": 0.461,
+          "Elevation": 63.305,
+          "Polarization": 0.4
+        },
+        {
+          "ID": "T06",
+          "Name": "IS-14",
+          "Azimuth": 355.309,
+          "Elevation": 63.227,
+          "Polarization": 355.7
+        },
+        {
+          "ID": "T07",
+          "Name": "SS-NSS 806",
+          "Azimuth": 348.967,
+          "Elevation": 62.862,
+          "Polarization": 349.8
+        },
+        {
+          "ID": "T08",
+          "Name": "IS-1R",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T09",
+          "Name": "IS-23",
+          "Azimuth": 336,
+          "Elevation": 61.089,
+          "Polarization": 337.952
+        },
+        {
+          "ID": "T10",
+          "Name": "IS-805",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T11",
+          "Name": "IS-G-11",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T12",
+          "Name": "IS-9",
+          "Azimuth": 0.203,
+          "Elevation": 63.306,
+          "Polarization": 0.2
+        },
+        {
+          "ID": "T13",
+          "Name": "IS-21",
+          "Azimuth": 325.675,
+          "Elevation": 58.494,
+          "Polarization": 328.7
+        },
+        {
+          "ID": "T14",
+          "Name": "HM-AMAZONAS2",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T15",
+          "Name": "HM-AMAZONAS3",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T16",
+          "Name": "TS-EDS2/14R",
+          "Azimuth": 317.074,
+          "Elevation": 55.193,
+          "Polarization": 321.1
+        },
+        {
+          "ID": "T17",
+          "Name": "SO-C1",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T18",
+          "Name": "SO-C2",
+          "Azimuth": 307.468,
+          "Elevation": 49.756,
+          "Polarization": 313
+        },
+        {
+          "ID": "T19",
+          "Name": "!SO-C3",
+          "Azimuth": 301.982,
+          "Elevation": 45.488,
+          "Polarization": 308.6
+        },
+        {
+          "ID": "T20",
+          "Name": "!IS-GALAX 28",
+          "Azimuth": 290.629,
+          "Elevation": 32.682,
+          "Polarization": 300.4
+        },
+        {
+          "ID": "T21",
+          "Name": "!TS-ANIK G1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T22",
+          "Name": "!TS-ANIK F1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T23",
+          "Name": "HM-AMAZONAS1",
+          "Azimuth": 330.799,
+          "Elevation": 59.945,
+          "Polarization": 333.3
+        },
+        {
+          "ID": "T24",
+          "Name": "IS-34",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T25",
+          "Name": "IS-29",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T26",
+          "Name": "!HM-HISPA 1D",
+          "Azimuth": 31.14,
+          "Elevation": 59.435,
+          "Polarization": 28.5
+        },
+        {
+          "ID": "T27",
+          "Name": "!IS-GALAX 3C",
+          "Azimuth": 286.939,
+          "Elevation": 27.022,
+          "Polarization": 298.2
+        },
+        {
+          "ID": "T28",
+          "Name": "!SO-HISPA 1C",
+          "Azimuth": 294.308,
+          "Elevation": 37.532,
+          "Polarization": 302.9
+        },
+        {
+          "ID": "T29",
+          "Name": "SO-C4",
+          "Azimuth": 307.468,
+          "Elevation": 49.756,
+          "Polarization": 313
+        },
+        {
+          "ID": "T30",
+          "Name": "ES-65W",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T31",
+          "Name": "SS-AMC 6",
+          "Azimuth": 305.155,
+          "Elevation": 48.079,
+          "Polarization": 311.1
+        },
+        {
+          "ID": "T32",
+          "Name": "HM-AMAZONA4A",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T33",
+          "Name": "SO-D1",
+          "Azimuth": 294.2,
+          "Elevation": 37.3,
+          "Polarization": 302.8
+        },
+        {
+          "ID": "T34",
+          "Name": "E65WA",
+          "Azimuth": 313.7,
+          "Elevation": 53.5,
+          "Polarization": 318.2
+        },
+        {
+          "ID": "T49",
+          "Name": "Test2",
+          "Azimuth": 2.76,
+          "Elevation": 63.165,
+          "Polarization": 1.941
+        },
+        {
+          "ID": "T50",
+          "Name": "Test",
+          "Azimuth": 326.548,
+          "Elevation": 58.636,
+          "Polarization": 330.059
+        }
+      ],
+      "LOG": ""
     },
     {
       "Name": "MKU-2",
       "ACU": "GD-7200",
       "IP": "10.21.205.45",
       "Port": 4005,
-      "Target": []
+      "Target": [
+        {
+          "ID": "T01",
+          "Name": "SO-D1",
+          "Azimuth": 294.2,
+          "Elevation": 37.3,
+          "Polarization": 302.8
+        },
+        {
+          "ID": "T02",
+          "Name": "!SS-SES 4",
+          "Azimuth": 44.986,
+          "Elevation": 54.204,
+          "Polarization": 40.569
+        },
+        {
+          "ID": "T03",
+          "Name": "IS-903",
+          "Azimuth": 21.497,
+          "Elevation": 61.559,
+          "Polarization": 19.7
+        },
+        {
+          "ID": "T04",
+          "Name": "SS-SES 6",
+          "Azimuth": 6.883,
+          "Elevation": 63.135,
+          "Polarization": 6.3
+        },
+        {
+          "ID": "T05",
+          "Name": "IS-11",
+          "Azimuth": 0.461,
+          "Elevation": 63.305,
+          "Polarization": 0.4
+        },
+        {
+          "ID": "T06",
+          "Name": "IS-14",
+          "Azimuth": 355.309,
+          "Elevation": 63.227,
+          "Polarization": 355.7
+        },
+        {
+          "ID": "T07",
+          "Name": "SS-NSS 806",
+          "Azimuth": 348.967,
+          "Elevation": 62.862,
+          "Polarization": 349.8
+        },
+        {
+          "ID": "T08",
+          "Name": "IS-1R",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T09",
+          "Name": "IS-23",
+          "Azimuth": 335.995,
+          "Elevation": 61.1,
+          "Polarization": 337.947
+        },
+        {
+          "ID": "T10",
+          "Name": "IS-805",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T11",
+          "Name": "IS-G-11",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T12",
+          "Name": "IS-9",
+          "Azimuth": 0.118,
+          "Elevation": 63.261,
+          "Polarization": 0.201
+        },
+        {
+          "ID": "T13",
+          "Name": "IS-21",
+          "Azimuth": 325.675,
+          "Elevation": 58.494,
+          "Polarization": 328.7
+        },
+        {
+          "ID": "T14",
+          "Name": "HM-AMAZONAS2",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T15",
+          "Name": "HM-AMAZONAS3",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T16",
+          "Name": "TS-EDS2/14R",
+          "Azimuth": 317.074,
+          "Elevation": 55.193,
+          "Polarization": 321.1
+        },
+        {
+          "ID": "T17",
+          "Name": "SO-C1",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T18",
+          "Name": "SO-C2",
+          "Azimuth": 307.468,
+          "Elevation": 49.756,
+          "Polarization": 313
+        },
+        {
+          "ID": "T19",
+          "Name": "!SO-C3",
+          "Azimuth": 301.982,
+          "Elevation": 45.488,
+          "Polarization": 308.6
+        },
+        {
+          "ID": "T20",
+          "Name": "!IS-GALAX 28",
+          "Azimuth": 290.802,
+          "Elevation": 32.788,
+          "Polarization": 300.456
+        },
+        {
+          "ID": "T21",
+          "Name": "!TS-ANIK G1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T22",
+          "Name": "E65WA",
+          "Azimuth": 313.7,
+          "Elevation": 53.5,
+          "Polarization": 318.2
+        },
+        {
+          "ID": "T23",
+          "Name": "IS-34",
+          "Azimuth": 330.594,
+          "Elevation": 59.893,
+          "Polarization": 333.1
+        },
+        {
+          "ID": "T24",
+          "Name": "IS-29",
+          "Azimuth": 342.847,
+          "Elevation": 62.213,
+          "Polarization": 344.2
+        },
+        {
+          "ID": "T25",
+          "Name": "!TS-ANIK F1",
+          "Azimuth": 280.635,
+          "Elevation": 15.397,
+          "Polarization": 295.1
+        },
+        {
+          "ID": "T26",
+          "Name": "!HM-HISPA 1D",
+          "Azimuth": 31.14,
+          "Elevation": 59.435,
+          "Polarization": 28.5
+        },
+        {
+          "ID": "T27",
+          "Name": "!IS-GALAX 3C",
+          "Azimuth": 286.939,
+          "Elevation": 27.022,
+          "Polarization": 298.2
+        },
+        {
+          "ID": "T28",
+          "Name": "!SO-HISPA 1C",
+          "Azimuth": 294.308,
+          "Elevation": 37.532,
+          "Polarization": 302.9
+        },
+        {
+          "ID": "T29",
+          "Name": "SO-C4",
+          "Azimuth": 307.468,
+          "Elevation": 49.756,
+          "Polarization": 313
+        },
+        {
+          "ID": "T30",
+          "Name": "ES-65W",
+          "Azimuth": 314.064,
+          "Elevation": 53.721,
+          "Polarization": 318.5
+        },
+        {
+          "ID": "T31",
+          "Name": "HM-AMAZONAS1",
+          "Azimuth": 330.799,
+          "Elevation": 59.945,
+          "Polarization": 333.3
+        },
+        {
+          "ID": "T32",
+          "Name": "SES-AMC 6",
+          "Azimuth": 305.155,
+          "Elevation": 48.079,
+          "Polarization": 311.1
+        },
+        {
+          "ID": "T33",
+          "Name": "HM-AMAZONA4A",
+          "Azimuth": 320.323,
+          "Elevation": 56.585,
+          "Polarization": 324
+        },
+        {
+          "ID": "T34",
+          "Name": "IS-32$",
+          "Azimuth": 356.297,
+          "Elevation": 63.303,
+          "Polarization": 324.038
+        }
+      ],
+      "LOG": ""
     },
     {
       "Name": "MKA-1",
       "ACU": "GD-123T",
       "IP": "",
       "Port": -1,
-      "Target": []
+      "Target": [],
+      "LOG": [
+        "Expected input number 1, ADDRESS, to be nonempty."
+      ]
     }
   ],
   "LNB": [

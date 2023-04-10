@@ -40,48 +40,163 @@ classdef EMSatLib
             obj.Antenna = tempStruct.Antenna;
             obj.LNB     = tempStruct.LNB;
         end
+
+
+        function msgError = PositionValueChanged(obj, Antenna)
+            msgError = '';
+
+            idx  = find(strcmp({obj.Antenna.Name}, Antenna.Name), 1);
+            IP   = obj.Antenna(idx).IP;
+            Port = obj.Antenna(idx).Port;
+
+            try
+                hACU = EMSatLib.SocketCreation(IP, Port);
+
+                writeline(hACU, sprintf('TT %s T', Antenna.TargetID));
+                pause(1)
+
+                clear hACU
+
+            catch  ME
+                msgError = ME.message;
+
+                if exist('hACU', 'var'); clear hACU
+                end
+            end
+        end
+
+
+        function [pos, msgError] = PositionValueChanging(obj, Antenna)
+            pos = [];
+            msgError = '';
+
+            idx  = find(strcmp({obj.Antenna.Name}, Antenna.Name), 1);
+            IP   = obj.Antenna(idx).IP;
+            Port = obj.Antenna(idx).Port;
+
+            try
+                hACU = EMSatLib.SocketCreation(IP, Port);
+
+                writeline(hACU, '/ CONFIGS ENCODERS CURRENT')
+                pause(1)
+
+                pos = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '(?<Azimuth>\d{1,3}.\d{1,3}) (?<Elevation>\d{1,3}.\d{1,3}) (?<Polarization>[-]\d{1,3}.\d{1,3})', 'names');
+                if ~isempty(pos)
+                    pos = pos(end);
+                    
+                    pos.Azimuth      = str2double(pos.Azimuth);
+                    pos.Elevation    = str2double(pos.Elevation);
+                    pos.Polarization = str2double(pos.Polarization);
+                    if pos.Polarization < 0; pos.Polarization = 360 + pos.Polarization;
+                    end
+                end
+
+                clear hACU
+
+            catch  ME
+                msgError = ME.message;
+
+                if exist('hACU', 'var'); clear hACU
+                end
+            end
+        end
+
+
+        function msgError = AntennaSwitch(obj, idx, hSwitch)
+            % Pendente chaveamento para as portas 19, 28 e 29.
+            msgError = '';
+
+            try
+                writeline(hSwitch, obj.Switch.set(idx));
+                pause(1); 
+                
+                if ~strcmp(obj.Switch.get(idx), read(hSwitch, hSwitch.NumBytesAvailable, 'char'))
+                    error('A matrix não aceitou a programação...')
+                end
+            catch ME
+                msgError = ME.message;
+            end
+        end
     end
 
     methods(Static = true)
+        function hACU = SocketCreation(IP, Port)
+            hACU = tcpclient(IP, Port);
+            configureTerminator(hACU, "CR/LF")
+
+            pause(1)
+
+            if hACU.NumBytesAvailable
+                clear hACU
+                error('A ACU está sendo controlada pelo Compass, o que impede o apontamento da antena e giro do LNB de forma automática.')
+            end
+        end
+
+
         function ConfigFile_Update()
             global appGeneral
 
             % Antenna
-            Antenna(1) = struct('Name', 'MCL-1', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4002, 'Target', []);
-            Antenna(2) = struct('Name', 'MCL-2', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4003, 'Target', []);
-            Antenna(3) = struct('Name', 'MCL-3', 'ACU', '',        'IP', '',             'Port', -1,   'Target', []);
-            Antenna(4) = struct('Name', 'MCC-1', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4006, 'Target', []);
-            Antenna(5) = struct('Name', 'MKU-1', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4004, 'Target', []);
-            Antenna(6) = struct('Name', 'MKU-2', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4005, 'Target', []);
-            Antenna(7) = struct('Name', 'MKA-1', 'ACU', 'GD-123T', 'IP', '',             'Port', -1,   'Target', []);
+            Antenna(1) = struct('Name', 'MCL-1', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4002, 'Target', [], 'LOG', '');
+            Antenna(2) = struct('Name', 'MCL-2', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4003, 'Target', [], 'LOG', '');
+            Antenna(3) = struct('Name', 'MCL-3', 'ACU', '',        'IP', '',             'Port', -1,   'Target', [], 'LOG', '');
+            Antenna(4) = struct('Name', 'MCC-1', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4006, 'Target', [], 'LOG', '');
+            Antenna(5) = struct('Name', 'MKU-1', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4004, 'Target', [], 'LOG', '');
+            Antenna(6) = struct('Name', 'MKU-2', 'ACU', 'GD-7200', 'IP', '10.21.205.45', 'Port', 4005, 'Target', [], 'LOG', '');
+            Antenna(7) = struct('Name', 'MKA-1', 'ACU', 'GD-123T', 'IP', '',             'Port', -1,   'Target', [], 'LOG', '');
+
+            PAUSE = 1;
 
             for ii = 1:numel(Antenna)
                 IP   = Antenna(ii).IP;
                 Port = Antenna(ii).Port;
 
                 try
-                    hACU = tcpclient(IP, Port);
-                    configureTerminator(hACU, "CR/LF")
+                    hACU = EMSatLib.SocketCreation(IP, Port);
 
-                    writeline(hMCL1, '/ CONFIGS SITE ANTENNA')
+                    writeline(hACU, '/ CONFIGS SITE ANTENNA')
                     pause(PAUSE)
-                    antName = read(hMCL1, hMCL1.NumBytesAvailable, 'char');
-                    if ~contains(antName, Antenna(ii).Name)
+
+                    if ~contains(read(hACU, hACU.NumBytesAvailable, 'char'), Antenna(ii).Name)
                         error('Não se trata da antena correta...')
                     end
 
-                    writeline(hMCL1, '/ TRACKING TRACK LS')
+                    writeline(hACU, '/ TRACKING TRACK LS')
                     pause(PAUSE)
-                    tgtList = regexp(read(hMCL1, hMCL1.NumBytesAvailable, 'char'), '\d{1,2} X T(?<ID>\d{2}) (?<Name>".*")\n', 'names');
+                    
+                    tgtList = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '\d{1,2} X (?<ID>T\d{2}) "(?<Name>.*)"', 'names', 'dotexceptnewline');
+                    if ~isempty(tgtList)
+                        tgtList(deblank({tgtList.Name}) == "") = [];
+                        
+                        Antenna(ii).Target = struct('ID', {}, 'Name', {}, 'Azimuth', {}, 'Elevation', {}, 'Polarization', {});
+                        for jj = 1:numel(tgtList)
+                            writeline(hACU, sprintf('TT %s', extractAfter(tgtList(jj).ID, 'T')))
+                            pause(PAUSE)
 
-                    for jj = 1:numel(tgtList)
-                        writeline(hMCL1, sprintf('TT %s', tgtList(jj).ID))
-                        pause(PAUSE)
-                        Antenna(ii).Target(jj) = regexp(read(hMCL1, hMCL1.NumBytesAvailable, 'char'), '\d{2} \d{2} \d{4} (?<Azimuth>\d{6}) (?<Elevation>\d{6}) (?<Polarization>\d{6})', 'names');
+                            tgtInfo = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '\d{2} \d{2} \d{4} (?<Azimuth>\d{6}) (?<Elevation>\d{6}) (?<Polarization>\d{6})', 'names');
+                            if ~isempty(tgtInfo)
+                                tgtInfo = tgtInfo(end);
+                                
+                                tgtInfo.Azimuth      = str2double(tgtInfo.Azimuth)      / 1000;
+                                tgtInfo.Elevation    = str2double(tgtInfo.Elevation)    / 1000;
+                                tgtInfo.Polarization = str2double(tgtInfo.Polarization) / 1000;
+                                if tgtInfo.Polarization < 0; tgtInfo.Polarization = 360+tgtInfo.Polarization;
+                                end
+                                
+                                Antenna(ii).Target(end+1) = struct('ID',           tgtList(jj).ID,    ...
+                                                                   'Name',         tgtList(jj).Name,  ...
+                                                                   'Azimuth',      tgtInfo.Azimuth,   ...
+                                                                   'Elevation',    tgtInfo.Elevation, ...
+                                                                   'Polarization', tgtInfo.Polarization);
+                            end
+                        end
                     end
 
                     clear hACU
-                catch
+
+                catch ME
+                    Antenna(ii).LOG{end+1} = ME.message;
+
                     if exist('hACU', 'var'); clear hACU
                     end
                 end                
