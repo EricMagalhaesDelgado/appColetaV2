@@ -2,6 +2,27 @@
 % Author(s): Eric Magalhães Delgado & Vinicius Puga
 % Date: April 10th, 2023
 
+
+% / TRACKING EDIT
+% Possibilita edição de qualquer um dos 50 registros de alvos.
+% / TRACKING IMMED EDIT
+% Edita imediatamente
+
+
+% Move to LOOK ANGLES!!! Command: IA AAAAA EEEEE PPP.P
+
+% Range: IA AAAAA EEEEE PPPP
+% Azimuth: 0.00 to 360.00
+% Elevation: -180.00 to 180.00
+% Polarization: -180.0 to 180.0
+
+
+
+%
+
+
+
+
 classdef EMSatLib
 
     properties
