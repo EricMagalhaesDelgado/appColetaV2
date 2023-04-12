@@ -12,17 +12,20 @@ function timeObj = task_RevisitFactors(specObj)
                 gpsRevisitTime = specObj(ii).taskObj.General.Task.GPS.RevisitTime;
             end
 
-            timeObj.Band(ii) = struct('RevisitTimes',   [gpsRevisitTime, [specObj(ii).taskObj.General.Task.Band.RevisitTime]], ...
+            tempArray = [specObj(ii).taskObj.General.Task.Band.RevisitTime];
+            tempArray(~[specObj(ii).Band.Status]) = -1;
+
+            timeObj.Band(ii) = struct('RevisitTimes',   [gpsRevisitTime, tempArray], ...
                                       'RevisitFactors', []);
             
-            RevisitTimeArray = [RevisitTimeArray, [specObj(ii).taskObj.General.Task.Band.RevisitTime]];
+            RevisitTimeArray = [RevisitTimeArray, tempArray];
         else
             timeObj.Band(ii) = struct('RevisitTimes',   [], ...
                                       'RevisitFactors', []);
         end
     end
 
-    timeObj.GlobalRevisitTime = min(RevisitTimeArray);
+    timeObj.GlobalRevisitTime = min(RevisitTimeArray(RevisitTimeArray ~= -1));
 
     for ii = 1:numel(specObj)
         if ~isempty(timeObj.Band(ii).RevisitTimes)
