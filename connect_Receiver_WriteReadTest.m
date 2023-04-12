@@ -24,7 +24,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
 
 
     % RECEIVER STARTUP
-    if taskObj.Receiver.Reset == "On"
+    if ~hReceiver && strcmp(taskObj.Receiver.Reset, "On")
         taskSCPI.scpiSet_Reset = instrInfo.scpiReset{1};
         writeline(hReceiver, instrInfo.scpiReset{1});
 
@@ -33,13 +33,14 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
     
     writeline(hReceiver, instrInfo.StartUp{1});
 
-    switch taskObj.Receiver.Sync
-        case 'Single Sweep'; scpiSet_Sync = 'INITiate:CONTinuous OFF';
-        otherwise;           scpiSet_Sync = 'INITiate:CONTinuous ON';       % 'Continuous Sweep' | 'Streaming'
+    if ~hReceiver
+        switch taskObj.Receiver.Sync
+            case 'Single Sweep'; scpiSet_Sync = 'INITiate:CONTinuous OFF';
+            otherwise;           scpiSet_Sync = 'INITiate:CONTinuous ON';       % 'Continuous Sweep' | 'Streaming'
+        end
+        taskSCPI.scpiSet_Sync = scpiSet_Sync;
+        writeline(hReceiver, scpiSet_Sync);
     end
-    taskSCPI.scpiSet_Sync = scpiSet_Sync;
-    writeline(hReceiver, scpiSet_Sync);
-
 
     % CONFIG TEST FOR EACH BAND
     TraceMode_Values   = strsplit(instrInfo.Trace_Values{1}, ',');

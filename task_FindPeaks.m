@@ -31,9 +31,9 @@ function Peaks = task_FindPeaks(specObj, idx, smoothedArray, Attributes)
         newFreq = (aCoef .* newIndex + bCoef) ./ 1e+6;                                                  % Em MHz
         newBW   = newBW_Index * aCoef / 1e+6;                                                           % Em MHz
 
-        Peaks = jsonencode(table(newFreq, newBW, 'VariableNames', {'Frequency', 'BW'}));
+        Peaks = table(newIndex, newFreq, newBW_Index, newBW, 'VariableNames', {'idx1', 'Frequency', 'idx2', 'BW'});
     else
-        Peaks = '';
+        Peaks = [];
     end
     delete(tempFig)
     

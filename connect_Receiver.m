@@ -47,7 +47,8 @@ function output = connect_Receiver(instrHandles, instrSelected)
 
                     instrNew.UserData = struct('IDN',      IDN,      ...
                                                'ClientIP', ClientIP, ...
-                                               'nTasks',   0);
+                                               'nTasks',   0,        ...
+                                               'SyncMode', '');
 
                     Socket = IP;
                     if ~isempty(Port)

@@ -63,7 +63,7 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.5,
         "IntegrationFactor": 1,
-        "Trigger": 1,
+        "Trigger": 2,
         "Enable": 1
       }
     ]

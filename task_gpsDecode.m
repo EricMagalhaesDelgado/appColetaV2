@@ -3,7 +3,7 @@ function gps = task_gpsDecode(hReceiver)
     gps  = struct('Status',     0, ...
                   'Latitude',  -1, ...
                   'Longitude', -1, ...
-                  'TimeStamp', []);
+                  'TimeStamp', '');
 
     Node = hReceiver.UserData.IDN;
     flush(hReceiver)
@@ -28,8 +28,8 @@ function gps = task_gpsDecode(hReceiver)
                 if strcmp(gpsStr{10}, 'W'); gps.Longitude = -gps.Longitude;
                 end
                 
-                gps.TimeStamp = datetime([str2double(gpsStr{14}), str2double(gpsStr{15}), str2double(gpsStr{16}), ...
-                                          str2double(gpsStr{17}), str2double(gpsStr{18}), str2double(gpsStr{19})], 'Format', 'dd/MM/yyyy HH:mm:ss');
+                gps.TimeStamp = datestr(datetime([str2double(gpsStr{14}), str2double(gpsStr{15}), str2double(gpsStr{16}), ...
+                                                  str2double(gpsStr{17}), str2double(gpsStr{18}), str2double(gpsStr{19})]), 'dd/mm/yyyy HH:MM:SS');
             end
         end
 
@@ -47,7 +47,7 @@ function gps = task_gpsDecode(hReceiver)
             gps.Status    = 1;
             gps.Latitude  = str2double(gpsStr{3})*180/pi;
             gps.Longitude = str2double(gpsStr{4})*180/pi;            
-            gps.TimeStamp = datetime(gpsStr{2}, "InputFormat", "eee MMM dd HH:mm:ss yyyy", 'Format', 'dd/MM/yyyy HH:mm:ss');
+            gps.TimeStamp = datestr(datetime(gpsStr{2}, "InputFormat", "eee MMM dd HH:mm:ss yyyy"), 'dd/mm/yyyy HH:MM:SS');
         end  
 
 % KEYSIGHT N9344C
@@ -64,7 +64,7 @@ function gps = task_gpsDecode(hReceiver)
             gps.Status    = 1;
             gps.Latitude  = str2double(gpsStr{2});
             gps.Longitude = str2double(gpsStr{1});            
-            gps.TimeStamp = datetime(sprintf('%s %s', gpsStr{4}, gpsStr{5}), "InputFormat", "MMddyyyy HH:mm:ss", 'Format', 'dd/MM/yyyy HH:mm:ss');
+            gps.TimeStamp = datestr(datetime(sprintf('%s %s', gpsStr{4}, gpsStr{5}), "InputFormat", "MMddyyyy HH:mm:ss"), 'dd/mm/yyyy HH:MM:SS');
         end
 
 % KEYSIGHT N9936B
@@ -90,7 +90,7 @@ function gps = task_gpsDecode(hReceiver)
             if strcmp(Longitude{3}, 'W'); gps.Longitude = -gps.Longitude;
             end
             
-            gps.TimeStamp = datetime(gpsStr{4}(1:end-1), "InputFormat", "yyyy-MM-dd HH:mm:ss", 'Format', 'dd/MM/yyyy HH:mm:ss');
+            gps.TimeStamp = datestr(datetime(gpsStr{4}(1:end-1), "InputFormat", "yyyy-MM-dd HH:mm:ss"), 'dd/mm/yyyy HH:MM:SS');
         end
 
 % TEKTRONIX SA2500

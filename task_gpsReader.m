@@ -3,7 +3,7 @@ function gps = task_gpsReader(hGPS, Timeout)
     gps  = struct('Status',     0, ...
                   'Latitude',  -1, ...
                   'Longitude', -1, ...
-                  'TimeStamp', []);
+                  'TimeStamp', '');
 
     flush(hGPS)
     lastwarn('')
@@ -56,7 +56,7 @@ function gps = task_gpsReader(hGPS, Timeout)
             else
                 dataFormat = 'HHmmss ddMMyy';
             end
-            gps.TimeStamp = datetime([receivedData{2} ' ' receivedData{10}], 'InputFormat', dataFormat, 'Format', 'dd/MM/yyyy HH:mm:ss');
+            gps.TimeStamp = datestr(datetime([receivedData{2} ' ' receivedData{10}], 'InputFormat', dataFormat), 'dd/mm/yyyy HH:MM:SS');
             
             break
             
