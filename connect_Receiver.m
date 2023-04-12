@@ -29,8 +29,12 @@ function output = connect_Receiver(instrHandles, instrSelected)
         end
         
         flush(instrNew)
-        IDN = replace(deblank(writeread(instrNew, '*IDN?')), '"', '');
-        drawnow nocallbacks
+%         IDN = replace(deblank(writeread(instrNew, '*IDN?')), '"', '');
+%         drawnow nocallbacks
+
+        writeline(instrNew, '*IDN?'); 
+        pause(.1); 
+        IDN = replace(deblank(read(instrNew, instrNew.NumBytesAvailable, 'char')), '"', '');
 
         if ~isempty(IDN)
             if contains(IDN, Tag, "IgnoreCase", true) 
@@ -41,8 +45,9 @@ function output = connect_Receiver(instrHandles, instrSelected)
                     elseif ~strcmp(IP, '127.0.0.1');     [~, ClientIP] = connect_IPsFind(IP);
                     end
 
-                    instrNew.UserData = struct('IDN',      IDN, ...
-                                               'ClientIP', ClientIP);
+                    instrNew.UserData = struct('IDN',      IDN,      ...
+                                               'ClientIP', ClientIP, ...
+                                               'nTasks',   0);
 
                     Socket = IP;
                     if ~isempty(Port)
