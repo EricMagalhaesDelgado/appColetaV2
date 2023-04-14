@@ -1,4 +1,6 @@
-function Peaks = task_FindPeaks(specObj, idx, smoothedArray, Attributes)
+function peaksTable = task_FindPeaks(specObj, idx, smoothedArray, validationArray, Attributes)
+
+    peaksTable = [];
 
     FreqStart  = specObj.taskObj.General.Task.Band(idx).FreqStart;
     FreqStop   = specObj.taskObj.General.Task.Band(idx).FreqStop;
@@ -8,32 +10,34 @@ function Peaks = task_FindPeaks(specObj, idx, smoothedArray, Attributes)
     aCoef = (FreqStop-FreqStart)/(DataPoints-1);
     bCoef = FreqStart-aCoef;
 
-    delete(findobj(Type='Line', Tag='HalfProminenceWidth'))
-    drawnow nocallbacks
-
     tempFig = figure;
-    findpeaks(smoothedArray, 'NPeaks',            Attributes.NPeaks,                  ...
-                             'MinPeakHeight',     Attributes.THR,                     ...
-                             'MinPeakProminence', Attributes.Proeminence,             ...
+    findpeaks(smoothedArray, 'MinPeakProminence', Attributes.Proeminence,             ...
                              'MinPeakDistance',   1000 * Attributes.Distance / aCoef, ...
                              'MinPeakWidth',      1000 * Attributes.BW / aCoef,       ...
                              'SortStr',           'descend',                          ...
-                             'Annotate',          'extents');
-             
+                             'Annotate',          'extents');             
 
-    h = findobj(Type='Line', Tag='HalfProminenceWidth');
+    h = findobj(tempFig, Tag='HalfProminenceWidth');
     if ~isempty(h)
+        idxFreq = [];
+        idxBW   = [];
+
         for ii = 1:numel(h.XData)/3
-            newIndex(ii,1)    = round(mean(h.XData(3*(ii-1)+1:3*(ii-1)+2)));
-            newBW_Index(ii,1) = diff(h.XData(3*(ii-1)+1:3*(ii-1)+2));
+            idxData  = h.XData(3*(ii-1)+1:3*(ii-1)+2);
+            idxRange = floor(idxData(1)):ceil(idxData(2));
+
+            if any(validationArray(idxRange), 'all')
+                idxFreq(end+1,1) = round(mean(idxData));
+                idxBW(end+1,1)   = diff(idxData);
+            end
         end
 
-        newFreq = (aCoef .* newIndex + bCoef) ./ 1e+6;                                                  % Em MHz
-        newBW   = newBW_Index * aCoef / 1e+6;                                                           % Em MHz
-
-        Peaks = table(newIndex, newFreq, newBW_Index, newBW, 'VariableNames', {'idx1', 'Frequency', 'idx2', 'BW'});
-    else
-        Peaks = [];
+        if ~isempty(idxFreq)
+            FreqCenter = (aCoef .* idxFreq + bCoef) ./ 1e+6;                                             % Em MHz
+            BandWidth  = idxBW .* aCoef ./ 1e+3;                                                           % Em kHz
+    
+            peaksTable = table(idxFreq, FreqCenter, BandWidth, 'VariableNames', {'idx', 'FreqCenter', 'BW'});
+        end
     end
     delete(tempFig)
     

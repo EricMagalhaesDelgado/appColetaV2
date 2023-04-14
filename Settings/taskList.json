@@ -12,7 +12,7 @@
       "Type": "auto",
       "Latitude": [],
       "Longitude": [],
-      "RevisitTime": 600
+      "RevisitTime": 10
     },
     "Band": [
       {
@@ -27,7 +27,7 @@
         "TraceMode": "ClearWrite",
         "Detector": "Sample",
         "LevelUnit": "dBm",
-        "RevisitTime": 0.1,
+        "RevisitTime": 1,
         "IntegrationFactor": 1,
         "Trigger": 1,
         "Enable": 1
@@ -44,7 +44,7 @@
         "TraceMode": "Average",
         "Detector": "Average/RMS",
         "LevelUnit": "dBm",
-        "RevisitTime": 1,
+        "RevisitTime": 3,
         "IntegrationFactor": 5,
         "Trigger": 0,
         "Enable": 1
@@ -61,7 +61,7 @@
         "TraceMode": "ClearWrite",
         "Detector": "Positive Peak",
         "LevelUnit": "dBm",
-        "RevisitTime": 0.5,
+        "RevisitTime": 5,
         "IntegrationFactor": 1,
         "Trigger": 2,
         "Enable": 1
@@ -95,7 +95,7 @@
       "TraceMode": "Average",
       "Detector": "Sample",
       "LevelUnit": "dBµV",
-      "RevisitTime": 0.1,
+      "RevisitTime": 1,
       "IntegrationFactor": 2,
       "Trigger": 1,
       "Enable": 1

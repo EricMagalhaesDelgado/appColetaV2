@@ -33,12 +33,11 @@
     "SampleTime": 10
   },
   "File": {
-    "Version": "RFlookBin v.2/1",
+    "Version": "RFlookBin v.1/1",
     "Size": 1.0E+8
   },
   "FindPeaks": {
-    "NPeaks": 10,
-    "THR": [],
+    "nSweeps": 10,
     "Proeminence": 30,
     "Distance": 25,
     "BW": 10

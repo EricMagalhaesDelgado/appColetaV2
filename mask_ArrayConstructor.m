@@ -1,7 +1,7 @@
 function maskArray = mask_ArrayConstructor(maskInfo, Band)
     
     % Limiar igual a 1000 (inatingível)
-    maskArray = ones(Band.instrDataPoints, 1) * 1e+3;
+    maskArray = ones(1, Band.instrDataPoints) * 1e+3;
 
     freq = linspace(Band.FreqStart /1e+6,  ...
                     Band.FreqStop  / 1e+6, ...

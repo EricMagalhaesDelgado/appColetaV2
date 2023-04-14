@@ -15,6 +15,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
                         'Datagrams',       [], ...
                         'DataPoints',      [], ...
                         'SyncModeRef',     [], ...
+                        'FlipArray',       [], ...
                         'Waterfall',       [], ...
                         'Mask',            [], ...
                         'File',            [], ...
@@ -24,7 +25,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
 
 
     % RECEIVER STARTUP
-    if ~hReceiver && strcmp(taskObj.Receiver.Reset, "On")
+    if ~hReceiver.UserData.nTasks && strcmp(taskObj.Receiver.Reset, "On")
         taskSCPI.scpiSet_Reset = instrInfo.scpiReset{1};
         writeline(hReceiver, instrInfo.scpiReset{1});
 
@@ -33,7 +34,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
     
     writeline(hReceiver, instrInfo.StartUp{1});
 
-    if ~hReceiver
+    if ~hReceiver.UserData.nTasks
         switch taskObj.Receiver.Sync
             case 'Single Sweep'; scpiSet_Sync = 'INITiate:CONTinuous OFF';
             otherwise;           scpiSet_Sync = 'INITiate:CONTinuous ON';       % 'Continuous Sweep' | 'Streaming'
@@ -214,7 +215,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
         taskBand(ii).scpiSet_Att    = scpiSet_Att;
         taskBand(ii).scpiSet_Answer = scpiSet_Answer;
         taskBand(ii).DataPoints     = DataPoints;
-        taskBand(ii).SyncModeRef    = -1;
+        taskBand(ii).SyncModeRef    = -1;        
         taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
         taskBand(ii).Status         = true;
     end

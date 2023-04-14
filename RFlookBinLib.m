@@ -22,7 +22,9 @@ classdef RFlookBinLib
 
                     AlocatedSamples    = RFlookBinLib.v1_WriteHeader(fileID, specObj, idx);
                     [Offset1, Offset2] = RFlookBinLib.v1_WriteBody(fileID, specObj, idx, AlocatedSamples);
+
                     fclose(fileID);
+                    fileID = [];
 
                     fileMemMap = RFlookBinLib.v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2);
         
@@ -113,7 +115,12 @@ classdef RFlookBinLib
             MetaData        = Task.Band(idx);
             BitsPerSample   = Task.BitsPerSample;
             DataPoints      = MetaData.instrDataPoints;
-            AlocatedSamples = ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints));
+
+            if strcmp(specObj.taskObj.General.Task.Observation.Type, 'Samples')
+                AlocatedSamples = min([specObj.taskObj.General.Task.Band(idx).instrObservationSamples, ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints))]);
+            else
+                AlocatedSamples = ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints));
+            end
         
             fwrite(fileID, 'RFlookBin v.1/1', 'char*1');
             fwrite(fileID, BitsPerSample);
