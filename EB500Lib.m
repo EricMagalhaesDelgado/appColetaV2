@@ -48,11 +48,12 @@ classdef EB500Lib
     methods(Static = true)
         function specObj = DatagramRead_PreTask(EB500Obj, specObj, hReceiver, hStreaming)
             Timeout = 10;
+            udpPort = hStreaming.LocalPort;
 
             for ii = 1:numel(specObj.Band)
                 writeline(hReceiver, specObj.Band(ii).scpiSet_Config);                
                 
-                EB500Lib.DatagramRead_OnOff('Open', EB500Obj.udpPort, hReceiver, hStreaming)
+                EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
 
                 udpTic = tic;
                 t = toc(udpTic);
@@ -63,9 +64,15 @@ classdef EB500Lib
                     t = toc(udpTic);
                 end
                                 
-                EB500Lib.DatagramRead_OnOff('Close', EB500Obj.udpPort, hReceiver, hStreaming)
+                EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
 
                 specDatagram = read(hStreaming, hStreaming.NumDatagramsAvailable);
+
+                % Delete datagrams sent by an unexpected source
+                idx0 = ([specDatagram.SenderAddress] ~= hReceiver.Address);
+                if any(idx0)
+                    specDatagram(idx0) = [];
+                end
 
                 nDatagrams  = 0;
                 nTerminator = 0;
@@ -108,16 +115,24 @@ classdef EB500Lib
             newArray     = zeros(1, taskInfo.DataPoints, 'single');
             Flag_success = false;
             Timeout      = 10;
+            udpPort      = hStreaming.LocalPort;
             specDatagram = [];
             
-            EB500Lib.DatagramRead_OnOff('Open', taskInfo.udpPort, hReceiver, hStreaming)
+            
+            EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
             
             udpTic = tic;
             t = toc(udpTic);
             while t < Timeout
                 specDatagram = [specDatagram, read(hStreaming, 2*taskInfo.nDatagrams-1)];
+
+                % Delete datagrams sent by an unexpected source
+                idx0 = ([specDatagram.SenderAddress] ~= hReceiver.Address);
+                if any(idx0)
+                    specDatagram(idx0) = [];
+                end
     
-                % Sorted datagrams
+                % Sort datagrams
                 DatagramsID = zeros(numel(specDatagram), 1);        
                 for ii = 1:numel(specDatagram)
                     specDatagram(ii).Data = uint8(specDatagram(ii).Data);
@@ -181,7 +196,7 @@ classdef EB500Lib
                 t = toc(udpTic);
             end
 
-            EB500Lib.DatagramRead_OnOff('Close', taskInfo.udpPort, hReceiver, hStreaming)
+            EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
         end
 
         

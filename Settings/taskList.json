@@ -27,7 +27,7 @@
         "TraceMode": "ClearWrite",
         "Detector": "Sample",
         "LevelUnit": "dBm",
-        "RevisitTime": 1,
+        "RevisitTime": 2,
         "IntegrationFactor": 1,
         "Trigger": 1,
         "Enable": 1
