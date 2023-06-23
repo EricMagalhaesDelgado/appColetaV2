@@ -6,7 +6,7 @@ function timeObj = task_RevisitFactors(specObj)
 
     RevisitTimeArray = [];
     for ii = 1:numel(specObj)
-        if specObj(ii).Status == "Em andamento..."
+        if specObj(ii).Status == "Em andamento"
             gpsRevisitTime = -1;
             if ~isempty(specObj(ii).taskObj.General.Task.GPS.RevisitTime)
                 gpsRevisitTime = specObj(ii).taskObj.General.Task.GPS.RevisitTime;
