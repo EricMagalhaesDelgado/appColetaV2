@@ -11,5 +11,4 @@ function lastGPS(app, gpsData)
                                                     extractBefore(gpsData.TimeStamp, ' '),           ...
                                                     extractAfter(gpsData.TimeStamp, ' '));
     app.lastGPS_color.Color = newColor;
-    drawnow
 end

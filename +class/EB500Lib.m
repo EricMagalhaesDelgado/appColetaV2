@@ -47,7 +47,7 @@ classdef EB500Lib
 
     methods(Static = true)
         function specObj = DatagramRead_PreTask(EB500Obj, specObj, hReceiver, hStreaming)
-            Timeout = 10;
+            Timeout = class.Constants.Timeout;
             udpPort = hStreaming.LocalPort;
 
             for ii = 1:numel(specObj.Band)
@@ -111,14 +111,14 @@ classdef EB500Lib
         end
 
 
-        function [newArray, Flag_success] = DatagramRead_Task(taskInfo, hReceiver, hStreaming)
+        function [newArray, Flag_success] = DatagramRead_Task(taskInfo, hReceiver, hStreaming)            
+            Timeout = class.Constants.Timeout;
+            udpPort = hStreaming.LocalPort;
+
             newArray     = zeros(1, taskInfo.DataPoints, 'single');
             Flag_success = false;
-            Timeout      = 10;
-            udpPort      = hStreaming.LocalPort;
             specDatagram = [];
-            
-            
+                        
             EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
             
             udpTic = tic;

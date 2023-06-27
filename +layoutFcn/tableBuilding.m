@@ -20,7 +20,7 @@ function tableBuilding(app, idx)
     end
 
     app.Table.Data = tempTable;
-    app.Table.Selection = idx;
+    app.Table.Selection = max([1, idx]);
 
     if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
     else;                                layoutFcn.treeBuilding(app, 1)

@@ -20,6 +20,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
                         'Mask',            [], ...
                         'File',            [], ...
                         'Antenna',         '', ...
+                        'uuid',            '', ...
                         'Status',          true);
     warnMsg    = {};
 
@@ -217,6 +218,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
         taskBand(ii).DataPoints     = DataPoints;
         taskBand(ii).SyncModeRef    = -1;        
         taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
+        taskBand(ii).uuid           = char(matlab.lang.internal.uuid());
         taskBand(ii).Status         = true;
     end
 

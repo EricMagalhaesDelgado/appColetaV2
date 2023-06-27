@@ -20,19 +20,19 @@ classdef RFlookBinLib
                     fileName = fullfile(appGeneral.userPath, sprintf('~%s_%.0f.bin', baseName, fileCount));
                     fileID   = fopen(fileName, 'w');
 
-                    AlocatedSamples    = RFlookBinLib.v1_WriteHeader(fileID, specObj, idx);
-                    [Offset1, Offset2] = RFlookBinLib.v1_WriteBody(fileID, specObj, idx, AlocatedSamples);
+                    AlocatedSamples    = class.RFlookBinLib.v1_WriteHeader(fileID, specObj, idx);
+                    [Offset1, Offset2] = class.RFlookBinLib.v1_WriteBody(fileID, specObj, idx, AlocatedSamples);
 
                     fclose(fileID);
                     fileID = [];
 
-                    fileMemMap = RFlookBinLib.v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2);
+                    fileMemMap = class.RFlookBinLib.v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2);
         
                 case 'RFlookBin v.2/1'
                     fileName = fullfile(appGeneral.userPath, sprintf('%s_%.0f.bin', baseName, fileCount));
                     fileID   = fopen(fileName, 'w');
                     
-                    RFlookBinLib.v2_WriteHeader(fileID, specObj, idx)
+                    class.RFlookBinLib.v2_WriteHeader(fileID, specObj, idx)
             end
 
             CurrentFile = struct('FullPath',        fileName,        ...
@@ -49,9 +49,9 @@ classdef RFlookBinLib
                     WritedSamples   = specObj.Band(idx).File.CurrentFile.MemMap{1}.Data.Value;
 
                     if AlocatedSamples == WritedSamples
-                        RFlookBinLib.v1_PostProcessing(specObj, idx, 'FullFile');
+                        class.RFlookBinLib.v1_PostProcessing(specObj, idx, 'FullFile');
                     else
-                        RFlookBinLib.v1_PostProcessing(specObj, idx, 'ObservationTime');
+                        class.RFlookBinLib.v1_PostProcessing(specObj, idx, 'ObservationTime');
                     end
         
                 case 'RFlookBin v.2/1'
@@ -72,10 +72,10 @@ classdef RFlookBinLib
                     WritedSamples   = specObj.Band(idx).File.CurrentFile.MemMap{1}.Data.Value;
         
                     if AlocatedSamples == WritedSamples
-                        RFlookBinLib.v1_PostProcessing(specObj, idx, 'FullFile');
+                        class.RFlookBinLib.v1_PostProcessing(specObj, idx, 'FullFile');
 
                         [specObj.Band(idx).File.Filecount, ...
-                            specObj.Band(idx).File.CurrentFile] = RFlookBinLib.OpenFile(specObj, idx);
+                            specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx);
                     end
         
                 case 'RFlookBin v.2/1'
@@ -85,7 +85,7 @@ classdef RFlookBinLib
                         fclose(fileID);
 
                         [specObj.Band(idx).File.Filecount, ...
-                            specObj.Band(idx).File.CurrentFile] = RFlookBinLib.OpenFile(specObj, idx);
+                            specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx);
                     end
             end
         end
@@ -95,10 +95,10 @@ classdef RFlookBinLib
             gpsData = specObj.lastGPS;
             switch specObj.Band(idx).File.Fileversion
                 case 'RFlookBin v.1/1'
-                    RFlookBinLib.v1_MemoryEdit(specObj, idx, rawArray, attFactor, gpsData)
+                    class.RFlookBinLib.v1_MemoryEdit(specObj, idx, rawArray, attFactor, gpsData)
 
                 case 'RFlookBin v.2/1'
-                    RFlookBinLib.v2_WriteBody(specObj,  idx, rawArray, attFactor, gpsData)
+                    class.RFlookBinLib.v2_WriteBody(specObj,  idx, rawArray, attFactor, gpsData)
             end        
         end
 
@@ -129,11 +129,11 @@ classdef RFlookBinLib
         
             % RECEIVER
             Resolution   = str2double(extractBefore(MetaData.instrResolution, ' kHz')) * 1000;
-            Trace_ID     = RFlookBinLib.str2id('TraceMode',      MetaData.TraceMode);
-            Detector_ID  = RFlookBinLib.str2id('Detector',       MetaData.instrDetector);
-            LevelUnit_ID = RFlookBinLib.str2id('LevelUnit',      MetaData.instrLevelUnit);
-            Preamp_ID    = RFlookBinLib.str2id('Preamp',         MetaData.instrPreamp);
-            AttMode_ID   = RFlookBinLib.str2id('Attenuation',    MetaData.instrAttMode);
+            Trace_ID     = class.RFlookBinLib.str2id('TraceMode',      MetaData.TraceMode);
+            Detector_ID  = class.RFlookBinLib.str2id('Detector',       MetaData.instrDetector);
+            LevelUnit_ID = class.RFlookBinLib.str2id('LevelUnit',      MetaData.instrLevelUnit);
+            Preamp_ID    = class.RFlookBinLib.str2id('Preamp',         MetaData.instrPreamp);
+            AttMode_ID   = class.RFlookBinLib.str2id('Attenuation',    MetaData.instrAttMode);
         
             fwrite(fileID, MetaData.FreqStart, 'single');
             fwrite(fileID, MetaData.FreqStop,  'single');
@@ -325,8 +325,8 @@ classdef RFlookBinLib
             BitsPerSample = Task.BitsPerSample;
             Node          = specObj.hReceiver.UserData.IDN;
 
-            AttMode_ID    = RFlookBinLib.str2id('Attenuation', MetaData.instrAttMode);
-            gpsMode_ID    = RFlookBinLib.str2id('GPS',         Task.GPS.Type);
+            AttMode_ID    = class.RFlookBinLib.str2id('Attenuation', MetaData.instrAttMode);
+            gpsMode_ID    = class.RFlookBinLib.str2id('GPS',         Task.GPS.Type);
         
             fwrite(fileID, 'RFlookBin v.2/1', 'char*1');
             fwrite(fileID, BitsPerSample);
