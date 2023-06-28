@@ -13,6 +13,7 @@ function d = modalWindow(fHandle, type, msg, varargin)
     switch type
         case 'ccTools.MessageBox'
             ccTools.MessageBox(fHandle, msg, varargin{:});
+            beep
 
         case 'ccTools.ProgressDialog'
             d = ccTools.ProgressDialog(fHandle, varargin{:});
@@ -24,10 +25,10 @@ function d = modalWindow(fHandle, type, msg, varargin)
                 case 'warning'; uialert(fHandle, msg, fHandle.Name, 'Interpreter', 'html', 'Icon', 'warning', varargin{:});
                 case 'info';    uialert(fHandle, msg, fHandle.Name, 'Interpreter', 'html', 'Icon', 'LT_info.png', varargin{:})
             end
+            beep
             
         case 'progressdlg'
             msg = sprintf('<font style="font-size:12;">%s</font>', msg);
             d = uiprogressdlg(fHandle, 'Indeterminate', 'on', 'Interpreter', 'html', 'Message', msg, varargin{:});
     end
-    beep
 end
