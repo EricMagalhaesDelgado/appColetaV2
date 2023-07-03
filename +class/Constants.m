@@ -3,11 +3,16 @@ classdef (Abstract) Constants
     properties (Constant)
         windowSize    = [1244, 660]
         windowMinSize = [ 640, 580]
-        fileVersion   = 'RFlookBin v.2/1'
+
         gps2locAPI    = 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=<Latitude>&longitude=<Longitude>&localityLanguage=pt'
-        Timeout       = 10                                                  % Maximum time in seconds to extract valid array of data from receiver
+        gps2loc_City  = 'city'
+        gps2loc_Unit  = 'principalSubdivisionCode'
+
         yMinLimRange  = 80                                                  % Minimum y-Axis limit range
         yMaxLimRange  = 100                                                 % Maximum y-Axis limit range
+
+        Timeout       = 10                                                  % Maximum time in seconds to extract valid array of data from receiver
+        fileVersion   = 'RFlookBin v.2/1'
     end
 
     methods (Static = true)

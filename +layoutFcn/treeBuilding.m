@@ -1,4 +1,4 @@
-function Layout_treeBuilding(app, Selection)            
+function treeBuilding(app, Selection)            
     delete(app.Tree.Children);
     
     if app.Table.Selection
@@ -20,5 +20,5 @@ function Layout_treeBuilding(app, Selection)
         app.Tree.SelectedNodes = app.Tree.Children(Selection);
         focus(app.Tree)
     end
-    drawnow
+    drawnow nocallbacks
 end

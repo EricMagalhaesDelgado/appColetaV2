@@ -2,7 +2,7 @@ function tableBuilding(app, idx)
     tempTable = table('Size', [0, 7],                                                                          ...
                       'VariableTypes', {'double', 'string', 'string', 'string', 'string', 'string', 'string'}, ...
                       'VariableNames', {'ID', 'Name', 'Receiver', 'Created', 'BeginTime', 'EndTime', 'Status'});
-
+    tempTable.Properties.UserData = char(matlab.lang.internal.uuid());
     
     for ii = 1:numel(app.specObj)
         EndTime = '-';
@@ -21,9 +21,9 @@ function tableBuilding(app, idx)
 
     app.Table.Data = tempTable;
     app.Table.Selection = max([1, idx]);
+    drawnow nocallbacks
 
     if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
     else;                                layoutFcn.treeBuilding(app, 1)
     end
-    drawnow
 end
