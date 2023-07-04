@@ -11,6 +11,10 @@ classdef (Abstract) Constants
         yMinLimRange  = 80                                                  % Minimum y-Axis limit range
         yMaxLimRange  = 100                                                 % Maximum y-Axis limit range
 
+        switchTimes   = 3                                                   % Maximum attempts to switch the antenna
+        switchPause   = 0.050                                               % Pause in seconds to ask antenna's name after its switch attempt (must be greater than 40ms)
+        antACUPause   = 1                                                   % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
+
         Timeout       = 10                                                  % Maximum time in seconds to extract valid array of data from receiver
         fileVersion   = 'RFlookBin v.2/1'
     end

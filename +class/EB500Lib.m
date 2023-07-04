@@ -1,8 +1,8 @@
-% EB500Lib.m
-% Author(s): Eric Magalhães Delgado & Michel Cerqueira Kulhavy
-% Date: April 8th, 2023
-
 classdef EB500Lib
+
+    % Author.: Eric Magalhães Delgado & Michel Cerqueira Kulhavy
+    % Date...: April 8, 2023
+    % Version: 1.00
 
     properties
         SelectivityMap
@@ -12,9 +12,7 @@ classdef EB500Lib
     end
 
     methods
-        function obj = EB500Lib()
-            global appGeneral
-
+        function obj = EB500Lib(RootFolder)
             % Selectivity x Resolution Mapping
             SelectivityMap = table('Size', [12, 3],                                 ...
                                    'VariableTypes', {'double', 'double', 'double'}, ...
@@ -37,7 +35,7 @@ classdef EB500Lib
             obj.SelectivityMap = SelectivityMap;
 
             % Firmware version, udpPort & nDatagrams
-            tempStruct = jsondecode(fileread(fullfile(appGeneral.RootFolder, 'Settings', 'EB500Lib.json')));
+            tempStruct = jsondecode(fileread(fullfile(RootFolder, 'Settings', 'EB500Lib.json')));
 
             obj.Firmware   = tempStruct.Firmware;
             obj.udpPort    = tempStruct.udpPort;
