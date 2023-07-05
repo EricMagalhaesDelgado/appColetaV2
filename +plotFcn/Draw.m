@@ -42,7 +42,7 @@ function Draw(app, ii, jj)
         ylabel(app.axes2, 'Amostras');
 
         % Main lines
-        app.line_ClrWrite = plot(app.axes1, xArray, newArray,    'Tag', 'ClrWrite', 'Color', app.General.Colors(4,:));
+        app.line_ClrWrite = plot(app.axes1, xArray, newArray, 'Tag', 'ClrWrite', 'Color', app.General.Colors(4,:));
         plotFcn.DataTipModel(app.line_ClrWrite, LevelUnit)
         
         if app.Button_MinHold.Value
@@ -66,11 +66,11 @@ function Draw(app, ii, jj)
 
     else
         app.line_ClrWrite.YData = newArray;
-        if ~isempty(app.line_MinHold);  app.line_MinHold.YData  = min(app.line_MinHold.YData, newArray);
+        if ~isempty(app.line_MinHold); app.line_MinHold.YData = min(app.line_MinHold.YData, newArray);
         end
-        if ~isempty(app.line_Average);  app.line_Average.YData  = ((app.General.Integration.Trace-1)*app.line_Average.YData + newArray) / app.General.Integration.Trace;
+        if ~isempty(app.line_Average); app.line_Average.YData = ((app.General.Integration.Trace-1)*app.line_Average.YData + newArray) / app.General.Integration.Trace;
         end
-        if ~isempty(app.line_MaxHold);  app.line_MaxHold.YData  = max(app.line_MaxHold.YData, newArray);
+        if ~isempty(app.line_MaxHold); app.line_MaxHold.YData = max(app.line_MaxHold.YData, newArray);
         end
         
         app.surface_WFall.CData = app.specObj(ii).Band(jj).Waterfall.Matrix(idx2,:);
@@ -78,9 +78,9 @@ function Draw(app, ii, jj)
 
     switch app.plotLayout
         case 2
-            set(app.axes2.Children, Visible=0)
+            set(app.axes2.Children, 'Visible', 'off')
         case 3
-            set(app.axes1.Children, Visible=0)
+            set(app.axes1.Children, 'Visible', 'off')
     end
     drawnow
 

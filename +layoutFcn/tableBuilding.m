@@ -23,6 +23,10 @@ function tableBuilding(app, idx)
     app.Table.Selection = max([1, idx]);
     drawnow nocallbacks
 
+    if all(~strcmp(tempTable.Status, "Em andamento"))
+        app.Flag_running = 0;
+    end
+
     if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
     else;                                layoutFcn.treeBuilding(app, 1)
     end

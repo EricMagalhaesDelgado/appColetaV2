@@ -114,12 +114,13 @@ classdef EMSatLib
 
 
         %-----------------------------------------------------------------%
-        function msgError = AntennaSwitch(obj, idx)
+        function msgError = AntennaSwitch(obj, antennaName)
             % As of July 4, 2023, the L-Band Matrix is not switching to the
             % ports 19, 28 and 29.
             msgError = '';
-
+            
             try
+                idx = obj.LNB.Port(find(strcmp(obj.LNB.Name, antennaName), 1));
                 hSwitch = tcpclient(obj.switchSocket.IP, obj.switchSocket.Port);
 
                 for ii = 1:class.Constants.switchTimes
