@@ -27,6 +27,16 @@ function tableBuilding(app, idx)
         app.Flag_running = 0;
     end
 
+    if height(tempTable)
+        app.Button_Edit.Enable = 1;
+        app.Button_Del.Enable  = 1;
+        app.Button_log.Enable  = 1;
+    else
+        app.Button_Edit.Enable = 0;
+        app.Button_Del.Enable  = 0;
+        app.Button_log.Enable  = 0;
+    end
+
     if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
     else;                                layoutFcn.treeBuilding(app, 1)
     end

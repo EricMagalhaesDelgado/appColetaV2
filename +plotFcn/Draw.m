@@ -25,7 +25,7 @@ function Draw(app, ii, jj)
         end
 
         % General settings
-        [upYLim, strUnit] = class.Constants.yAxisUpLimit('dBm');
+        [upYLim, strUnit] = class.Constants.yAxisUpLimit(app.specObj(ii).taskObj.General.Task.Band(jj).instrLevelUnit);
         downYLim = min(newArray) - mod(min(newArray), 10);
         if diff([downYLim, upYLim]) < class.Constants.yMinLimRange
             upYLim = downYLim + class.Constants.yMinLimRange;

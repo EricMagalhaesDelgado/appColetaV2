@@ -1,4 +1,4 @@
-function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
+function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj)
 
     hReceiver  = taskObj.Receiver.Handle;
     instrInfo  = taskObj.General.SCPI;
@@ -16,6 +16,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
                         'DataPoints',      [], ...
                         'SyncModeRef',     [], ...
                         'FlipArray',       [], ...
+                        'nSweeps',          0, ...
                         'LastTimeStamp',   [], ...
                         'RevisitTime',     [], ...
                         'Waterfall',       [], ...
@@ -28,7 +29,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
 
 
     % RECEIVER STARTUP
-    if ~hReceiver.UserData.nTasks && strcmp(taskObj.Receiver.Reset, "On")
+    if ~hReceiver.UserData.nTasks && strcmp(taskObj.Receiver.Reset, 'On')
         taskSCPI.scpiSet_Reset = instrInfo.scpiReset{1};
         writeline(hReceiver, instrInfo.scpiReset{1});
 
@@ -218,7 +219,8 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
         taskBand(ii).scpiSet_Att    = scpiSet_Att;
         taskBand(ii).scpiSet_Answer = scpiSet_Answer;
         taskBand(ii).DataPoints     = DataPoints;
-        taskBand(ii).SyncModeRef    = -1;        
+        taskBand(ii).SyncModeRef    = -1;
+        taskBand(ii).nSweeps        = 0;
         taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
         taskBand(ii).uuid           = char(matlab.lang.internal.uuid());
         taskBand(ii).Status         = true;
@@ -227,29 +229,23 @@ function [taskSCPI, taskBand, warnMsg] = connect_Receiver_WriteReadTest(taskObj)
 end
 
 
+%-------------------------------------------------------------------------%
 function msg = msgConstructor(Type, Trigger, scpiSet_Config, scpiSet_Answer)
-
     switch Type
         case 1
-            msg = sprintf(['Trigger: "%s\n"' ...
-                           'scpiSet_Config: %s'], Trigger, ...
-                                                  scpiSet_Config);
-
+            msg = sprintf(['Trigger: "%s\n"'      ...
+                           'scpiSet_Config: %s'], Trigger, scpiSet_Config);
         otherwise                                                           % 'error' | 'warning'
             msg = sprintf(['Trigger: "%s"\n'      ...
                            'scpiSet_Config: %s\n' ...
-                           'scpiSet_Answer: %s'], Trigger,        ...
-                                                  scpiSet_Config, ...
-                                                  scpiSet_Answer);
+                           'scpiSet_Answer: %s'], Trigger, scpiSet_Config, scpiSet_Answer);
     end
-
 end
 
 
+%-------------------------------------------------------------------------%
 function AntennaInfo = AntennaExtract(taskObj, idx1)
-
     AntennaName     = taskObj.General.Task.Band(idx1).instrAntenna;
-
     AntennaMetaData = rmfield(taskObj.Antenna.MetaData, 'Installation');
     AntennaFields   = fieldnames(AntennaMetaData);
 
@@ -264,5 +260,4 @@ function AntennaInfo = AntennaExtract(taskObj, idx1)
         end
     end
     AntennaInfo = jsonencode(AntennaMetaData);
-
 end

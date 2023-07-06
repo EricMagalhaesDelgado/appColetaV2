@@ -1,11 +1,21 @@
-% RFlookBinLib.m
-% Author: Eric Magalhães Delgado
-% Date: March 30th, 2023
-
 classdef RFlookBinLib
 
-	methods(Static = true)
+    % Author.: Eric Magalhães Delgado
+    % Date...: March 30, 2023
+    % Version: 1.00
 
+    % !! BUG !!
+    % Na v. 1, o arquivo binário é criado por meio da função memmepfile. Ao 
+    % finalizar a escrita do arquivo, não consigo desmapeá-lo. Ao que parce, o
+    % arquivo está visível em alguma outra área de trabalho, o que impede
+    % o desmapeamento.
+    % Até que se resolva o problema, o appColetaV2 gerará apenas arquivos do 
+    % novo formato (v.2).
+    % Testar o seguinte: ao invés de passar specObj como argumento de
+    % entrada, passar app, alterando diretamente app.specObj.
+
+	methods(Static = true)
+        %-----------------------------------------------------------------%
         function [fileCount, CurrentFile] = OpenFile(specObj, idx)
             global appGeneral
 
@@ -42,6 +52,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function specObj = CloseFile(specObj, idx)
             switch specObj.Band(idx).File.Fileversion
                 case 'RFlookBin v.1/1'
@@ -63,6 +74,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function specObj = CheckFile(specObj, idx)
             global appGeneral
 
@@ -91,6 +103,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function EditFile(specObj, idx, rawArray, attFactor)
             gpsData = specObj.lastGPS;
             switch specObj.Band(idx).File.Fileversion
@@ -106,8 +119,9 @@ classdef RFlookBinLib
 
 
     methods (Static = true, Access = private)
-
+        %-----------------------------------------------------------------%
         % ## RFlookBin v.1/1 ##
+        %-----------------------------------------------------------------%
         function AlocatedSamples = v1_WriteHeader(fileID, specObj, idx)
             global appGeneral
 
@@ -182,6 +196,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function [Offset1, Offset2] = v1_WriteBody(fileID, specObj, idx, AlocatedSamples)        
             Task            = specObj.taskObj.General.Task;
             MetaData        = Task.Band(idx);
@@ -208,6 +223,7 @@ classdef RFlookBinLib
         end
         
         
+        %-----------------------------------------------------------------%
         function fileMemMap = v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2)        
             Task            = specObj.taskObj.General.Task;
             DataPoints      = Task.Band(idx).instrDataPoints;
@@ -242,6 +258,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function v1_MemoryEdit(specObj, idx1, rawArray, attFactor, gpsData)
             TimeStamp = datetime('now');
             RefLevel  = max(rawArray);        
@@ -274,6 +291,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function v1_PostProcessing(specObj, idx, Type)
             fileFullPath = specObj.Band(idx).File.CurrentFile.FullPath;
 
@@ -318,7 +336,9 @@ classdef RFlookBinLib
         end
 
 
-        % ## RFlookBin v.2/1 ##        
+        %-----------------------------------------------------------------%
+        % ## RFlookBin v.2/1 ##      
+        %-----------------------------------------------------------------%
         function v2_WriteHeader(fileID, specObj, idx)
             Task          = specObj.taskObj.General.Task;
             MetaData      = Task.Band(idx);
@@ -370,6 +390,7 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         function v2_WriteBody(specObj, idx, rawArray, attFactor, gpsData)
             TimeStamp = datetime('now');
 
@@ -406,7 +427,9 @@ classdef RFlookBinLib
         end
 
 
+        %-----------------------------------------------------------------%
         % ## Auxiliar function ##
+        %-----------------------------------------------------------------%
         function ID = str2id(Type, Value)        
             switch Type
                 case 'TraceMode'
