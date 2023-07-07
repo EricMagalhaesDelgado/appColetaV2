@@ -17,25 +17,28 @@ function tableBuilding(app, idx)
                               datestr(app.specObj(ii).Observation.BeginTime, 'dd/mm/yyyy HH:MM:SS'), ...
                               EndTime,                                   ...
                               app.specObj(ii).Status};
-    end
-
-    app.Table.Data = tempTable;
-    app.Table.Selection = max([1, idx]);
-    drawnow nocallbacks
+    end    
 
     if all(~strcmp(tempTable.Status, "Em andamento"))
         app.Flag_running = 0;
     end
 
     if height(tempTable)
+        app.Table.Data = tempTable;
+        app.Table.Selection = max([1, idx]);
+
         app.Button_Edit.Enable = 1;
         app.Button_Del.Enable  = 1;
         app.Button_log.Enable  = 1;
     else
+        app.Table.Data = table;
+        app.Table.Selection = 0;
+
         app.Button_Edit.Enable = 0;
         app.Button_Del.Enable  = 0;
         app.Button_log.Enable  = 0;
     end
+    drawnow nocallbacks
 
     if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
     else;                                layoutFcn.treeBuilding(app, 1)

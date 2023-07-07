@@ -4,9 +4,9 @@
     "BitsPerSample": 8,
     "Observation": {
       "Type": "Duration",
-      "BeginTime": "",
-      "EndTime": "",
-      "Duration": 600
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "600 seconds"
     },
     "GPS": {
       "Type": "auto",
@@ -16,7 +16,7 @@
     },
     "Band": [
       {
-        "ThreadID": 1,
+        "ID": 1,
         "Description": "Faixa 1 de 3",
         "ObservationSamples": [],
         "FreqStart": 7.6E+7,
@@ -33,7 +33,7 @@
         "Enable": 1
       },
       {
-        "ThreadID": 2,
+        "ID": 2,
         "Description": "Faixa 2 de 3",
         "ObservationSamples": [],
         "FreqStart": 1.08E+8,
@@ -47,10 +47,10 @@
         "RevisitTime": 3,
         "IntegrationFactor": 5,
         "Trigger": 0,
-        "Enable": 1
+        "Enable": 0
       },
       {
-        "ThreadID": 3,
+        "ID": 3,
         "Description": "Faixa 3 de 3",
         "ObservationSamples": [],
         "FreqStart": 4.5E+8,
@@ -73,9 +73,9 @@
     "BitsPerSample": 16,
     "Observation": {
       "Type": "Samples",
-      "BeginTime": "",
-      "EndTime": "",
-      "Duration": []
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "not applicable"
     },
     "GPS": {
       "Type": "manual",
@@ -84,7 +84,7 @@
       "RevisitTime": []
     },
     "Band": {
-      "ThreadID": 1,
+      "ID": 1,
       "Description": "Faixa 1 de 1",
       "ObservationSamples": 1000,
       "FreqStart": 7.6E+7,
@@ -108,7 +108,7 @@
       "Type": "Time",
       "BeginTime": "09/03/2023 10:15:23",
       "EndTime": "11/03/2023 11:25:23",
-      "Duration": []
+      "Duration": "not applicable"
     },
     "GPS": {
       "Type": "manual",
@@ -117,7 +117,7 @@
       "RevisitTime": []
     },
     "Band": {
-      "ThreadID": 1,
+      "ID": 1,
       "Description": "Faixa 1 de 1",
       "ObservationSamples": 850,
       "FreqStart": 7.6E+7,
@@ -138,10 +138,10 @@
     "Name": "appColeta HOM_4",
     "BitsPerSample": 16,
     "Observation": {
-      "Type": "Samples",
-      "BeginTime": "",
-      "EndTime": "",
-      "Duration": []
+      "Type": "Duration",
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "inf"
     },
     "GPS": {
       "Type": "manual",
@@ -150,7 +150,7 @@
       "RevisitTime": []
     },
     "Band": {
-      "ThreadID": 1,
+      "ID": 1,
       "Description": "Faixa 1 de 1",
       "ObservationSamples": 1000,
       "FreqStart": 4.5E+8,
@@ -172,9 +172,9 @@
     "BitsPerSample": 8,
     "Observation": {
       "Type": "Samples",
-      "BeginTime": "",
-      "EndTime": "",
-      "Duration": []
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "not applicable"
     },
     "GPS": {
       "Type": "manual",
@@ -184,7 +184,7 @@
     },
     "Band": [
       {
-        "ThreadID": 1,
+        "ID": 1,
         "Description": "Faixa 1 de 3",
         "ObservationSamples": 3600,
         "FreqStart": 4.49E+9,
@@ -198,10 +198,10 @@
         "RevisitTime": 10,
         "IntegrationFactor": 1,
         "Trigger": 0,
-        "Enable": 1
+        "Enable": 0
       },
       {
-        "ThreadID": 2,
+        "ID": 2,
         "Description": "Faixa 2 de 3",
         "ObservationSamples": 3600,
         "FreqStart": 11.2E+9,
@@ -218,7 +218,7 @@
         "Enable": 1
       },
       {
-        "ThreadID": 3,
+        "ID": 3,
         "Description": "Faixa 3 de 3",
         "ObservationSamples": 3600,
         "FreqStart": 11.44E+9,
@@ -232,7 +232,7 @@
         "RevisitTime": 60,
         "IntegrationFactor": 1,
         "Trigger": 0,
-        "Enable": 1
+        "Enable": 0
       }
     ]
   }

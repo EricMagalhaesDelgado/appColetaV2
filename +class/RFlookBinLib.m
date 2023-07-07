@@ -1,18 +1,22 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: March 30, 2023
+    % Date...: July 06, 2023
     % Version: 1.00
 
     % !! BUG !!
     % Na v. 1, o arquivo binário é criado por meio da função memmepfile. Ao 
-    % finalizar a escrita do arquivo, não consigo desmapeá-lo. Ao que parce, o
-    % arquivo está visível em alguma outra área de trabalho, o que impede
+    % finalizar a escrita do arquivo, não consigo desmapeá-lo. Ao que parece, 
+    % o arquivo está visível em alguma outra área de trabalho, o que impede
     % o desmapeamento.
     % Até que se resolva o problema, o appColetaV2 gerará apenas arquivos do 
     % novo formato (v.2).
     % Testar o seguinte: ao invés de passar specObj como argumento de
     % entrada, passar app, alterando diretamente app.specObj.
+    %
+    % !! EVOLUÇÃO !!
+    % Tirar referência à variável global appGeneral e depois eliminar
+    % criação da variável global (lá no startup de WinAppColetaV2).
 
 	methods(Static = true)
         %-----------------------------------------------------------------%
@@ -76,7 +80,9 @@ classdef RFlookBinLib
 
         %-----------------------------------------------------------------%
         function specObj = CheckFile(specObj, idx)
-            global appGeneral
+            if isempty(specObj.Band(idx).File.CurrentFile)
+                return
+            end
 
             switch specObj.Band(idx).File.Fileversion
                 case 'RFlookBin v.1/1'
@@ -91,6 +97,7 @@ classdef RFlookBinLib
                     end
         
                 case 'RFlookBin v.2/1'
+                    global appGeneral
                     fileID = specObj.Band(idx).File.CurrentFile.Handle;
 
                     if ftell(fileID) > appGeneral.File.Size
@@ -105,6 +112,10 @@ classdef RFlookBinLib
 
         %-----------------------------------------------------------------%
         function EditFile(specObj, idx, rawArray, attFactor)
+            if isempty(specObj.Band(idx).File.CurrentFile)
+                return
+            end
+
             gpsData = specObj.lastGPS;
             switch specObj.Band(idx).File.Fileversion
                 case 'RFlookBin v.1/1'
@@ -112,9 +123,8 @@ classdef RFlookBinLib
 
                 case 'RFlookBin v.2/1'
                     class.RFlookBinLib.v2_WriteBody(specObj,  idx, rawArray, attFactor, gpsData)
-            end        
+            end
         end
-
     end
 
 
@@ -214,10 +224,10 @@ classdef RFlookBinLib
         
             fwrite(fileID, zeros(1, (20 + BitsPerSample * DataPoints) * AlocatedSamples, 'uint8'));
             fwrite(fileID, jsonencode(struct('TaskName',          replace(Task.Name, {'"', ',', newline}, ''),            ...
-                                             'ThreadID',          MetaData.ThreadID,                                      ...
+                                             'ID',                MetaData.ID,                                            ...
                                              'Description',       replace(MetaData.Description, {'"', ',', newline}, ''), ...
                                              'Node',              Node,                                                   ...
-                                             'Antenna',           specObj.Band(idx).Antenna,                               ...
+                                             'Antenna',           specObj.Band(idx).Antenna,                              ...
                                              'IntegrationFactor', MetaData.IntegrationFactor,                             ...
                                              'RevisitTime',       MetaData.RevisitTime)), 'char*1');        
         end
@@ -357,7 +367,7 @@ classdef RFlookBinLib
                                 'AntennaInfo',      specObj.Band(idx).Antenna,   ...
                                 'gpsType',          Task.GPS.Type,               ...
                                 'Task',             Task.Name,                   ...
-                                'ID',               MetaData.ThreadID,           ...
+                                'ID',               MetaData.ID,                 ...
                                 'Description',      MetaData.Description,        ...
                                 'FreqStart',        MetaData.FreqStart,          ...
                                 'FreqStop',         MetaData.FreqStop,           ...
