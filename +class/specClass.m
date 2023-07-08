@@ -19,6 +19,8 @@ classdef specClass
         lastGPS     = struct('Status', 0, 'Latitude', -1, 'Longitude', -1, 'TimeStamp', '')
         SCPI        = []                                                    % See "connect_Receiver_WriteReadTest.m"
         Band        = []                                                    % See "connect_Receiver_WriteReadTest.m"
+
+        ErrorCount  = 0
         Status      = ''                                                    % 'Na fila' | 'Em andamento' | 'Concluída' | 'Cancelada' | 'Erro'
         LOG         = struct('type', {}, 'time', {}, 'msg',  {})
     end

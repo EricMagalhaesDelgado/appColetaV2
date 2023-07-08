@@ -72,6 +72,13 @@ classdef taskList
                     if ~any([List(ii).Band.Enable])
                         List(ii).Band(1).Enable = 1;
                     end
+            
+                    NN = numel(List(ii).Band);
+                    for jj = NN:-1:1
+                        if ~List(ii).Band(jj).Enable
+                            List(ii).Band(jj) = [];
+                        end
+                    end
                 end
 
             catch ME

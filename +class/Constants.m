@@ -15,6 +15,8 @@ classdef (Abstract) Constants
         switchPause   = 0.050                                               % Pause in seconds to ask antenna's name after its switch attempt (must be greater than 40ms)
         antACUPause   = 1                                                   % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
 
+        errorTrigger  = 10                                                  % Maximum error count before change the status of the task ("In progress" to "Error")
+
         Timeout       = 10                                                  % Maximum time in seconds to extract valid array of data from receiver
         fileVersion   = 'RFlookBin v.2/1'
     end

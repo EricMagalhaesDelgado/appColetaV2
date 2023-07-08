@@ -29,11 +29,9 @@ function output = connect_Receiver(instrHandles, instrSelected)
         end
         
         flush(instrNew)
-%         IDN = replace(deblank(writeread(instrNew, '*IDN?')), '"', '');
-%         drawnow nocallbacks
 
-        writeline(instrNew, '*IDN?'); 
-        pause(.1); 
+        writeline(instrNew, '*IDN?');
+        waitfor(instrNew, 'NumBytesAvailable')
         IDN = replace(deblank(read(instrNew, instrNew.NumBytesAvailable, 'char')), '"', '');
 
         if ~isempty(IDN)

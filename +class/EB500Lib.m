@@ -1,8 +1,8 @@
 classdef EB500Lib
 
     % Author.: Eric Magalhães Delgado & Michel Cerqueira Kulhavy
-    % Date...: April 8, 2023
-    % Version: 1.00
+    % Date...: July 07, 2023
+    % Version: 1.01
 
     properties
         SelectivityMap
@@ -49,22 +49,30 @@ classdef EB500Lib
             udpPort = hStreaming.LocalPort;
 
             for ii = 1:numel(specObj.Band)
-                writeline(hReceiver, specObj.Band(ii).scpiSet_Config);                
-                
-                EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
+                specDatagram = [];
+
+                writeline(hReceiver, specObj.Band(ii).scpiSet_Config);
+                class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
 
                 udpTic = tic;
                 t = toc(udpTic);
                 while t < Timeout
-                    if hStreaming.NumDatagramsAvailable > EB500Obj.nDatagrams
+                    specDatagram = [specDatagram, read(hStreaming, hStreaming.NumDatagramsAvailable)];
+
+                    if numel(specDatagram) > EB500Obj.nDatagrams                        
                         break
                     end
                     t = toc(udpTic);
                 end
-                                
-                EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
+                class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
 
-                specDatagram = read(hStreaming, hStreaming.NumDatagramsAvailable);
+                if isempty(specDatagram)
+                    error(sprintf(['ERROR - Não identificada a estimativa do número de datagramas que representam um único traço.\n' ...
+                                   'Possíveis causas:\n'                                                                     ...
+                                   '(a) Perda de conectividade com o EB500.\n'                                               ...
+                                   '(b) <i>Firewall</i> bloqueando fluxo UDP gerado pelo EB500.\n'                           ...
+                                   '(c) Não redirecionamento de porta do roteador (no caso de não ser uma conexão direta ao EB500).']))
+                end
 
                 % Delete datagrams sent by an unexpected source
                 idx0 = ([specDatagram.SenderAddress] ~= hReceiver.Address);
@@ -117,7 +125,7 @@ classdef EB500Lib
             Flag_success = false;
             specDatagram = [];
                         
-            EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
+            class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
             
             udpTic = tic;
             t = toc(udpTic);
@@ -194,7 +202,7 @@ classdef EB500Lib
                 t = toc(udpTic);
             end
 
-            EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
+            class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
         end
 
         

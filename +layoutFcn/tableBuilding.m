@@ -28,6 +28,7 @@ function tableBuilding(app, idx)
         app.Table.Selection = max([1, idx]);
 
         app.Button_Edit.Enable = 1;
+        app.Button_Play.Enable = 1;
         app.Button_Del.Enable  = 1;
         app.Button_log.Enable  = 1;
     else
@@ -35,6 +36,7 @@ function tableBuilding(app, idx)
         app.Table.Selection = 0;
 
         app.Button_Edit.Enable = 0;
+        app.Button_Play.Enable = 0;
         app.Button_Del.Enable  = 0;
         app.Button_log.Enable  = 0;
     end
