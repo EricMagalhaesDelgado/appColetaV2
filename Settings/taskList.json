@@ -192,13 +192,13 @@
         "StepWidth": 10000,
         "Resolution": 10000,
         "RFMode": "Low Distortion",
-        "TraceMode": "ClearWrite",
+        "TraceMode": "Average",
         "Detector": "PositivePeak",
         "LevelUnit": "dBm",
         "RevisitTime": 10,
-        "IntegrationFactor": 1,
+        "IntegrationFactor": 3,
         "Trigger": 0,
-        "Enable": 0
+        "Enable": 1
       },
       {
         "ID": 2,
@@ -209,11 +209,11 @@
         "StepWidth": 10000,
         "Resolution": 10000,
         "RFMode": "Low Distortion",
-        "TraceMode": "ClearWrite",
+        "TraceMode": "Average",
         "Detector": "PositivePeak",
         "LevelUnit": "dBm",
-        "RevisitTime": 30,
-        "IntegrationFactor": 1,
+        "RevisitTime": 10,
+        "IntegrationFactor": 3,
         "Trigger": 0,
         "Enable": 1
       },
@@ -226,13 +226,13 @@
         "StepWidth": 10000,
         "Resolution": 10000,
         "RFMode": "Low Distortion",
-        "TraceMode": "ClearWrite",
+        "TraceMode": "Average",
         "Detector": "PositivePeak",
         "LevelUnit": "dBm",
-        "RevisitTime": 60,
-        "IntegrationFactor": 1,
+        "RevisitTime": 10,
+        "IntegrationFactor": 3,
         "Trigger": 0,
-        "Enable": 0
+        "Enable": 1
       }
     ]
   }

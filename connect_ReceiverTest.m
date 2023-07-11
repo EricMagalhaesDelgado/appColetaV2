@@ -1,4 +1,4 @@
-function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj)
+function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
 
     hReceiver  = taskObj.Receiver.Handle;
     instrInfo  = taskObj.General.SCPI;
@@ -12,6 +12,8 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj)
     taskBand   = struct('scpiSet_Config',  '', ...
                         'scpiSet_Att',     '', ...
                         'scpiSet_Answer',  '', ...
+                        'FreqStart',       [], ...
+                        'FreqStop',        [], ...
                         'Datagrams',       [], ...
                         'DataPoints',      [], ...
                         'SyncModeRef',     [], ...
@@ -108,10 +110,22 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj)
             case {'dBµV', 'dBμV'}; LevelUnit = LevelUnit_Values{2};
         end                
         
-        % FreqStart, FreqStop, DataPoints, StepWidth, Resolution,
-        % Selectivity
-        FreqStart       = rawBand(ii).FreqStart;
-        FreqStop        = rawBand(ii).FreqStop;
+        % FreqStart/FreqStop
+        if strcmp(taskObj.Antenna.Switch, 'EMSat')
+            antIndex  = find(strcmp(EMSatObj.LNB.Name, rawBand(ii).instrAntenna), 1);
+            lnbOffset = double(EMSatObj.LNB.Offset(antIndex));
+            FlipArray = EMSatObj.LNB.Inverted(antIndex);
+
+            freqBand  = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - lnbOffset);
+            FreqStart = min(freqBand);
+            FreqStop  = max(freqBand);
+        else
+            FlipArray = [];
+            FreqStart = rawBand(ii).FreqStart;
+            FreqStop  = rawBand(ii).FreqStop;            
+        end
+
+        % DataPoints, StepWidth, Resolution, Selectivity
         DataPoints      = rawBand(ii).instrDataPoints;
         StepWidth       = (rawBand(ii).FreqStop - rawBand(ii).FreqStart) ./ (rawBand(ii).instrDataPoints - 1);
         ResolutionValue = str2double(extractBefore(rawBand(ii).instrResolution, ' kHz')) .* 1e+3;
@@ -220,6 +234,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj)
         taskBand(ii).scpiSet_Answer = scpiSet_Answer;
         taskBand(ii).DataPoints     = DataPoints;
         taskBand(ii).SyncModeRef    = -1;
+        taskBand(ii).FlipArray      = FlipArray;
         taskBand(ii).nSweeps        = 0;
         taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
         taskBand(ii).uuid           = char(matlab.lang.internal.uuid());

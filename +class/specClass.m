@@ -33,41 +33,47 @@ classdef specClass
     %                        (FreqStart, FreqStop, RBW, StepWidth etc).
     % (b) 'scpiSet_Att'    - Frase SCPI de condifuração do atenuador do receptor.
     % (c) 'scpiSet_Answer' - Estado de parâmetros do receptor pós-configuração.
-    % (d) 'Datagrams'      - Estimativa do número de datagramas que representa 
+    % (d) 'FreqStart'      - Frequência a ser programada no receptor - trata-se de campo 
+    %                        que possibilita a execução de tarefa em que há translação de 
+    %                        frequência, como no caso do EMSat, o qual usa um LNB, translatando 
+    %                        a faixa monitorada para a Banda L (1 a 2 GHz).
+    % (e) 'FreqStop'       - Frequência a ser programada no receptor.
+    % (f) 'Datagrams'      - Estimativa do número de datagramas que representa 
     %                        um único traço (aplicável apenas para o receptor R&S EB500)
-    % (e) 'DataPoints'     - Número de pontos por traço.
-    % (f) 'SyncModeRef'    - Soma do vetor de níveis, o que é usado como valor de referência 
+    % (g) 'DataPoints'     - Número de pontos por traço.
+    % (h) 'SyncModeRef'    - Soma do vetor de níveis, o que é usado como valor de referência 
     %                        quando o modo de sincronismo usa o "ContinuousSweep", identificando 
     %                        se o traço é idêntico ao anterior, o que possibilita o seu descarte 
     %                        (aplicável apenas para o receptor Tektronix SA2500).
-    % (g) 'FlipArray'      - Flag que indica se o vetor de níveis entregue pelo receptor 
+    % (i) 'FlipArray'      - Flag que indica se o vetor de níveis entregue pelo receptor 
     %                        precisa ser rotacionado (aplicável apenas para o MSAT).
-    % (h) 'nSweeps'        - Número de varreduras realizadas.
-    % (i) 'LastTimeStamp'  - Timestamp do instante em que foi extraído o último vetor 
+    % (j) 'nSweeps'        - Número de varreduras realizadas.
+    % (k) 'LastTimeStamp'  - Timestamp do instante em que foi extraído o último vetor 
     %                        de níveis.
-    % (j) 'RevisitTime'    - Estimativa do tempo de revisita (média online, usando 
+    % (l) 'RevisitTime'    - Estimativa do tempo de revisita (média online, usando 
     %                        fator de integração definido no arquivo "GeneralSettings.json").
-    % (k) 'Waterfall'      - Estrutura que armazena informações da última linha preenchida
+    % (m) 'Waterfall'      - Estrutura que armazena informações da última linha preenchida
     %                        ('idx'), da quantidade de traços que será armazenada ('Depth') 
     %                        e da matriz de níveis ('Matrix').
-    % (l) 'Mask'           - Estrutura que armazena informações da máscara ('Table', 'Array'), 
+    % (n) 'Mask'           - Estrutura que armazena informações da máscara ('Table', 'Array'), 
     %                        do contador de validações ('Validations'), do contador violações 
     %                        por bin ('BrokenArray'), do contador de vezes em que a máscara 
     %                        foi violada ('BrokenCount'), das principais emissões ('MainPeaks') 
     %                        e do instante em que foi registrada a última violação de máscara 
     %                       ('TimeStamp')
-    % (m) 'File'           - Estrutura que armazena informações da versão do arquivo
+    % (o) 'File'           - Estrutura que armazena informações da versão do arquivo
     %                        ('Fileversion'), do nome base do arquivo a ser criado ('Basename'), 
     %                        do contador de arquivos ('Filecount'), do número de traços escritos 
     %                        em arquivos ('WritedSamples') e do atual arquivo('CurrentFile')
-    % (n) 'Antenna'        - JSON com nome da antena e seus parâmetros de configuração 
+    % (p) 'Antenna'        - JSON com nome da antena e seus parâmetros de configuração 
     %                        (altura, azimute, elevação e polarização).
-    % (o) 'Status'         - true | false
+    % (q) 'uuid'           - Identificador único.
+    % (r) 'Status'         - true | false
 
 
     methods
         %-----------------------------------------------------------------%
-        function [obj, idx] = AddOrEditTask(obj, taskObj, infoEdition)
+        function [obj, idx] = AddOrEditTask(obj, infoEdition, taskObj, EMSatObj)
             switch infoEdition.type
                 case 'new'
                     idx = numel(obj)+1;
@@ -88,7 +94,7 @@ classdef specClass
             obj(idx).Observation.EndTime   = datetime(taskObj.General.Task.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss', 'Format', 'dd/MM/yyyy HH:mm:ss');
 
             obj = obj.startup_lastGPS(idx, taskObj.General.Task.GPS);
-            obj = obj.startup_ReceiverTest(idx);
+            obj = obj.startup_ReceiverTest(idx, EMSatObj);
         end
     end
 
@@ -106,11 +112,11 @@ classdef specClass
 
 
         %-----------------------------------------------------------------%
-        function obj = startup_ReceiverTest(obj, idx)
+        function obj = startup_ReceiverTest(obj, idx, EMSatObj)
             warnMsg  = {};
             errorMsg = '';
             try
-                [obj(idx).SCPI, obj(idx).Band, warnMsg] = connect_ReceiverTest(obj(idx).taskObj);
+                [obj(idx).SCPI, obj(idx).Band, warnMsg] = connect_ReceiverTest(obj(idx).taskObj, EMSatObj);
             catch ME
                 errorMsg = ME.message;
             end
