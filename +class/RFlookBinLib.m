@@ -1,8 +1,8 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: July 06, 2023
-    % Version: 1.00
+    % Date...: July 10, 2023
+    % Version: 1.01
 
     % !! BUG !!
     % Na v. 1, o arquivo binário é criado por meio da função memmepfile. Ao 
@@ -13,6 +13,10 @@ classdef RFlookBinLib
     % novo formato (v.2).
     % Testar o seguinte: ao invés de passar specObj como argumento de
     % entrada, passar app, alterando diretamente app.specObj.
+    %
+    % !! BUG !!
+    % Na linha 413 - o que determina escrever ou não o valor da atenuação é
+    % ter o valor automático (e não o valor -1). Avaliar isso!
     %
     % !! EVOLUÇÃO !!
     % Tirar referência à variável global appGeneral e depois eliminar
@@ -271,17 +275,8 @@ classdef RFlookBinLib
         %-----------------------------------------------------------------%
         function v1_MemoryEdit(specObj, idx1, rawArray, attFactor, gpsData)
             TimeStamp = datetime('now');
-            RefLevel  = max(rawArray);        
-            
-            switch specObj.taskObj.General.Task.BitsPerSample
-                case  8
-                    Offset = -2*RefLevel+255;
-                    processedArray = uint8(2.*rawArray + Offset);                
-                case 16
-                    processedArray = int16(100.*rawArray);
-                case 32
-                    processedArray = single(rawArray);
-            end
+
+            [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray, specObj.taskObj.General.Task.BitsPerSample);
 
             idx2 = specObj.Band(idx1).File.CurrentFile.MemMap{1}.Data.Value + 1;
 
@@ -393,43 +388,43 @@ classdef RFlookBinLib
                 MetaStruct.Longitude = Task.GPS.Longitude;
             end
 
-            MetaStruct = jsonencode(MetaStruct);
+            if ~isempty(specObj.Band(idx).Mask)
+                MetaStruct.Mask = jsonencode(specObj.Band(idx).Mask.Table);
+            end
+
+            MetaStruct = unicode2native(jsonencode(MetaStruct), 'UTF-8');
         
             fwrite(fileID, numel(MetaStruct), 'uint32');
-            fwrite(fileID, MetaStruct, 'char*1');
+            fwrite(fileID, MetaStruct);
         end
 
 
         %-----------------------------------------------------------------%
         function v2_WriteBody(specObj, idx, rawArray, attFactor, gpsData)
-            TimeStamp = datetime('now');
+            Task          = specObj.taskObj.General.Task;
+            MetaData      = Task.Band(idx);
+            BitsPerSample = Task.BitsPerSample;
 
-            fileID = specObj.Band(idx).File.CurrentFile.Handle;
+            fileID        = specObj.Band(idx).File.CurrentFile.Handle;
+            TimeStamp     = datetime('now');
             
             fwrite(fileID, 'StArT', 'char*1');
             fwrite(fileID, [year(TimeStamp)-2000, month(TimeStamp), day(TimeStamp), hour(TimeStamp), minute(TimeStamp), fix(second(TimeStamp))]);
             fwrite(fileID, (second(TimeStamp) - fix(second(TimeStamp))).*1000, 'uint16');
 
-            if ismember(specObj.taskObj.General.Task.GPS.Type, {'Built-in', 'External'})
+            if ismember(Task.GPS.Type, {'Built-in', 'External'})
                 fwrite(fileID, gpsData.Status);
                 fwrite(fileID, [gpsData.Latitude, gpsData.Longitude], 'single');
             end
             
-            if attFactor ~= -1
+            if strcmp(MetaData.instrAttMode, 'Auto')
                 fwrite(fileID, attFactor, 'int8');
             end
-            
-            switch specObj.taskObj.General.Task.BitsPerSample
-                case  8
-                    RefLevel = max(rawArray);
-                    fwrite(fileID, RefLevel, 'int16');
 
-                    Offset = -2*RefLevel+255;
-                    processedArray = uint8(2.*rawArray + Offset);                
-                case 16
-                    processedArray = int16(100.*rawArray);
-                case 32
-                    processedArray = single(rawArray);
+            [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray, BitsPerSample);
+            
+            if BitsPerSample == 8
+                fwrite(fileID, RefLevel, 'int16');
             end
         
             fwrite(fileID, class.CompressLib.compress(processedArray));            
@@ -438,7 +433,24 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        % ## Auxiliar function ##
+        % ## Auxiliar functions ##
+        %-----------------------------------------------------------------%
+        function [processedArray, RefLevel] = raw2processedArray(rawArray, BitsPerSample)
+            switch BitsPerSample
+                case  8
+                    RefLevel       = max(rawArray);
+                    Offset         = -2*RefLevel+255;
+                    processedArray = uint8(2.*rawArray + Offset);                
+                case 16
+                    RefLevel       = -1;
+                    processedArray = int16(100.*rawArray);
+                case 32
+                    RefLevel       = -1;
+                    processedArray = single(rawArray);
+            end
+        end
+
+
         %-----------------------------------------------------------------%
         function ID = str2id(Type, Value)        
             switch Type
@@ -460,8 +472,9 @@ classdef RFlookBinLib
         
                 case 'LevelUnit'
                     switch Value
-                        case 'dBm';            ID = 1;
-                        case {'dBµV', 'dBμV'}; ID = 2;
+                        case 'dBm';                ID = 1;
+                        case {'dBµV', 'dBμV'};     ID = 2;
+                        case {'dBµV/m', 'dBμV/m'}; ID = 3;
                     end
         
                 case 'Preamp'

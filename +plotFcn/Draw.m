@@ -17,8 +17,8 @@ function Draw(app, ii, jj)
         % Mask line
         if ~isempty(app.specObj(ii).Band(jj).Mask)
             maskTable = app.specObj(ii).Band(jj).Mask.Table;
-            for ii = 1:height(maskTable)
-                newObj = plot(app.axes1, [maskTable.FreqStart(ii), maskTable.FreqStop(ii)], [maskTable.THR(ii), maskTable.THR(ii)], 'red', ...
+            for kk = 1:height(maskTable)
+                newObj = plot(app.axes1, [maskTable.FreqStart(kk), maskTable.FreqStop(kk)], [maskTable.THR(kk), maskTable.THR(kk)], 'red', ...
                               'Marker', 'o', 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red', 'MarkerSize', 4, 'Tag', 'Mask');
                 plotFcn.DataTipModel(newObj, LevelUnit)
             end
