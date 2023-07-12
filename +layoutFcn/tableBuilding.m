@@ -40,6 +40,7 @@ function tableBuilding(app, idx)
         app.Button_Del.Enable  = 0;
         app.Button_log.Enable  = 0;
     end
+    layoutFcn.errorCount(app, app.Table.Selection)
     drawnow nocallbacks
 
     if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)

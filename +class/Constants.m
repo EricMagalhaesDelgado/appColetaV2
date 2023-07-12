@@ -17,7 +17,7 @@ classdef (Abstract) Constants
 
         errorTrigger  = 10                                                  % Maximum error count before change the status of the task ("In progress" to "Error")
 
-        Timeout       = 10                                                  % Maximum time in seconds to extract valid array of data from receiver
+        Timeout       = 10                                                  % Maximum time in seconds to extract valid info from receiver
         fileVersion   = 'RFlookBin v.2/1'
     end
 

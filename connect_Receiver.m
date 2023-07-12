@@ -5,12 +5,9 @@ function output = connect_Receiver(instrHandles, instrSelected)
         instrSelected struct
     end
 
-    Type               = instrSelected.Type;
-    Tag                = instrSelected.Tag;
-    IP                 = instrSelected.Parameters.IP;
-    Port               = instrSelected.Parameters.Port;    
-    Localhost_publicIP = instrSelected.Parameters.Localhost_publicIP;
-    Localhost_localIP  = instrSelected.Parameters.Localhost_localIP;
+    Type = instrSelected.Type;
+    Tag  = instrSelected.Tag;
+    [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(instrSelected);
         
     try
         idx = find(contains(instrHandles.Socket, IP), 1);
@@ -31,7 +28,7 @@ function output = connect_Receiver(instrHandles, instrSelected)
         flush(instrNew)
 
         writeline(instrNew, '*IDN?');
-        waitfor(instrNew, 'NumBytesAvailable')
+        fcn.waitfor(instrNew)
         IDN = replace(deblank(read(instrNew, instrNew.NumBytesAvailable, 'char')), '"', '');
 
         if ~isempty(IDN)
@@ -73,6 +70,33 @@ function output = connect_Receiver(instrHandles, instrSelected)
         end
 
         output = struct('type', 'error', 'msg', getReport(ME));
-    end    
+    end
+end
 
+
+%-------------------------------------------------------------------------%
+function [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(instrSelected)
+
+    % IP
+    if isfield(instrSelected.Parameters, 'IP');   IP = instrSelected.Parameters.IP;
+    else;                                         IP = '';
+    end
+
+    % Port
+    if isfield(instrSelected.Parameters, 'Port'); Port = instrSelected.Parameters.Port;
+    else;                                         Port = [];
+    end
+    
+    if ~isnumeric(Port);                          Port = str2double(Port);
+    end
+
+    % Localhost_publicIP
+    if isfield(instrSelected.Parameters, 'Localhost_publicIP'); Localhost_publicIP = instrSelected.Parameters.Localhost_publicIP;
+    else;                                                       Localhost_publicIP = '';
+    end
+
+    % Localhost_localIP
+    if isfield(instrSelected.Parameters, 'Localhost_localIP');  Localhost_localIP = instrSelected.Parameters.Localhost_localIP;
+    else;                                                       Localhost_localIP = '';
+    end
 end
