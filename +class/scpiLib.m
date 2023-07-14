@@ -1,19 +1,15 @@
 classdef scpiLib
 
-    % !! EVOLUÇÃO !!
-    % A consulta para saber se já há objeto "tcpclient" criado para o 
-    % instrumento selecionado está restrita ao IP. E se tiver vários
-    % instrumentos no mesmo IP, mas com portas distintas?!
-
-    % !! EVOLUÇÃO !!
-    % Inserir conexão VISA - normal (sem indicar a porta) e SOCKET.
+    % ?? EVOLUÇÃO ??
+    % Inserir conexão VISA?! Caso sim, mapear objeto transporte relacionado
+    % struct(struct(hReceiver).Client).Transport.connect
 
     properties
         Config
         List
-        Table = table('Size', [0, 7],                                                                      ...
-                      'VariableTypes', {'string', 'string', 'string', 'cell', 'double', 'double', 'cell'}, ...
-                      'VariableNames', {'Type', 'IDN', 'Socket', 'Handle', 'nTask', 'Status', 'LOG'})
+        Table = table('Size', [0, 5],                                                    ...
+                      'VariableTypes', {'string', 'string', 'string', 'cell', 'string'}, ...
+                      'VariableNames', {'Type', 'IDN', 'Socket', 'Handle', 'Status'})
     end
 
 
@@ -30,50 +26,47 @@ classdef scpiLib
             end
 
             obj.List = struct2table(tempList, 'AsArray', true);
-            obj.List.idx = (1:numel(tempList))';
-            obj.List = movevars(obj.List, 'idx', 'Before', 1);
         end
 
 
         %-----------------------------------------------------------------%
-        function [obj, idx] = Connect(obj, instrSelected)        
+        function [obj, idx, msgError] = Connect(obj, instrSelected)
             % Características do instrumento em que se deseja controlar:
-            Type = instrSelected.Type;
-            Tag  = instrSelected.Tag;
-            [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(instrSelected);
+            Type   = instrSelected.Type;
+            Tag    = instrSelected.Tag;
+            [IP, Port, Localhost_publicIP, Localhost_localIP] = obj.MissingParameters(instrSelected);
+            Socket = sprintf('%s:%d', IP, Port);
 
             % Consulta se há objeto "tcpclient" criado para o instrumento:
             IDN = '';
+            msgError = '';
+            idx = find(strcmp(obj.Table.Socket, Socket), 1);
 
-            idx = find(contains(obj.Table.Socket, IP), 1);
             if ~isempty(idx)
                 hReceiver = obj.Table.Handle{idx};
 
-                % Três tentativas para reestabelecer a comunicações, caso
+                % Três tentativas para reestabelecer a comunicação, caso
                 % esteja com falha.
                 for kk = 1:3
                     try
+                        warning('off', 'MATLAB:structOnObject')
                         if ~struct(struct(hReceiver).TCPCustomClient).Transport.Connected
                             struct(struct(hReceiver).TCPCustomClient).Transport.connect
                         end
-
-                        IDN = ConnectionStatusTest(hReceiver);
+                        IDN = obj.ConnectionStatus(hReceiver);
                         break
 
                     catch ME
+                        msgError = ME.message;
                         switch ME.identifier
                             case 'network:tcpclient:connectFailed'
                                 obj.Table.Status(idx) = 'Disconnected';
                                 return
-
                             case {'MATLAB:class:InvalidHandle', 'testmeaslib:CustomDisplay:PropertyError'}
                                 delete(obj.Table.Handle{idx})
                                 obj.Table(idx,:) = [];
                                 idx = [];
                                 break
-
-                            otherwise
-                                ME.identifier
                         end
                     end
                     pause(.100)
@@ -84,59 +77,47 @@ classdef scpiLib
                 end
             end
 
-            if isempty(idx)
-                idx = height(obj.Table)+1;
-                switch Type
-                    case {'TCPIP Socket', 'TCP/UDP IP Socket'}                    
-                        hReceiver = tcpclient(IP, Port);                            
-                    case 'TCPIP Visa'
-                        hReceiver = visadev("TCPIP::" + IP + "::INSTR");
-                        % TCPIP0::127.0.0.1::34835::SOCKET
-                end
-            end
+            try
+                if isempty(idx)
+                    idx = height(obj.Table)+1;
+                    switch Type
+                        case {'TCPIP Socket', 'TCP/UDP IP Socket'}                    
+                            hReceiver = tcpclient(IP, Port);
+                            IDN = obj.ConnectionStatus(hReceiver);
+                        case 'TCPIP Visa'
+                            error('Not supported connection type: TCPIP Visa')
+                            % hReceiver = visadev(sprintf('TCPIP::%s::INSTR', IP));
+                            % hReceiver = visadev(sprintf('TCPIP::%s::%d::SOCKET', IP, Port));
+                    end
+                end                
 
-                
-
-        try
                 if ~isempty(IDN)
                     if contains(IDN, Tag, "IgnoreCase", true) 
-                        if idx > height(instrHandles)
+                        if idx > height(obj.Table)
                             ClientIP = '';
                             if     ~isempty(Localhost_publicIP); ClientIP      = Localhost_publicIP;
                             elseif ~isempty(Localhost_localIP);  ClientIP      = Localhost_localIP;
-                            elseif ~strcmp(IP, '127.0.0.1');     [~, ClientIP] = connect_IPsFind(IP);
+                            elseif ~strcmp(IP, '127.0.0.1');     [~, ClientIP] = obj.IPsFind(IP);
                             end
         
-                            instrNew.UserData = struct('IDN',      IDN,      ...
-                                                       'ClientIP', ClientIP, ...
-                                                       'nTasks',   0,        ...
-                                                       'SyncMode', '');
-        
-                            Socket = IP;
-                            if ~isempty(Port)
-                                Socket = sprintf('%s:%.0f', Socket, Port);
-                            end
-                            instrHandles(idx,:) = {'Receiver', IDN, Socket, {instrNew}, 0};
+                            hReceiver.UserData = struct('IDN', IDN, 'ClientIP', ClientIP, 'nTasks', 0, 'SyncMode', '', 'instrSelected', instrSelected);
+                            obj.Table{idx,:}   = {Type, IDN, Socket, hReceiver, "Connected"};
         
                         elseif ~contains(instrHandles.IDN(idx), Tag, "IgnoreCase", true)
-                            error('O instrumento mapeado (%s) difere do identificado (%s).', instrHandles.IDN(idx), IDN)
-                        end
-                        output = struct('type', 'handles', 'instrHandles', instrHandles, 'idx', idx);
-        
+                            error('O instrumento mapeado (%s) difere do identificado (%s).', obj.Table.IDN(idx), IDN)
+                        end        
                     else
                         error('O instrumento identificado (%s) difere do configurado (%s).', IDN, Tag)
-                    end
-        
+                    end        
                 else
                     error('Não recebida resposta à requisição "*IDN?".')
-                end
-        
+                end        
             catch ME
-                idx = [];
-
-                if (idx > height(instrHandles)) & exist('instrNew', 'var')
-                    clear instrNew
+                msgError = ME.message;
+                if (idx > height(obj.Table)) & exist('hReceiver', 'var')
+                    clear hReceiver
                 end
+                idx = [];
             end
         end
 
@@ -155,6 +136,8 @@ classdef scpiLib
         % O MATLAB retorna os seguintes erros em operações de escrita e leitura de um objeto "tcpclient" desconectado:
         % 'MATLAB:networklib:tcpclient:connectTerminated'  (write)
         % 'transportclients:string:writeFailed'            (writeline|writeread)
+        % 'network:tcpclient:sendFailed'                   (write|writeline)
+        % 'transportclients:string:timeoutToken'           (writeread)
         % 'transportclients:string:invalidConnectionState' (read|readline)
         %
         % E esse objeto "TCPClient" possui os métodos "connect" e "disconnect", os quais tentam alterar ativamente o estado da conexão.
@@ -199,10 +182,13 @@ classdef scpiLib
 
     methods (Access = protected)
         %-----------------------------------------------------------------%
-        function [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(instrSelected)
+        function [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(obj, instrSelected)
             % IP
             if isfield(instrSelected.Parameters, 'IP');   IP = instrSelected.Parameters.IP;
             else;                                         IP = '';
+            end
+
+            if strcmpi(IP, 'localhost');                  IP = '127.0.0.1';
             end
         
             % Port
@@ -226,11 +212,72 @@ classdef scpiLib
 
 
         %-----------------------------------------------------------------%
-        function IDN = ConnectionStatusTest(hReceiver)
+        function IDN = ConnectionStatus(obj, hReceiver)
+            IDN = '';            
+
+            % A ideia de usar writeline/readline (com loop, criando artificialmente 
+            % um Timeout) é fazer duas operações de comunicações com o socket (notei 
+            % que em alguns sockets desconectados, a primeira operação de escrita é realizada
+            % normalmente, retornando erro apenas numa segunda operação). Isso evita, também,
+            % o Timeout padrão do writeread (10 segundos).
+
             flush(hReceiver)
-            IDN = writeread(hReceiver, '*IDN?');
+            % IDN = writeread(hReceiver, '*IDN?');
+            writeline(hReceiver, '*IDN?')
+
+            statusTic = tic;
+            t = toc(statusTic);
+            while t < class.Constants.idnTimeout
+                if hReceiver.NumBytesAvailable
+                    IDN = readline(hReceiver);
+                    if ~isempty(IDN)
+                        IDN = replace(deblank(IDN), {'"', ''''}, {'', ''});
+                        break
+                    end
+                end
+                t = toc(statusTic);
+            end
+            
             if isempty(IDN)
                 error('scpiLib:EmptyIDN', 'Empty identification')
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function [localIP, publicIP] = IPsFind(obj, instrIP)
+            [~, msg] = system('arp -a');            
+            msgCell  = splitlines(msg);
+            msgCell(cellfun(@(x) isempty(x), msgCell)) = [];
+            
+            idx_localIPs = find(cellfun(@(x) contains(x, ' --- '), msgCell));
+            idx_instrIPs = find(cellfun(@(x) contains(x, [' ' instrIP ' ']), msgCell));
+            
+            localIP = '';
+            regExp  = '(\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]\d{1,3})';
+            if ~isempty(idx_instrIPs)
+                idx_instrIPs = idx_instrIPs(1);
+                
+                temp = idx_localIPs - idx_instrIPs;
+                idx  = find(temp<0);
+                idx  = idx(end);
+                        
+                localIP  = char(regexp(msgCell{idx_localIPs(idx)}, regExp, 'match'));
+                publicIP = localIP;
+                
+            else
+                localIPs = {};
+                for ii = 1:numel(idx_localIPs)
+                    localIPs = [localIPs, regexp(msgCell{idx_localIPs(ii)}, regExp, 'match')];
+                end
+                
+                for jj = 1:numel(localIPs)
+                    if ~system(sprintf('ping -n 3 -w 1000 -S %s %s', localIPs{jj}, instrIP))
+                        localIP = localIPs{jj};
+                        break
+                    end
+                end                
+                publicIP = char(regexp(webread(class.Constants.checkIP), regExp, 'match'));
             end
         end
     end

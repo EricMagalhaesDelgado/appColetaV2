@@ -18,7 +18,12 @@ classdef (Abstract) Constants
         errorTrigger  = 10                                                  % Maximum error count before change the status of the task ("In progress" to "Error")
 
         Timeout       = 10                                                  % Maximum time in seconds to extract valid info from receiver
+        idnTimeout    = 1                                                   % Maximum time in seconds to extract IDN info from receiver
         fileVersion   = 'RFlookBin v.2/1'
+
+        checkIP       = 'http://checkip.dyndns.org'
+
+        tcpServerPort = 24002
     end
 
     methods (Static = true)
