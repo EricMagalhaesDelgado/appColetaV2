@@ -1,4 +1,9 @@
-function gps = task_gpsReader(hGPS, Timeout)
+function gps = gpsExternalReader(hGPS, Timeout)
+
+    arguments
+        hGPS
+        Timeout = class.Constants.gpsTimeout
+    end
     
     gps  = struct('Status',     0, ...
                   'Latitude',  -1, ...
@@ -16,10 +21,7 @@ function gps = task_gpsReader(hGPS, Timeout)
         
         [msg, warnID] = lastwarn;
         if strcmp(warnID, 'MATLAB:serial:fscanf:unsuccessfulRead')
-            errorStruct.message    = msg;
-            errorStruct.identifier = warnID;
-            
-            error(errorStruct)
+            error(warnID, msg)
         end
         
         if ~isempty(receivedData) && contains(receivedData, 'RMC')
@@ -93,10 +95,11 @@ function gps = task_gpsReader(hGPS, Timeout)
             
         end
         t = toc(gpsTic);
-    end
-    
+    end    
 end
-%%
+
+
+%-------------------------------------------------------------------------%
 function checksum = Fcn_gpsReader_CheckSum(nmeaData)
     
     nmeaData = char(extractBetween(nmeaData, '$', '*'));
@@ -109,6 +112,5 @@ function checksum = Fcn_gpsReader_CheckSum(nmeaData)
     checksum = dec2hex(checksum);
     if numel(checksum) == 1
         checksum = ['0' checksum];
-    end
-    
+    end    
 end

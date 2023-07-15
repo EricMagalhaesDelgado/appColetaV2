@@ -1,4 +1,4 @@
-function gps = task_gpsDecode(hReceiver)
+function gps = gpsBuiltInReader(hReceiver)
 
     gps  = struct('Status',     0, ...
                   'Latitude',  -1, ...
@@ -8,10 +8,11 @@ function gps = task_gpsDecode(hReceiver)
     Node = hReceiver.UserData.IDN;
     flush(hReceiver)
 
-% R&S EB500
-% Possíveis respostas à requisição ':SYSTem:GPS:DATA?':
-% - Uma string vazia '' (caso não haja conectividade); ou
-% - Uma string com o template 'GPS,1,1629933835,74,11,S,18,53,19.70,W,48,13,50.99,2021,8,25,23,23,55,0.00,0.00,338.50,940.00,1,-8.00'.
+    %---------------------------------------------------------------------%
+    % R&S EB500
+    %---------------------------------------------------------------------%
+    % Requisição: ':SYSTem:GPS:DATA?'
+    % Resposta  : string vazia '' (não há conectividade); ou string com o template 'GPS,1,1629933835,74,11,S,18,53,19.70,W,48,13,50.99,2021,8,25,23,23,55,0.00,0.00,338.50,940.00,1,-8.00'
     if contains(Node, 'EB500')
         gpsStr = deblank(writeread(hReceiver, ':SYSTem:GPS:DATA?'));
         
@@ -33,11 +34,12 @@ function gps = task_gpsDecode(hReceiver)
             end
         end
 
-% ANRITSU MS2720T
-% Possíveis respostas à requisição ':FETCh:GPS?':
-% - Uma string vazia '' (caso não haja conectividade);
-% - Uma string 'NO FIX' (caso não exista informação válida); ou
-% - Uma string com o template 'GOOD FIX,WED AUG 25 23:10:29 2021,-0.2267732173,-0.6713082194' (caso exista informação válida).
+
+    %---------------------------------------------------------------------%
+    % ANRITSU MS2720T
+    %---------------------------------------------------------------------%
+    % Requisição: ':FETCh:GPS?'
+    % Reposta   : Uma string vazia '' (não há conectividade); string 'NO FIX' (informação inválida); ou string com o template 'GOOD FIX,WED AUG 25 23:10:29 2021,-0.2267732173,-0.6713082194' (informação válida)
     elseif contains(Node, 'MS2720T')
         gpsStr = deblank(writeread(hReceiver, ':FETCh:GPS?'));
         
@@ -50,11 +52,12 @@ function gps = task_gpsDecode(hReceiver)
             gps.TimeStamp = datestr(datetime(gpsStr{2}, "InputFormat", "eee MMM dd HH:mm:ss yyyy"), 'dd/mm/yyyy HH:MM:SS');
         end  
 
-% KEYSIGHT N9344C
-% Possíveis respostas à requisição ':SYSTem:GPSinfo?':
-% - Uma string vazia '' (caso não haja conectividade);
-% - Uma string com o template '-38.463093,-12.993198,40,08252021,21:11:50' (caso exista informação válida); ou
-% - Uma string '0.000000,0.000000,0,02152009,00:12:19' (caso não exista informação válida).
+
+    %---------------------------------------------------------------------%
+    % KEYSIGHT N9344C
+    %---------------------------------------------------------------------%
+    % Requisição: ':SYSTem:GPSinfo?'
+    % Resposta  : string vazia '' (não há conectividade); string com o template '-38.463093,-12.993198,40,08252021,21:11:50' (informação válida); ou string '0.000000,0.000000,0,02152009,00:12:19' (informação inválida)
     elseif contains(Node, 'N9344C')
         gpsStr = deblank(writeread(hReceiver, ':SYSTem:GPSinfo?'));
         
@@ -67,11 +70,12 @@ function gps = task_gpsDecode(hReceiver)
             gps.TimeStamp = datestr(datetime(sprintf('%s %s', gpsStr{4}, gpsStr{5}), "InputFormat", "MMddyyyy HH:mm:ss"), 'dd/mm/yyyy HH:MM:SS');
         end
 
-% KEYSIGHT N9936B
-% Possíveis respostas à requisição ':SYSTem:GPS:DATA?':
-% - Uma string vazia '' (caso não haja conectividade);
-% - Uma string com o template '"12 51.63421 S,38 18.50857 W,26,2021-08-27 19:29:34Z"' (caso exista informação válida); ou
-% - Uma string '"0,0,0,2021-08-27 19:33:18Z"' (caso não exista informação válida).
+
+    %---------------------------------------------------------------------%
+    % KEYSIGHT N9936B
+    %---------------------------------------------------------------------%
+    % Requisição: ':SYSTem:GPS:DATA?'
+    % Resposta  : string vazia '' (não há conectividade); string com o template '"12 51.63421 S,38 18.50857 W,26,2021-08-27 19:29:34Z"' (informação válida); ou string '"0,0,0,2021-08-27 19:33:18Z"' (informação inválida)
     elseif contains(Node, 'N9936B')
         gpsStr = extractBetween(deblank(writeread(hReceiver, ':SYSTem:GPS:DATA?')), '"', '"');
         
@@ -93,10 +97,12 @@ function gps = task_gpsDecode(hReceiver)
             gps.TimeStamp = datestr(datetime(gpsStr{4}(1:end-1), "InputFormat", "yyyy-MM-dd HH:mm:ss"), 'dd/mm/yyyy HH:MM:SS');
         end
 
-% TEKTRONIX SA2500
-% Possíveis respostas à requisição ':SYSTem:GPS:POSition?':
-% - Uma string vazia ''NAN,NAN" (caso não haja conectividade); ou
-% - Uma string com o template '45.4992483333333,-122.82315' (caso exista informação válida).
+
+    %---------------------------------------------------------------------%
+    % TEKTRONIX SA2500
+    %---------------------------------------------------------------------%
+    % Requisição: ':SYSTem:GPS:POSition?'
+    % Resposta  : string vazia ''NAN,NAN" (não há conectividade); ou string com o template '45.4992483333333,-122.82315' (informação válida)
     elseif contains(Node, 'SA2500')
         gpsStr = regexp(deblank(writeread(hReceiver, ':SYSTem:GPS:STATus?;:SYSTem:GPS:POSition?')), '(?<status>\w+);(?<lat>[0-9.-]+),(?<long>[0-9.-]+)', 'names');
         
@@ -106,5 +112,4 @@ function gps = task_gpsDecode(hReceiver)
             gps.Longitude = str2double(gpsStr.long);
         end
     end
-
 end

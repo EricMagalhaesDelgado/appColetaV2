@@ -1,31 +1,23 @@
-classdef scpiLib
+classdef ReceiverLib
 
     % ?? EVOLUÇÃO ??
-    % Inserir conexão VISA?! Caso sim, mapear objeto transporte relacionado
-    % struct(struct(hReceiver).Client).Transport.connect
+    % Inserir conexão VISA (TCPIP, SOCKET, USB etc)?! Caso sim, mapear objeto 
+    % transporte relacionado struct(struct(hReceiver).Client).Transport.connect
 
     properties
         Config
         List
-        Table = table('Size', [0, 5],                                                    ...
-                      'VariableTypes', {'string', 'string', 'string', 'cell', 'string'}, ...
-                      'VariableNames', {'Type', 'IDN', 'Socket', 'Handle', 'Status'})
+        Table = table('Size', [0, 6],                                                              ...
+                      'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
+                      'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
     end
 
 
     methods
         %-----------------------------------------------------------------%
-        function obj = scpiLib(RootFolder)
-            % Config
-            obj.Config = struct2table(jsondecode(fileread(fullfile(RootFolder, 'Settings', 'scpiLib_Config.json'))));
-
-            % List
-            tempList = jsondecode(fileread(fullfile(RootFolder, 'Settings', 'scpiLib_List.json')));
-            for ii = 1:numel(tempList)
-                tempList(ii).Parameters = jsonencode(tempList(ii).Parameters);
-            end
-
-            obj.List = struct2table(tempList, 'AsArray', true);
+        function obj = ReceiverLib(RootFolder)
+            obj.Config = struct2table(jsondecode(fileread(fullfile(RootFolder, 'Settings', 'ReceiverLib.json'))));
+            obj.List   = obj.FileRead(fullfile(RootFolder, 'Settings', 'instrumentList.json'), RootFolder);
         end
 
 
@@ -57,9 +49,9 @@ classdef scpiLib
                         break
 
                     catch ME
-                        msgError = ME.message;
                         switch ME.identifier
                             case 'network:tcpclient:connectFailed'
+                                msgError = ME.message;
                                 obj.Table.Status(idx) = 'Disconnected';
                                 return
                             case {'MATLAB:class:InvalidHandle', 'testmeaslib:CustomDisplay:PropertyError'}
@@ -84,8 +76,8 @@ classdef scpiLib
                         case {'TCPIP Socket', 'TCP/UDP IP Socket'}                    
                             hReceiver = tcpclient(IP, Port);
                             IDN = obj.ConnectionStatus(hReceiver);
-                        case 'TCPIP Visa'
-                            error('Not supported connection type: TCPIP Visa')
+                        otherwise
+                            error('appColetaV2 supports only TCPIP Socket connection type.')
                             % hReceiver = visadev(sprintf('TCPIP::%s::INSTR', IP));
                             % hReceiver = visadev(sprintf('TCPIP::%s::%d::SOCKET', IP, Port));
                     end
@@ -101,9 +93,9 @@ classdef scpiLib
                             end
         
                             hReceiver.UserData = struct('IDN', IDN, 'ClientIP', ClientIP, 'nTasks', 0, 'SyncMode', '', 'instrSelected', instrSelected);
-                            obj.Table{idx,:}   = {Type, IDN, Socket, hReceiver, "Connected"};
+                            obj.Table{idx,:}   = {"Receiver", Type, IDN, Socket, hReceiver, "Connected"};
         
-                        elseif ~contains(instrHandles.IDN(idx), Tag, "IgnoreCase", true)
+                        elseif ~contains(obj.Table.IDN(idx), Tag, "IgnoreCase", true)
                             error('O instrumento mapeado (%s) difere do identificado (%s).', obj.Table.IDN(idx), IDN)
                         end        
                     else
@@ -161,26 +153,49 @@ classdef scpiLib
 
 
         end
-
-
-        %-----------------------------------------------------------------%
-        function obj = StatusUpdate(obj)
-            for ii = 1:height(Handle)
-                hReceiver = obj.Table.Handle{ii};
-
-                if hReceiver.Status
-                    try
-                        obj.Table.Handle{ii}.NumBytesAvailable;
-                    catch ME
-                        ME.identifier
-                    end
-                end
-            end
-        end
     end
 
 
     methods (Access = protected)
+        %-----------------------------------------------------------------%
+        function [List, msgError] = FileRead(obj, FilePath, RootFolder)
+            
+            try
+                tempList = jsondecode(fileread(FilePath));
+                for ii = 1:numel(tempList)
+                    tempList(ii).Parameters = jsonencode(tempList(ii).Parameters);
+                end
+    
+                List = struct2table(tempList, 'AsArray', true);
+                List(~strcmp(List.Family, 'Receiver'),:) = [];
+
+                % Essa validação é importante para o caso de ser aberto um
+                % arquivo externo com lista de instrumentos (ao invés do arquivo 
+                % "instrumentList.json" constante na subpasta "Settings".
+
+                if strcmp(FilePath, fullfile(RootFolder, 'Settings', 'instrumentList.json'))
+                    if height(List)
+                        if ~any(List.Enable)
+                            List.Enable(1) = 1;
+                        end
+                    else
+                        List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+                    end
+                end
+                msgError = '';
+
+            catch ME        
+                if strcmp(FilePath, fullfile(RootFolder, 'Settings', 'instrumentList.json'))
+                    List = table('Size', [0, 7],                                                              ...
+                                 'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
+                                 'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'});
+                    List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+                end
+                msgError = ME.message;
+            end
+        end
+
+
         %-----------------------------------------------------------------%
         function [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(obj, instrSelected)
             % IP
@@ -239,7 +254,7 @@ classdef scpiLib
             end
             
             if isempty(IDN)
-                error('scpiLib:EmptyIDN', 'Empty identification')
+                error('ReceiverLib:EmptyIDN', 'Empty identification')
             end
         end
 

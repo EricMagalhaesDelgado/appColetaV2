@@ -1,0 +1,24 @@
+[
+  {
+    "Family": "GPS",
+    "Name": "GPS USB/Serial",
+    "Tag": "GPS",
+    "Logo": "Instr_Global.png",
+    "Image": "Instr_gpsGarmin62sc.png",
+    "connectType": [
+      "Serial"
+    ],
+    "connectPort": "COM1"
+  },
+  {
+    "Family": "GPS",
+    "Name": "GPS TCPIP",
+    "Tag": "GPS",
+    "Logo": "Instr_Global.png",
+    "Image": "Instr_gpsGarmin62sc.png",
+    "connectType": [
+      "TCPIP Socket"
+    ],
+    "connectPort": "24002"
+  }
+]

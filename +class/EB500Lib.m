@@ -11,7 +11,9 @@ classdef EB500Lib
         nDatagrams
     end
 
+
     methods
+        %-----------------------------------------------------------------%
         function obj = EB500Lib(RootFolder)
             % Selectivity x Resolution Mapping
             SelectivityMap = table('Size', [12, 3],                                 ...
@@ -43,7 +45,9 @@ classdef EB500Lib
         end
     end
 
+
     methods(Static = true)
+        %-----------------------------------------------------------------%
         function specObj = DatagramRead_PreTask(EB500Obj, specObj, hReceiver, hStreaming)
             Timeout = class.Constants.Timeout;
             udpPort = hStreaming.LocalPort;
@@ -117,6 +121,7 @@ classdef EB500Lib
         end
 
 
+        %-----------------------------------------------------------------%
         function [newArray, Flag_success] = DatagramRead_Task(taskInfo, hReceiver, hStreaming)            
             Timeout = class.Constants.Timeout;
             udpPort = hStreaming.LocalPort;
@@ -206,6 +211,7 @@ classdef EB500Lib
         end
 
         
+        %-----------------------------------------------------------------%
         function DatagramRead_OnOff(Type, udpPort, hReceiver, hStreaming)
             switch Type
                 case 'Open'

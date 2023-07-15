@@ -1,4 +1,30 @@
 [
+    {
+    "Family": "GPS",
+    "Name": "GPS Garmin GPSmap 62sc",
+    "Type": "Serial",
+    "Parameters": {
+      "Port": "COM1",
+      "BaudRate": 9600,
+      "Timeout": 5
+    },
+    "Description": "GPS Garmin",
+    "Enable": 1,
+    "LOG": ""
+  },
+  {
+    "Family": "GPS",
+    "Name": "GPS Smartphone",
+    "Type": "TCPIP Socket",
+    "Parameters": {
+      "IP": "192.168.10.30",
+      "Port": "11123",
+      "Timeout": 5
+    },
+    "Description": "GPS2IP (iOS)",
+    "Enable": 1,
+    "LOG": ""
+  },
   {
     "Family": "Receiver",
     "Name": "Tektronix SA2500",
@@ -27,7 +53,7 @@
       "Timeout": 5
     },
     "Description": "FSL-6 (10k - 6 GHz)",
-    "Enable": 0,
+    "Enable": 1,
     "LOG": [
       "{",
       "  \"time\": \"01/12/2022 10:36:27\",",
@@ -63,7 +89,7 @@
       "Timeout": 5
     },
     "Description": "Fake Tektronix SA2500",
-    "Enable": 0,
+    "Enable": 1,
     "LOG": ""
   },
     {

@@ -11,13 +11,13 @@ classdef taskList
     % - 'Time'....: demanda apenas informações constantes nos campos 'BeginTime' e 'EndTime'; 
     % - 'Samples'.: demanda apenas informações constantes nos campos 'ObservationSamples' de cada uma das faixas - vide campo 'Band' do arquivo "taskList.json".
     %
-    % Ao ler o arquivo taskList.json, o campo 'Duration' é editado para computar a duração da tarefa em segundos (valor numérico), o que somente é aplicável quando tipo de observação for 'Duration'
+    % Ao ler o arquivo taskList.json, o campo 'Duration' é editado para computar a duração da tarefa em segundos (valor numérico), o que somente é aplicável quando o tipo de observação for 'Duration'
 
     % Campo "GPS" do arquivo "taskList.json" possui a seguinte estrutura:
     % (a) 'Type'        - 'auto' | 'manual'
     % (b) 'Latitude'    - valor numérico, aplicável apenas quando 'Type' igual a 'manual'
     % (c) 'Longitude'   - valor numérico, aplicável apenas quando 'Type' igual a 'manual'
-    % (d) 'RevisitTime' - valor numérico, representante o tempo de revisita em segundos, aplicável apenas quando 'Type' igual a 'auto'
+    % (d) 'RevisitTime' - valor numérico, representando o tempo de revisita em segundos e aplicável apenas quando 'Type' igual a 'auto'
     %
     % Ao incluir uma tarefa, o campo 'Type', caso seja igual a 'auto', será alterado por 'Built-in' (GPS embarcado no receptor) ou 'External'.
 
@@ -77,7 +77,9 @@ classdef taskList
                     for jj = NN:-1:1
                         if ~List(ii).Band(jj).Enable
                             List(ii).Band(jj) = [];
+                            continue
                         end
+                        List(ii).Band(jj).ID = jj;
                     end
                 end
 

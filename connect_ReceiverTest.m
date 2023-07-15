@@ -35,7 +35,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
         taskSCPI.scpiSet_Reset = instrInfo.scpiReset{1};
         writeline(hReceiver, instrInfo.scpiReset{1});
 
-        pause(instrInfo.ResetPause{1})
+        pause(instrInfo.ResetPause)
     end
     
     writeline(hReceiver, instrInfo.StartUp{1});
@@ -178,7 +178,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
         
         % Tenta programar valores...
         writeline(hReceiver, scpiSet_Config);
-        pause(instrInfo.BandPause{1})
+        pause(instrInfo.BandPause)
         
         if ~AttenuationMode & ~isempty(instrInfo.scpiAttenuation{1})
             scpiSet_Att = replace(char(instrInfo.scpiAttenuation{1}), '%AttenuationValue%', num2str(AttenuationValue));
