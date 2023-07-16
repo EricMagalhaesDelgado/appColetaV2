@@ -1,4 +1,4 @@
-function [cityName, distValue_km, locInfo] = geo_FindCity(gps, method)
+function [cityName, distValue_km, locInfo] = geoFindCity(gps, method)
 
     arguments
         gps    struct

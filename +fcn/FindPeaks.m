@@ -1,9 +1,9 @@
-function peaksTable = task_FindPeaks(specObj, idx, smoothedArray, validationArray, Attributes)
+function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray, Attributes)
 
     peaksTable = [];
 
-    FreqStart  = specObj.taskObj.General.Task.Band(idx).FreqStart;
-    FreqStop   = specObj.taskObj.General.Task.Band(idx).FreqStop;
+    FreqStart  = specObj.Task.Script.Band(idx).FreqStart;
+    FreqStop   = specObj.Task.Script.Band(idx).FreqStop;
     DataPoints = numel(smoothedArray);
 
     % Frequency = aCoef * Index + bCoef

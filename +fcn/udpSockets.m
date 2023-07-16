@@ -1,4 +1,4 @@
-function [udpPortArray, idx] = connect_udpSockets(udpPortArray, Port)
+function [udpPortArray, idx] = udpSockets(udpPortArray, Port)
 
     idx = [];   
     for ii = 1:numel(udpPortArray)
