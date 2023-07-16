@@ -1,99 +1,48 @@
-function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
+function [obj, warnMsg] = receiverConfig_SpecificBand(obj, idx, EMSatObj)
+    
+    newTask   = obj(idx).Task;
+    instrInfo = obj(idx).Task.Receiver.Config;
+    hReceiver = obj(idx).hReceiver;
+     
+    rawBand   = obj(idx).Task.Script.Band;
+    taskBand  = class.bandClass.empty;
 
-    hReceiver  = taskObj.Receiver.Handle;
-    instrInfo  = taskObj.General.SCPI;
-    rawBand    = taskObj.General.Task.Band;
-
-    taskSCPI   = struct('scpiSet_Reset',   '',                                 ...
-                        'scpiSet_Startup', instrInfo.StartUp{1},               ...
-                        'scpiSet_Sync',    '',                                 ...
-                        'scpiGet_Att',     instrInfo.scpiQuery_Attenuation{1}, ...
-                        'scpiGet_Data',    instrInfo.scpiTraceData{1});    
-    taskBand   = struct('scpiSet_Config',  '', ...
-                        'scpiSet_Att',     '', ...
-                        'scpiSet_Answer',  '', ...
-                        'FreqStart',       [], ...
-                        'FreqStop',        [], ...
-                        'Datagrams',       [], ...
-                        'DataPoints',      [], ...
-                        'SyncModeRef',     [], ...
-                        'FlipArray',       [], ...
-                        'nSweeps',          0, ...
-                        'LastTimeStamp',   [], ...
-                        'RevisitTime',     [], ...
-                        'Waterfall',       [], ...
-                        'Mask',            [], ...
-                        'File',            [], ...
-                        'Antenna',         '', ...
-                        'uuid',            '', ...
-                        'Status',          true);
     warnMsg    = {};
 
-
-    % RECEIVER STARTUP
-    if ~hReceiver.UserData.nTasks && strcmp(taskObj.Receiver.Reset, 'On')
-        taskSCPI.scpiSet_Reset = instrInfo.scpiReset{1};
-        writeline(hReceiver, instrInfo.scpiReset{1});
-
-        pause(instrInfo.ResetPause)
-    end
-    
-    writeline(hReceiver, instrInfo.StartUp{1});
-
-    if ~hReceiver.UserData.nTasks
-        switch taskObj.Receiver.Sync
-            case 'Single Sweep'; scpiSet_Sync = 'INITiate:CONTinuous OFF';
-            otherwise;           scpiSet_Sync = 'INITiate:CONTinuous ON';       % 'Continuous Sweep' | 'Streaming'
-        end
-        taskSCPI.scpiSet_Sync = scpiSet_Sync;
-        writeline(hReceiver, scpiSet_Sync);
-    end
-
-    % CONFIG TEST FOR EACH BAND
+    % Peculiaridades do receptor sob análise:
     TraceMode_Values   = strsplit(instrInfo.Trace_Values{1}, ',');
     AverageMode_Values = instrInfo.AverageMode_Values{1};
     Detector_Values    = strsplit(instrInfo.Detector_Values{1},  ',');
     LevelUnit_Values   = strsplit(instrInfo.LevelUnit_Values{1}, ',');
 
-    rawFields = {'TraceMode',        ...
-                 'AverageMode',      ...
-                 'AveragCount',      ...
-                 'Detector',         ...
-                 'LevelUnit',        ...
-                 'FreqStart',        ...
-                 'FreqStop',         ...
-                 'DataPoints',       ...
-                 'StepWidth',        ...
-                 'ResolutionMode',   ...
-                 'ResolutionValue',  ...
-                 'Selectivity',      ...
-                 'SensitivityMode',  ...
-                 'Preamp',           ...
-                 'AttenuationMode',  ...
-                 'AttenuationValue', ...
-                 'SampleTimeMode',   ...
-                 'SampleTimeValue',  ...
-                 'minFreqRange',     ...
-                 'maxFreqRange',     ...
-                 'VideoBandwidth'};
+    rawFields = {'TraceMode',        'AverageMode',     'AveragCount',     ...
+                 'Detector',         'LevelUnit',       'FreqStart',       ...
+                 'FreqStop',         'DataPoints',      'StepWidth',       ...
+                 'ResolutionMode',   'ResolutionValue', 'Selectivity',     ...
+                 'SensitivityMode',  'Preamp',          'AttenuationMode', ...
+                 'AttenuationValue', 'SampleTimeMode',  'SampleTimeValue', ...
+                 'minFreqRange',     'maxFreqRange',    'VideoBandwidth'};
     rawFields = rawFields(instrInfo.scpiQuery_IDs{1});
 
-    for ii = 1:numel(rawBand)        
+    % Teste de configuração para cada uma das bandas - em resumo, configura-se 
+    % os parâmetros (FreqStart, FreqStop, Resolution etc) e, posteriormente, 
+    % confirma-se que os parâmetros foram devidamente configurados.
+    for ii = 1:numel(rawBand)
         ResolutionMode  = 0;
         SampleTimeMode  = 1;
         SampleTimeValue = 0;
 
         % TraceMode
         switch rawBand(ii).TraceMode
-            case 'ClearWrite'; idxTraceMode = 1;
-            case 'Average';    idxTraceMode = 2;
-            case 'MaxHold';    idxTraceMode = 3;
-            case 'MinHold';    idxTraceMode = 4;
+            case 'ClearWrite'; TraceModeID = 1;
+            case 'Average';    TraceModeID = 2;
+            case 'MaxHold';    TraceModeID = 3;
+            case 'MinHold';    TraceModeID = 4;
         end
-        TraceMode = TraceMode_Values{idxTraceMode};
+        TraceMode = TraceMode_Values{TraceModeID};
         
         AverageMode = [];
-        if ~isempty(AverageMode_Values); AverageMode = AverageMode_Values(idxTraceMode);
+        if ~isempty(AverageMode_Values); AverageMode = AverageMode_Values(TraceModeID);
         end
 
         % Average count
@@ -114,7 +63,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
         end                
         
         % FreqStart/FreqStop
-        if strcmp(taskObj.Antenna.Switch, 'EMSat')
+        if strcmp(newTask.Antenna.Switch, 'EMSat')
             antIndex  = find(strcmp(EMSatObj.LNB.Name, rawBand(ii).instrAntenna), 1);
             lnbOffset = double(EMSatObj.LNB.Offset(antIndex));
             FlipArray = EMSatObj.LNB.Inverted(antIndex);
@@ -180,7 +129,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
         writeline(hReceiver, scpiSet_Config);
         pause(instrInfo.BandPause)
         
-        if ~AttenuationMode & ~isempty(instrInfo.scpiAttenuation{1})
+        if ~AttenuationMode && ~isempty(instrInfo.scpiAttenuation{1})
             scpiSet_Att = replace(char(instrInfo.scpiAttenuation{1}), '%AttenuationValue%', num2str(AttenuationValue));
             writeline(hReceiver, scpiSet_Att);
         end
@@ -188,7 +137,7 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
         % Confirma que foram programados corretamente os valores no sensor...
         tic
         t1 = toc;
-        while t1 < 5
+        while t1 < class.Constants.Timeout
             flush(hReceiver)
             rawAnswer = deblank(writeread(hReceiver, instrInfo.scpiQuery{1}));
             
@@ -232,18 +181,14 @@ function [taskSCPI, taskBand, warnMsg] = connect_ReceiverTest(taskObj, EMSatObj)
             end
         end
 
-        taskBand(ii).scpiSet_Config = scpiSet_Config;
-        taskBand(ii).scpiSet_Att    = scpiSet_Att;
-        taskBand(ii).scpiSet_Answer = scpiSet_Answer;
-        taskBand(ii).DataPoints     = DataPoints;
-        taskBand(ii).SyncModeRef    = -1;
-        taskBand(ii).FlipArray      = FlipArray;
-        taskBand(ii).nSweeps        = 0;
-        taskBand(ii).Antenna        = AntennaExtract(taskObj, ii);
-        taskBand(ii).uuid           = char(matlab.lang.internal.uuid());
-        taskBand(ii).Status         = true;
+        taskBand(ii).SpecificSCPI = struct('configSET', scpiSet_Config, 'attSET', scpiSet_Att);
+        taskBand(ii).rawMetaData  = scpiSet_Answer;
+        taskBand(ii).DataPoints   = DataPoints;
+        taskBand(ii).FlipArray    = FlipArray;
+        taskBand(ii).Antenna      = AntennaExtract(newTask, ii);
     end
 
+    obj(idx).Band = taskBand;
 end
 
 
@@ -262,9 +207,9 @@ end
 
 
 %-------------------------------------------------------------------------%
-function AntennaInfo = AntennaExtract(taskObj, idx1)
-    AntennaName     = taskObj.General.Task.Band(idx1).instrAntenna;
-    AntennaMetaData = rmfield(taskObj.Antenna.MetaData, 'Installation');
+function AntennaInfo = AntennaExtract(newTask, idx1)
+    AntennaName     = newTask.Script.Band(idx1).instrAntenna;
+    AntennaMetaData = rmfield(newTask.Antenna.MetaData, 'Installation');
     AntennaFields   = fieldnames(AntennaMetaData);
 
     if ~isempty(AntennaName)

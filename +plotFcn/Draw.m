@@ -9,9 +9,9 @@ function Draw(app, ii, jj)
         plotFcn.Layout(app)
 
         % xArray
-        FreqStart = app.specObj(ii).taskObj.General.Task.Band(jj).FreqStart / 1e+6;
-        FreqStop  = app.specObj(ii).taskObj.General.Task.Band(jj).FreqStop  / 1e+6;
-        LevelUnit = app.specObj(ii).taskObj.General.Task.Band(jj).instrLevelUnit;
+        FreqStart = app.specObj(ii).Task.Script.Band(jj).FreqStart / 1e+6;
+        FreqStop  = app.specObj(ii).Task.Script.Band(jj).FreqStop  / 1e+6;
+        LevelUnit = app.specObj(ii).Task.Script.Band(jj).instrLevelUnit;
         xArray    = linspace(FreqStart, FreqStop, app.specObj(ii).Band(jj).DataPoints);
         
         % Mask line
@@ -25,7 +25,7 @@ function Draw(app, ii, jj)
         end
 
         % General settings
-        [upYLim, strUnit] = class.Constants.yAxisUpLimit(app.specObj(ii).taskObj.General.Task.Band(jj).instrLevelUnit);
+        [upYLim, strUnit] = class.Constants.yAxisUpLimit(app.specObj(ii).Task.Script.Band(jj).instrLevelUnit);
         downYLim = min(newArray) - mod(min(newArray), 10);
         if diff([downYLim, upYLim]) < class.Constants.yMinLimRange
             upYLim = downYLim + class.Constants.yMinLimRange;

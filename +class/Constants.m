@@ -15,7 +15,7 @@ classdef (Abstract) Constants
         switchPause    = 0.050                                              % Pause in seconds to ask antenna's name after its switch attempt (must be greater than 40ms)
         antACUPause    = 1                                                  % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
 
-        errorTrigger   = 10                                                 % Maximum error count before change the status of the task ("In progress" to "Error")
+        errorTrigger   = 60                                                 % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
 
         Timeout        = 10                                                 % Maximum time in seconds to extract valid info from receiver
         idnTimeout     = 1                                                  % Maximum time in seconds to extract IDN info from receiver

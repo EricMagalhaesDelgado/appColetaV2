@@ -139,13 +139,13 @@ classdef RFlookBinLib
         function AlocatedSamples = v1_WriteHeader(fileID, specObj, idx)
             global appGeneral
 
-            Task            = specObj.taskObj.General.Task;
-            MetaData        = Task.Band(idx);
-            BitsPerSample   = Task.BitsPerSample;
+            Script          = specObj.Task.Script;
+            MetaData        = Script.Band(idx);
+            BitsPerSample   = Script.BitsPerSample;
             DataPoints      = MetaData.instrDataPoints;
 
-            if strcmp(specObj.taskObj.General.Task.Observation.Type, 'Samples')
-                AlocatedSamples = min([specObj.taskObj.General.Task.Band(idx).instrObservationSamples, ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints))]);
+            if strcmp(specObj.Task.Script.Observation.Type, 'Samples')
+                AlocatedSamples = min([specObj.Task.Script.Band(idx).instrObservationSamples, ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints))]);
             else
                 AlocatedSamples = ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints));
             end
@@ -182,15 +182,15 @@ classdef RFlookBinLib
             fwrite(fileID, zeros(1, 2));                                    % Alignment
         
             % GPS
-            switch Task.GPS.Type
+            switch Script.GPS.Type
                 case 'Manual'
-                    gpsInfo = struct('Type',       0,                ...
-                                     'Status',    -1,                ...
-                                     'Latitude',  Task.GPS.Latitude, ...
-                                     'Longitude', Task.GPS.Longitude);
+                    gpsInfo = struct('Type',       0,                  ...
+                                     'Status',    -1,                  ...
+                                     'Latitude',  Script.GPS.Latitude, ...
+                                     'Longitude', Script.GPS.Longitude);
         
                 otherwise
-                    switch Task.GPS.Type
+                    switch Script.GPS.Type
                         case 'Built-in'; gpsType = 1;
                         case 'External'; gpsType = 2;
                     end
@@ -212,10 +212,10 @@ classdef RFlookBinLib
 
         %-----------------------------------------------------------------%
         function [Offset1, Offset2] = v1_WriteBody(fileID, specObj, idx, AlocatedSamples)        
-            Task            = specObj.taskObj.General.Task;
-            MetaData        = Task.Band(idx);
-            BitsPerSample   = Task.BitsPerSample;
-            DataPoints      = Task.Band(idx).instrDataPoints;
+            Script          = specObj.Task.Script;
+            MetaData        = Script.Band(idx);
+            BitsPerSample   = Script.BitsPerSample;
+            DataPoints      = Script.Band(idx).instrDataPoints;
             Node            = specObj.hReceiver.UserData.IDN;
             
             Offset1 = ftell(fileID) + 12;
@@ -227,7 +227,7 @@ classdef RFlookBinLib
             fwrite(fileID, Offset3, 'uint32');
         
             fwrite(fileID, zeros(1, (20 + BitsPerSample * DataPoints) * AlocatedSamples, 'uint8'));
-            fwrite(fileID, jsonencode(struct('TaskName',          replace(Task.Name, {'"', ',', newline}, ''),            ...
+            fwrite(fileID, jsonencode(struct('TaskName',          replace(Script.Name, {'"', ',', newline}, ''),            ...
                                              'ID',                MetaData.ID,                                            ...
                                              'Description',       replace(MetaData.Description, {'"', ',', newline}, ''), ...
                                              'Node',              Node,                                                   ...
@@ -239,10 +239,10 @@ classdef RFlookBinLib
         
         %-----------------------------------------------------------------%
         function fileMemMap = v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2)        
-            Task            = specObj.taskObj.General.Task;
-            DataPoints      = Task.Band(idx).instrDataPoints;
+            Script     = specObj.Task.Script;
+            DataPoints = Script.Band(idx).instrDataPoints;
         
-            switch Task.BitsPerSample
+            switch Script.BitsPerSample
                 case  8; dataFormat = 'uint8';
                 case 16; dataFormat = 'int16';
                 case 32; dataFormat = 'single';
@@ -276,7 +276,7 @@ classdef RFlookBinLib
         function v1_MemoryEdit(specObj, idx1, rawArray, attFactor, gpsData)
             TimeStamp = datetime('now');
 
-            [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray, specObj.taskObj.General.Task.BitsPerSample);
+            [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray, specObj.Task.Script.BitsPerSample);
 
             idx2 = specObj.Band(idx1).File.CurrentFile.MemMap{1}.Data.Value + 1;
 
@@ -345,13 +345,13 @@ classdef RFlookBinLib
         % ## RFlookBin v.2/1 ##      
         %-----------------------------------------------------------------%
         function v2_WriteHeader(fileID, specObj, idx)
-            Task          = specObj.taskObj.General.Task;
-            MetaData      = Task.Band(idx);
-            BitsPerSample = Task.BitsPerSample;
+            Script        = specObj.Task.Script;
+            MetaData      = Script.Band(idx);
+            BitsPerSample = Script.BitsPerSample;
             Node          = specObj.hReceiver.UserData.IDN;
 
             AttMode_ID    = class.RFlookBinLib.str2id('Attenuation', MetaData.instrAttMode);
-            gpsMode_ID    = class.RFlookBinLib.str2id('GPS',         Task.GPS.Type);
+            gpsMode_ID    = class.RFlookBinLib.str2id('GPS',         Script.GPS.Type);
         
             fwrite(fileID, 'RFlookBin v.2/1', 'char*1');
             fwrite(fileID, BitsPerSample);
@@ -360,8 +360,8 @@ classdef RFlookBinLib
         
             MetaStruct = struct('Receiver',         Node,                        ...
                                 'AntennaInfo',      specObj.Band(idx).Antenna,   ...
-                                'gpsType',          Task.GPS.Type,               ...
-                                'Task',             Task.Name,                   ...
+                                'gpsType',          Script.GPS.Type,             ...
+                                'Task',             Script.Name,                 ...
                                 'ID',               MetaData.ID,                 ...
                                 'Description',      MetaData.Description,        ...
                                 'FreqStart',        MetaData.FreqStart,          ...
@@ -382,10 +382,10 @@ classdef RFlookBinLib
             end
         
             if gpsMode_ID
-                MetaStruct.gpsRevisitTime = Task.GPS.RevisitTime;
+                MetaStruct.gpsRevisitTime = Script.GPS.RevisitTime;
             else
-                MetaStruct.Latitude  = Task.GPS.Latitude;
-                MetaStruct.Longitude = Task.GPS.Longitude;
+                MetaStruct.Latitude  = Script.GPS.Latitude;
+                MetaStruct.Longitude = Script.GPS.Longitude;
             end
 
             if ~isempty(specObj.Band(idx).Mask)
@@ -401,9 +401,9 @@ classdef RFlookBinLib
 
         %-----------------------------------------------------------------%
         function v2_WriteBody(specObj, idx, rawArray, attFactor, gpsData)
-            Task          = specObj.taskObj.General.Task;
-            MetaData      = Task.Band(idx);
-            BitsPerSample = Task.BitsPerSample;
+            Script        = specObj.Task.Script;
+            MetaData      = Script.Band(idx);
+            BitsPerSample = Script.BitsPerSample;
 
             fileID        = specObj.Band(idx).File.CurrentFile.Handle;
             TimeStamp     = datetime('now');
@@ -412,7 +412,7 @@ classdef RFlookBinLib
             fwrite(fileID, [year(TimeStamp)-2000, month(TimeStamp), day(TimeStamp), hour(TimeStamp), minute(TimeStamp), fix(second(TimeStamp))]);
             fwrite(fileID, (second(TimeStamp) - fix(second(TimeStamp))).*1000, 'uint16');
 
-            if ismember(Task.GPS.Type, {'Built-in', 'External'})
+            if ismember(Script.GPS.Type, {'Built-in', 'External'})
                 fwrite(fileID, gpsData.Status);
                 fwrite(fileID, [gpsData.Latitude, gpsData.Longitude], 'single');
             end
