@@ -1,7 +1,7 @@
 classdef specClass
 
     % Author.: Eric Magalhães Delgado
-    % Date...: July 15, 2023
+    % Date...: July 16, 2023
     % Version: 1.00
 
     properties
@@ -20,7 +20,7 @@ classdef specClass
         GeneralSCPI = struct('resetSET', {}, 'startupSET', {}, 'syncSET', {}, 'attGET', {}, 'dataGET', {})
         Band        = class.bandClass.empty                                 % See "fcn.receiverConfig_SpecificBand.m"
 
-        Error       = struct('CreatedTime', NaT, 'LastTime', NaT, 'Count', 0)
+        Error       = table(["Receiver";"GPS"], [NaT;NaT], [NaT;NaT], [0;0], 'VariableNames', {'Family', 'CreatedTime', 'LastTime', 'Count'})
         Status      = ''                                                    % 'Na fila' | 'Em andamento' | 'Concluída' | 'Cancelada' | 'Erro'
         LOG         = struct('type', {}, 'time', {}, 'msg',  {})
     end
@@ -45,8 +45,8 @@ classdef specClass
             obj(idx).hStreaming = newTask.Streaming.Handle;
             obj(idx).hGPS       = newTask.GPS.Handle;
 
-            obj(idx).Observation.BeginTime = datetime(newTask.Script.Observation.BeginTime, 'InputFormat', 'dd/MM/yyyy HH:mm:ss', 'Format', 'dd/MM/yyyy HH:mm:ss');
-            obj(idx).Observation.EndTime   = datetime(newTask.Script.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss', 'Format', 'dd/MM/yyyy HH:mm:ss');
+            obj(idx).Observation.BeginTime = datetime(newTask.Script.Observation.BeginTime, 'InputFormat', 'dd/MM/yyyy HH:mm:ss');
+            obj(idx).Observation.EndTime   = datetime(newTask.Script.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss');
 
             obj = obj.startup_lastGPS(idx, newTask.Script.GPS);
             obj = obj.startup_ReceiverTest(idx, EMSatObj);

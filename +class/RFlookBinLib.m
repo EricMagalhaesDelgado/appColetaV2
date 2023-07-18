@@ -115,7 +115,7 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        function EditFile(specObj, idx, rawArray, attFactor)
+        function EditFile(specObj, idx, rawArray, attFactor, TimeStamp)
             if isempty(specObj.Band(idx).File.CurrentFile)
                 return
             end
@@ -123,10 +123,10 @@ classdef RFlookBinLib
             gpsData = specObj.lastGPS;
             switch specObj.Band(idx).File.Fileversion
                 case 'RFlookBin v.1/1'
-                    class.RFlookBinLib.v1_MemoryEdit(specObj, idx, rawArray, attFactor, gpsData)
+                    class.RFlookBinLib.v1_MemoryEdit(specObj, idx, rawArray, attFactor, gpsData, TimeStamp)
 
                 case 'RFlookBin v.2/1'
-                    class.RFlookBinLib.v2_WriteBody(specObj,  idx, rawArray, attFactor, gpsData)
+                    class.RFlookBinLib.v2_WriteBody(specObj,  idx, rawArray, attFactor, gpsData, TimeStamp)
             end
         end
     end
@@ -273,9 +273,7 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        function v1_MemoryEdit(specObj, idx1, rawArray, attFactor, gpsData)
-            TimeStamp = datetime('now');
-
+        function v1_MemoryEdit(specObj, idx1, rawArray, attFactor, gpsData, TimeStamp)
             [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray, specObj.Task.Script.BitsPerSample);
 
             idx2 = specObj.Band(idx1).File.CurrentFile.MemMap{1}.Data.Value + 1;
@@ -400,13 +398,12 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        function v2_WriteBody(specObj, idx, rawArray, attFactor, gpsData)
+        function v2_WriteBody(specObj, idx, rawArray, attFactor, gpsData, TimeStamp)
             Script        = specObj.Task.Script;
             MetaData      = Script.Band(idx);
             BitsPerSample = Script.BitsPerSample;
 
             fileID        = specObj.Band(idx).File.CurrentFile.Handle;
-            TimeStamp     = datetime('now');
             
             fwrite(fileID, 'StArT', 'char*1');
             fwrite(fileID, [year(TimeStamp)-2000, month(TimeStamp), day(TimeStamp), hour(TimeStamp), minute(TimeStamp), fix(second(TimeStamp))]);

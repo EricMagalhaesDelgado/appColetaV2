@@ -4,6 +4,39 @@ classdef ReceiverLib
     % Inserir conexão VISA (TCPIP, SOCKET, USB etc)?! Caso sim, mapear objeto 
     % transporte relacionado struct(struct(hReceiver).Client).Transport.connect
 
+    % ## tcpclient ##
+    % O objeto "tcpclient" possui uma propriedade privada da classe - "TCPCustomClient" -, o qual armazena o objeto "TCPCustomClient".
+    % É essa propriedade que possibilita acesso ao objeto "TCPClient".
+    %
+    % ## TCPClient ##
+    % O objeto "TCPClient" possui as propriedades "Connect" (true|false) e "ConnectionStatus" ('Connected'|'Disconnected') que registram o 
+    % estado da conexão, o qual só é alterado quando realizada alguma operação de escrita (write, writeline etc) ou leitura no objeto "tcpclient".
+    %
+    % O MATLAB retorna os seguintes erros em operações de escrita e leitura de um objeto "tcpclient" desconectado:
+    % 'MATLAB:networklib:tcpclient:connectTerminated'  (write)
+    % 'transportclients:string:writeFailed'            (writeline|writeread)
+    % 'network:tcpclient:sendFailed'                   (write|writeline)
+    % 'transportclients:string:timeoutToken'           (writeread)
+    % 'transportclients:string:invalidConnectionState' (read|readline)
+    %
+    % E esse objeto "TCPClient" possui os métodos "connect" e "disconnect", os quais tentam alterar ativamente o estado da conexão.
+    %
+    % O controle da conexão do appColeta com o objeto "tcpclient" pode ser feito com a exclusão do objeto (delete/clear) e posterior
+    % recriação, ou po meio da alteração do seu estado (método "connect" do objeto "TCPClient").
+    %
+    % Notei, contudo, que o objeto "TCPCustomClient" às vezes é deletado, desvinculando o objeto "tcpclient" do "TCPClient". Quando isso
+    % acontece, o MATLAB retorna os seguintes erros:
+    % 'MATLAB:networklib:tcpclient:writeFailed'        (write)
+    % 'MATLAB:class:InvalidHandle'                     (writeline|writeread|read|readline)
+    % 'testmeaslib:CustomDisplay:PropertyError'        (acesso à propriedade)
+    %
+    % Nesse caso, o objeto "tcpclient" deve ser recriado. Não é adequado armazenar um handle pro objeto "TCPClient" porque, mesmo
+    % existente, ele pode não mais estar relacionado ao objeto "tcpclient".
+    %
+    % Na maioria das vezes, contudo, isso não ocorre, e aí basta chamar o método "connect" do objeto "TCPClient". Se a conexão não for
+    % reestabelecida, o MATLAB retorna o erro:
+    % 'network:tcpclient:connectFailed'
+
     properties
         Config
         List
@@ -94,16 +127,18 @@ classdef ReceiverLib
         
                             hReceiver.UserData = struct('IDN', IDN, 'ClientIP', ClientIP, 'nTasks', 0, 'SyncMode', '', 'instrSelected', instrSelected);
                             obj.Table{idx,:}   = {"Receiver", Type, IDN, Socket, hReceiver, "Connected"};
-        
-                        elseif ~contains(obj.Table.IDN(idx), Tag, "IgnoreCase", true)
-                            error('O instrumento mapeado (%s) difere do identificado (%s).', obj.Table.IDN(idx), IDN)
+                        else
+                            obj.Table.Status(idx) = "Connected";
                         end        
                     else
+                        obj.Table.Status(idx) = "Disconnected";
                         error('O instrumento identificado (%s) difere do configurado (%s).', IDN, Tag)
                     end        
                 else
+                    obj.Table.Status(idx) = "Disconnected";
                     error('Não recebida resposta à requisição "*IDN?".')
-                end        
+                end
+
             catch ME
                 msgError = ME.message;
                 if (idx > height(obj.Table)) & exist('hReceiver', 'var')
@@ -115,43 +150,33 @@ classdef ReceiverLib
 
 
         %-----------------------------------------------------------------%
-        function obj = ReconnectAttempt(obj, instrSelected)
+        function obj = ReconnectAttempt(obj, instrSelected, nBands, SpecificSCPI)
 
-        % ## tcpclient ##
-        % O objeto "tcpclient" possui uma propriedade privada da classe - "TCPCustomClient" -, o qual armazena o objeto "TCPCustomClient".
-        % É essa propriedade que possibilita acesso ao objeto "TCPClient".
-        %
-        % ## TCPClient ##
-        % O objeto "TCPClient" possui as propriedades "Connect" (true|false) e "ConnectionStatus" ('Connected'|'Disconnected') que registram o 
-        % estado da conexão, o qual só é alterado quando realizada alguma operação de escrita (write, writeline etc) ou leitura no objeto "tcpclient".
-        %
-        % O MATLAB retorna os seguintes erros em operações de escrita e leitura de um objeto "tcpclient" desconectado:
-        % 'MATLAB:networklib:tcpclient:connectTerminated'  (write)
-        % 'transportclients:string:writeFailed'            (writeline|writeread)
-        % 'network:tcpclient:sendFailed'                   (write|writeline)
-        % 'transportclients:string:timeoutToken'           (writeread)
-        % 'transportclients:string:invalidConnectionState' (read|readline)
-        %
-        % E esse objeto "TCPClient" possui os métodos "connect" e "disconnect", os quais tentam alterar ativamente o estado da conexão.
-        %
-        % O controle da conexão do appColeta com o objeto "tcpclient" pode ser feito com a exclusão do objeto (delete/clear) e posterior
-        % recriação, ou po meio da alteração do seu estado (método "connect" do objeto "TCPClient").
-        %
-        % Notei, contudo, que o objeto "TCPCustomClient" às vezes é deletado, desvinculando o objeto "tcpclient" do "TCPClient". Quando isso
-        % acontece, o MATLAB retorna os seguintes erros:
-        % 'MATLAB:networklib:tcpclient:writeFailed'        (write)
-        % 'MATLAB:class:InvalidHandle'                     (writeline|writeread|read|readline)
-        % 'testmeaslib:CustomDisplay:PropertyError'        (acesso à propriedade)
-        %
-        % Nesse caso, o objeto "tcpclient" deve ser recriado. Não é adequado armazenar um handle pro objeto "TCPClient" porque, mesmo
-        % existente, ele pode não mais estar relacionado ao objeto "tcpclient".
-        %
-        % Na maioria das vezes, contudo, isso não ocorre, e aí basta chamar o método "connect" do objeto "TCPClient". Se a conexão não for
-        % reestabelecida, o MATLAB retorna o erro:
-        % 'network:tcpclient:connectFailed'
+            [obj, idx] = Connect(obj, instrSelected);
 
+            % Se ocorrer alguma queda de energia e o receptor desligar, ao
+            % religar, o receptor voltará às suas configurações de fábrica,
+            % o que demandará, portanto, a sua reconfiguração (FreqStart,
+            % FreqStop, Resolution etc).
+            % Esse processo é essencial apenas se a tarefa possuir apenas
+            % uma faixa a monitorar. Para tarefas com mais de uma faixa, a
+            % reconfiguração é automática e parte do loop...
 
-
+            if ~isempty(idx) && (obj.Table.Status(idx) == "Connected")
+                if nBands == 1
+                    try
+                        hReceiver = obj.Table.Handle{idx};
+    
+                        writeline(hReceiver, SpecificSCPI.configSET);
+                        pause(.001)
+                        
+                        if ~isempty(SpecificSCPI.attSET)
+                            writeline(hReceiver, SpecificSCPI.attSET);
+                        end
+                    catch
+                    end
+                end
+            end
         end
     end
 

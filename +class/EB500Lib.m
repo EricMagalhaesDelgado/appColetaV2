@@ -55,20 +55,20 @@ classdef EB500Lib
             for ii = 1:numel(specObj.Band)
                 specDatagram = [];
 
-                writeline(hReceiver, specObj.Band(ii).scpiSet_Config);
-                class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
+                writeline(hReceiver, specObj.Band(ii).SpecificSCPI.configSET);
+                class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver)
 
                 udpTic = tic;
                 t = toc(udpTic);
                 while t < Timeout
-                    specDatagram = [specDatagram, read(hStreaming, hStreaming.NumDatagramsAvailable)];
+                    specDatagram = [specDatagram, read(hStreaming)];
 
                     if numel(specDatagram) > EB500Obj.nDatagrams                        
                         break
                     end
                     t = toc(udpTic);
                 end
-                class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
+                class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver)
 
                 if isempty(specDatagram)
                     error(sprintf(['ERROR - Não identificada a estimativa do número de datagramas que representam um único traço.\n' ...
@@ -96,10 +96,10 @@ classdef EB500Lib
                     FreqStop    = double(typecast(specDatagram(jj).Data(36:-1:33), 'uint32')) + double(typecast(specDatagram(jj).Data(48:-1:45), 'uint32')) * 2^32;
                     DataPoints  = (FreqStop - FreqStart)/double(typecast(specDatagram(jj).Data(40:-1:37), 'uint32')) + 1;
 
-                    if (MagicNumber == 963072)                                              && ...
-                            (DataSize   == numel(specDatagram(jj).Data))                    && ...
-                            (FreqStart  == specObj.taskObj.General.Task.Band(ii).FreqStart) && ...
-                            (FreqStop   == specObj.taskObj.General.Task.Band(ii).FreqStop)  && ...
+                    if (MagicNumber == 963072)                                     && ...
+                            (DataSize   == numel(specDatagram(jj).Data))           && ...
+                            (FreqStart  == specObj.Task.Script.Band(ii).FreqStart) && ...
+                            (FreqStop   == specObj.Task.Script.Band(ii).FreqStop)  && ...
                             (DataPoints == specObj.Band(ii).DataPoints)
                         nDatagrams = nDatagrams + 1;
                         if typecast(specDatagram(jj).Data(end:-1:end-1), 'uint16') == 2000
@@ -107,6 +107,7 @@ classdef EB500Lib
                         end
                     end
                 end
+                numel(specDatagram)
                 
                 if nTerminator
                     specObj.Band(ii).Datagrams = round(nDatagrams/nTerminator);
@@ -130,102 +131,99 @@ classdef EB500Lib
             Flag_success = false;
             specDatagram = [];
                         
-            class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver, hStreaming)
+            class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver)
             
             udpTic = tic;
             t = toc(udpTic);
             while t < Timeout
                 specDatagram = [specDatagram, read(hStreaming, 2*taskInfo.nDatagrams-1)];
 
-                % Delete datagrams sent by an unexpected source
-                idx0 = ([specDatagram.SenderAddress] ~= hReceiver.Address);
-                if any(idx0)
-                    specDatagram(idx0) = [];
-                end
-    
-                % Sort datagrams
-                DatagramsID = zeros(numel(specDatagram), 1);        
-                for ii = 1:numel(specDatagram)
-                    specDatagram(ii).Data = uint8(specDatagram(ii).Data);
-    
-                    DatagramID_low  = double(typecast(specDatagram(ii).Data(10:-1: 9), 'uint16'));
-                    DatagramID_high = double(typecast(specDatagram(ii).Data(12:-1:11), 'uint16')).*2^16;
-                    DatagramsID(ii) = DatagramID_low + DatagramID_high;
-                end
-    
-                if ~issorted(DatagramsID)
-                    [DatagramsID, idxSort] = sort(DatagramsID);
-                    specDatagram = specDatagram(idxSort);
-                end
-    
-                % Array
-                udpFlag  = 0;
-                Points   = 0;
-    
-                for jj = 1:numel(specDatagram)
-                    if udpFlag && (DatagramsID(jj) ~= DatagramsID(jj-1)+1)
-                        udpFlag  = 0;
-                        Points   = 0;
-                        continue
+                if ~isempty(specDatagram)
+                    % Delete datagrams sent by an unexpected source
+                    idx0 = ([specDatagram.SenderAddress] ~= hReceiver.Address);
+                    if any(idx0)
+                        specDatagram(idx0) = [];
                     end
-    
-                    MagicNumber = typecast(specDatagram(jj).Data( 4:-1: 1), 'uint32');
-                    DataSize    = typecast(specDatagram(jj).Data(16:-1:13), 'uint32');
-    
-                    FreqStart   = double(typecast(specDatagram(jj).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(jj).Data(44:-1:41), 'uint32')) * 2^32;
-                    FreqStop    = double(typecast(specDatagram(jj).Data(36:-1:33), 'uint32')) + double(typecast(specDatagram(jj).Data(48:-1:45), 'uint32')) * 2^32;
-                    DataPoints  = (FreqStop - FreqStart)/double(typecast(specDatagram(jj).Data(40:-1:37), 'uint32')) + 1;
-    
-                    if (MagicNumber == 963072)                           && ...
-                            (DataSize   == numel(specDatagram(jj).Data)) && ...
-                            (FreqStart  == taskInfo.FreqStart)           && ...
-                            (FreqStop   == taskInfo.FreqStop)            && ...
-                            (DataPoints == taskInfo.DataPoints)
-                        idx1   = Points + 1;
-                        Points = Points + typecast(specDatagram(jj).Data(22:-1:21), 'uint16');
-                        idx2   = Points;
-    
-                        if typecast(specDatagram(jj).Data(end:-1:end-1), 'uint16') == 2000
-                            if Points == DataPoints+1
-                                newArray(idx1:idx2-1) = single(flip(typecast(specDatagram(jj).Data((end-2):-1:81), 'int16')))./10;
-                                Flag_success = true;
-                                break
+        
+                    % Sort datagrams
+                    DatagramsID = zeros(numel(specDatagram), 1);        
+                    for ii = 1:numel(specDatagram)
+                        specDatagram(ii).Data = uint8(specDatagram(ii).Data);
+        
+                        DatagramID_low  = double(typecast(specDatagram(ii).Data(10:-1: 9), 'uint16'));
+                        DatagramID_high = double(typecast(specDatagram(ii).Data(12:-1:11), 'uint16')).*2^16;
+                        DatagramsID(ii) = DatagramID_low + DatagramID_high;
+                    end
+        
+                    if ~issorted(DatagramsID)
+                        [DatagramsID, idxSort] = sort(DatagramsID);
+                        specDatagram = specDatagram(idxSort);
+                    end
+        
+                    % Array
+                    udpFlag  = 0;
+                    Points   = 0;
+        
+                    for jj = 1:numel(specDatagram)
+                        if udpFlag && (DatagramsID(jj) ~= DatagramsID(jj-1)+1)
+                            udpFlag  = 0;
+                            Points   = 0;
+                            continue
+                        end
+        
+                        MagicNumber = typecast(specDatagram(jj).Data( 4:-1: 1), 'uint32');
+                        DataSize    = typecast(specDatagram(jj).Data(16:-1:13), 'uint32');
+        
+                        FreqStart   = double(typecast(specDatagram(jj).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(jj).Data(44:-1:41), 'uint32')) * 2^32;
+                        FreqStop    = double(typecast(specDatagram(jj).Data(36:-1:33), 'uint32')) + double(typecast(specDatagram(jj).Data(48:-1:45), 'uint32')) * 2^32;
+                        DataPoints  = (FreqStop - FreqStart)/double(typecast(specDatagram(jj).Data(40:-1:37), 'uint32')) + 1;
+        
+                        if (MagicNumber == 963072)                           && ...
+                                (DataSize   == numel(specDatagram(jj).Data)) && ...
+                                (FreqStart  == taskInfo.FreqStart)           && ...
+                                (FreqStop   == taskInfo.FreqStop)            && ...
+                                (DataPoints == taskInfo.DataPoints)
+                            idx1   = Points + 1;
+                            Points = Points + typecast(specDatagram(jj).Data(22:-1:21), 'uint16');
+                            idx2   = Points;
+        
+                            if typecast(specDatagram(jj).Data(end:-1:end-1), 'uint16') == 2000
+                                if Points == DataPoints+1
+                                    newArray(idx1:idx2-1) = single(flip(typecast(specDatagram(jj).Data((end-2):-1:81), 'int16')))./10;
+                                    Flag_success = true;
+                                    break
+                                else
+                                    udpFlag = 0;
+                                    Points  = 0;
+                                end
                             else
-                                udpFlag = 0;
-                                Points  = 0;
+                                udpFlag = 1;
+                                newArray(idx1:idx2) = single(flip(typecast(specDatagram(jj).Data(end:-1:81), 'int16')))./10;                                    
                             end
-                        else
-                            udpFlag = 1;
-                            newArray(idx1:idx2) = single(flip(typecast(specDatagram(jj).Data(end:-1:81), 'int16')))./10;                                    
                         end
                     end
-                end
-    
-                if Flag_success
-                    break
+        
+                    if Flag_success
+                        break
+                    end
                 end
                 t = toc(udpTic);
             end
 
-            class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver, hStreaming)
+            class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver)
         end
 
         
         %-----------------------------------------------------------------%
-        function DatagramRead_OnOff(Type, udpPort, hReceiver, hStreaming)
+        function DatagramRead_OnOff(Type, udpPort, hReceiver)
             switch Type
                 case 'Open'
-                    flush(hStreaming)
-
-                    writeline(hReceiver, sprintf('TRACE:UDP:TAG:ON "%s", %.0f, PSCAN',                hReceiver.UserData.ClientIP, udpPort));
-                    writeline(hReceiver, sprintf('TRACE:UDP:FLAG:ON "%s", %.0f, "VOLTage:AC", "OPT"', hReceiver.UserData.ClientIP, udpPort));
+                    writeline(hReceiver, sprintf('TRAC:UDP:TAG:ON "%s", %.0f, PSCAN;:TRAC:UDP:FLAG:ON "%s", %.0f, "VOLTage:AC", "OPT"', ...
+                        hReceiver.UserData.ClientIP, udpPort, hReceiver.UserData.ClientIP, udpPort));
 
                 case 'Close'
-                    writeline(hReceiver, sprintf('TRACE:UDP:TAG:OFF "%s", %.0f, PSCAN',                hReceiver.UserData.ClientIP, udpPort));
-                    writeline(hReceiver, sprintf('TRACE:UDP:FLAG:OFF "%s", %.0f, "VOLTage:AC", "OPT"', hReceiver.UserData.ClientIP, udpPort));
-                    writeline(hReceiver, sprintf('TRACE:UDP:DEL "%s", %.0f',                           hReceiver.UserData.ClientIP, udpPort));
-                    
-                    flush(hStreaming)
+                    writeline(hReceiver, sprintf('TRAC:UDP:TAG:OFF "%s", %.0f, PSCAN;:TRAC:UDP:FLAG:OFF "%s", %.0f, "VOLTage:AC", "OPT";:TRAC:UDP:DEL "%s", %.0f', ...
+                        hReceiver.UserData.ClientIP, udpPort, hReceiver.UserData.ClientIP, udpPort, hReceiver.UserData.ClientIP, udpPort));
             end
         end
     end

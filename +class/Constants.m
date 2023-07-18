@@ -15,18 +15,21 @@ classdef (Abstract) Constants
         switchPause    = 0.050                                              % Pause in seconds to ask antenna's name after its switch attempt (must be greater than 40ms)
         antACUPause    = 1                                                  % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
 
-        errorTrigger   = 60                                                 % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
-
         Timeout        = 10                                                 % Maximum time in seconds to extract valid info from receiver
+        udpTimeout     = 3                                                  % Maximum time in seconds to rad a specific number of datagrams 
         idnTimeout     = 1                                                  % Maximum time in seconds to extract IDN info from receiver
         gpsTimeout     = 1                                                  % Maximum time in seconds to receive bytes from GPS
         fileVersion    = 'RFlookBin v.2/1'
 
         checkIP        = 'http://checkip.dyndns.org'
 
-        tcpServerPort  = 24000
-        recDefaultPort = 24001                                              % See "EB500Lib.json"
+        udpDefaultPort = 24001                                              % See "EB500Lib.json"
         gpsDefaultPort = {'COM1', 24002}                                    % See "GPSLib.json"
+        tcpServerPort  = 24003
+
+        errorTimeTrigger     = 60                                           % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
+        errorCountTrigger    = 10                                           % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the receiver
+        errorGPSCountTrigger = 100                                          % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the GPS
     end
 
     methods (Static = true)

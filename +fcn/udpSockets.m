@@ -10,7 +10,7 @@ function [udpPortArray, idx] = udpSockets(udpPortArray, Port)
     
     if isempty(idx)
         idx = numel(udpPortArray)+1;
-        udpPortArray(idx) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian')};
+        udpPortArray(idx) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian', 'Timeout', class.Constants.udpTimeout)};
     end
 
 end

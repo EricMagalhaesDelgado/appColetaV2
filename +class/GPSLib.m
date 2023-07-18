@@ -103,13 +103,7 @@ classdef GPSLib
 
         %-----------------------------------------------------------------%
         function obj = ReconnectAttempt(obj, instrSelected)
-
-        % ## tcpclient ##
-        % Vide notas no "ReceiverLib.m".
-
-        % ## serialport ##
-        % Pendente...
-
+            obj = Connect(obj, instrSelected);
         end
     end
 
