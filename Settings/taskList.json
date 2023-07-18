@@ -27,7 +27,7 @@
         "TraceMode": "ClearWrite",
         "Detector": "Sample",
         "LevelUnit": "dBm",
-        "RevisitTime": 2,
+        "RevisitTime": 0.001,
         "IntegrationFactor": 1,
         "Trigger": 1,
         "Enable": 1
@@ -44,7 +44,7 @@
         "TraceMode": "Average",
         "Detector": "Average/RMS",
         "LevelUnit": "dBm",
-        "RevisitTime": 3,
+        "RevisitTime": 0.1,
         "IntegrationFactor": 5,
         "Trigger": 0,
         "Enable": 0
@@ -61,10 +61,10 @@
         "TraceMode": "ClearWrite",
         "Detector": "Positive Peak",
         "LevelUnit": "dBm",
-        "RevisitTime": 5,
+        "RevisitTime": 0.1,
         "IntegrationFactor": 1,
         "Trigger": 2,
-        "Enable": 1
+        "Enable": 0
       }
     ]
   },

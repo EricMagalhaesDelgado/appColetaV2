@@ -28,7 +28,7 @@ classdef specClass
 
     methods
         %-----------------------------------------------------------------%
-        function [obj, idx] = AddOrEditTask(obj, infoEdition, newTask, EMSatObj)
+        function [obj, errorMsg] = AddOrEditTask(obj, infoEdition, newTask, EMSatObj)
             switch infoEdition.type
                 case 'new'
                     idx = numel(obj)+1;
@@ -49,7 +49,7 @@ classdef specClass
             obj(idx).Observation.EndTime   = datetime(newTask.Script.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss');
 
             obj = obj.startup_lastGPS(idx, newTask.Script.GPS);
-            obj = obj.startup_ReceiverTest(idx, EMSatObj);
+            [obj, errorMsg] = obj.startup_ReceiverTest(idx, EMSatObj);
         end
     end
 
@@ -67,28 +67,29 @@ classdef specClass
 
 
         %-----------------------------------------------------------------%
-        function obj = startup_ReceiverTest(obj, idx, EMSatObj)
-            warnMsg  = {};
+        function [obj, errorMsg] = startup_ReceiverTest(obj, idx, EMSatObj)
             errorMsg = '';
+
             try
                 obj = fcn.receiverConfig_General(obj, idx);
                 [obj, warnMsg] = fcn.receiverConfig_SpecificBand(obj, idx, EMSatObj);
+                obj(idx).Status = 'Na fila';
+
+                if ~isempty(warnMsg)
+                    obj(idx).LOG(end+1) = struct('type', 'warning', 'time', obj(idx).Observation.Created, 'msg', warnMsg);
+                end
+                obj(idx).LOG(end+1) = struct('type', 'task', 'time', obj(idx).Observation.Created, 'msg', 'Incluída na fila a tarefa.');
+
             catch ME
                 errorMsg = ME.message;
-            end
-            
-            % STATUS/LOG
-            if isempty(errorMsg)
-                obj(idx).Status = 'Na fila';
-                obj(idx).LOG(end+1) = struct('type', 'task',    'time', obj(idx).Observation.Created, 'msg', 'Incluída na fila a tarefa.');
-            else
-                obj(idx).Status = 'Erro';
-                obj(idx).LOG(end+1) = struct('type', 'error',   'time', obj(idx).Observation.Created, 'msg', errorMsg);
-            end
-            
-            if ~isempty(warnMsg)
-                obj(idx).LOG(end+1) = struct('type', 'warning', 'time', obj(idx).Observation.Created, 'msg', warnMsg);
-            end
+
+                if isempty(obj.Band)
+                    obj(idx) = [];
+                else
+                    obj(idx).Status = 'Erro';
+                    obj(idx).LOG(end+1) = struct('type', 'error', 'time', obj(idx).Observation.Created, 'msg', errorMsg);    
+                end
+            end          
         end
     end
 end

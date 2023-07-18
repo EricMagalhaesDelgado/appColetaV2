@@ -75,6 +75,8 @@ classdef ReceiverLib
                 for kk = 1:3
                     try
                         warning('off', 'MATLAB:structOnObject')
+                        warning('off', 'transportlib:legacy:PropertyNotSupported')
+                        
                         if ~struct(struct(hReceiver).TCPCustomClient).Transport.Connected
                             struct(struct(hReceiver).TCPCustomClient).Transport.connect
                         end

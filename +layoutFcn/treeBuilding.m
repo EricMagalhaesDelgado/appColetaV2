@@ -3,7 +3,7 @@ function treeBuilding(app, Selection)
     
     if app.Table.Selection
         idx = app.Table.Selection;
-        for ii = 1:numel(app.specObj(idx).Band)
+        for ii = 1:numel(app.specObj(idx).Task.Script.Band)
             Antenna = app.specObj(idx).Task.Script.Band(ii).instrAntenna;
             if ~isempty(Antenna)
                 Antenna = sprintf('(%s)', Antenna);
@@ -18,7 +18,7 @@ function treeBuilding(app, Selection)
         end
         
         app.Tree.SelectedNodes = app.Tree.Children(Selection);
-%         focus(app.Tree)
+        focus(app.Tree)
     end
     drawnow nocallbacks
 end

@@ -81,18 +81,70 @@
   },
   {
     "Family": "Receiver",
-    "Name": "R&S FSW",
+    "Name": "R&S FSVR",
     "Type": "TCPIP Socket",
     "Parameters": {
-      "IP": "127.0.0.1",
-      "Port": "34835",
+      "IP": "192.168.1.106",
+      "Port": "5025",
       "Timeout": 5
     },
-    "Description": "Fake Tektronix SA2500",
+    "Description": "FSVR",
+    "Enable": 1,
+    "LOG": ""
+  },
+  {
+    "Family": "Receiver",
+    "Name": "Anritsu MS2720T",
+    "Type": "TCPIP Socket",
+    "Parameters": {
+      "IP": "192.168.1.104",
+      "Port": "9001",
+      "Timeout": 5
+    },
+    "Description": "GR08",
+    "Enable": 1,
+    "LOG": ""
+  },
+  {
+    "Family": "Receiver",
+    "Name": "Keysight N9344C",
+    "Type": "TCPIP Socket",
+    "Parameters": {
+      "IP": "192.168.1.102",
+      "Port": "5025",
+      "Timeout": 5
+    },
+    "Description": "GR08",
     "Enable": 1,
     "LOG": ""
   },
     {
+    "Family": "Receiver",
+    "Name": "Keysight N9936B",
+    "Type": "TCPIP Socket",
+    "Parameters": {
+      "IP": "192.168.1.103",
+      "Port": "5025",
+      "Timeout": 5
+    },
+    "Description": "GR08",
+    "Enable": 1,
+    "LOG": ""
+  },
+    {
+    "Family": "Receiver",
+    "Name": "Tektronix SA2500",
+    "Type": "TCPIP Socket",
+    "Parameters": {
+      "IP": "192.168.1.105",
+      "Port": "34835",
+      "Timeout": 5
+    },
+    "Description": "GR08",
+    "Enable": 1,
+    "LOG": ""
+  },
+  {
     "Family": "Receiver",
     "Name": "R&S EB500",
     "Type": "TCP/UDP IP Socket",

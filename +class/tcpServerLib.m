@@ -21,8 +21,14 @@ classdef tcpServerLib
     methods
         %-----------------------------------------------------------------%
         function obj = tcpServerLib(app)
-            obj.App    = app;
-            obj.Server = tcpserver(class.Constants.tcpServerPort);
+            obj.App = app;
+
+            try
+                obj.Server = tcpserver(class.Constants.tcpServerIP, class.Constants.tcpServerPort);
+            catch
+                obj.Server = tcpserver(class.Constants.tcpServerPort);
+            end
+            
             set(obj.Server, UserData = table('Size', [0, 5],                                                    ...
                                              'VariableTypes', {'string', 'string', 'double', 'string', 'cell'}, ...
                                              'VariableNames', {'timestamp', 'ip', 'port', 'message', 'status'}));
@@ -44,6 +50,9 @@ classdef tcpServerLib
                             writeline(obj.Server, jsonencode(obj.App.EMSatObj.LNB))
                         case 'type2'
                             writeline(obj.Server, jsonencode(obj.App.EMSatObj.switchCommand))
+                        case 'type3'
+                            idx = obj.App.specObj.Band.Waterfall.idx;
+                            write(obj.Server, obj.App.specObj.Band.Waterfall.Matrix(idx,:), 'single');
                         otherwise
                             error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
                     end

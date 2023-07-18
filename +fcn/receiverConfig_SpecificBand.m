@@ -175,7 +175,7 @@ function [obj, warnMsg] = receiverConfig_SpecificBand(obj, idx, EMSatObj)
                 case 12; if ~contains(Selectivity, splitAnswer{jj}, 'IgnoreCase', true);          error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
                 case 13; if splitAnswer{jj}             ~= SensitivityMode;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
                 case 14; if str2double(splitAnswer{jj}) ~= Preamp;                     warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
-                case 15; if str2double(splitAnswer{jj}) ~= AttenuationMode;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 15; if str2double(splitAnswer{jj}) ~= AttenuationMode;            warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
                 case 16; if ~AttenuationMode & (str2double(splitAnswer{jj}) ~= AttenuationValue); error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
                 case 17; if str2double(splitAnswer{jj}) ~= SampleTimeMode;                        error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
             end

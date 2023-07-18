@@ -25,7 +25,9 @@ classdef (Abstract) Constants
 
         udpDefaultPort = 24001                                              % See "EB500Lib.json"
         gpsDefaultPort = {'COM1', 24002}                                    % See "GPSLib.json"
-        tcpServerPort  = 24003
+
+        tcpServerIP    = '172.24.5.159'
+        tcpServerPort  = 8910
 
         errorTimeTrigger     = 60                                           % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
         errorCountTrigger    = 10                                           % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the receiver
