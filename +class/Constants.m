@@ -16,7 +16,7 @@ classdef (Abstract) Constants
         antACUPause    = 1                                                  % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
 
         Timeout        = 10                                                 % Maximum time in seconds to extract valid info from receiver
-        udpTimeout     = 3                                                  % Maximum time in seconds to rad a specific number of datagrams 
+        udpTimeout     = 3                                                  % Maximum time in seconds to receive a specific number of datagrams 
         idnTimeout     = 1                                                  % Maximum time in seconds to extract IDN info from receiver
         gpsTimeout     = 1                                                  % Maximum time in seconds to receive bytes from GPS
         fileVersion    = 'RFlookBin v.2/1'

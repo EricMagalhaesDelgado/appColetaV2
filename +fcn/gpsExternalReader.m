@@ -19,9 +19,9 @@ function gps = gpsExternalReader(hGPS, Timeout)
     while t < Timeout
         receivedData = char(deblank(readline(hGPS)));
         
-        [msg, warnID] = lastwarn;
-        if strcmp(warnID, 'MATLAB:serial:fscanf:unsuccessfulRead')
-            error(warnID, msg)
+        [warnMsg, warnID] = lastwarn;
+        if isempty(receivedData) && strcmp(warnID, 'serialport:serialport:ReadlineWarning')
+            error(warnID, warnMsg)
         end
         
         if ~isempty(receivedData) && contains(receivedData, 'RMC')

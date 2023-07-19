@@ -59,7 +59,7 @@ classdef ReceiverLib
             % Características do instrumento em que se deseja controlar:
             Type   = instrSelected.Type;
             Tag    = instrSelected.Tag;
-            [IP, Port, Localhost_publicIP, Localhost_localIP] = obj.MissingParameters(instrSelected);
+            [IP, Port, Timeout, Localhost_publicIP, Localhost_localIP] = obj.MissingParameters(instrSelected);
             Socket = sprintf('%s:%d', IP, Port);
 
             % Consulta se há objeto "tcpclient" criado para o instrumento:
@@ -116,6 +116,7 @@ classdef ReceiverLib
                             % hReceiver = visadev(sprintf('TCPIP::%s::INSTR', IP));
                             % hReceiver = visadev(sprintf('TCPIP::%s::%d::SOCKET', IP, Port));
                     end
+                    hReceiver.Timeout = Timeout;
                 end                
 
                 if ~isempty(IDN)
@@ -189,8 +190,17 @@ classdef ReceiverLib
             
             try
                 tempList = jsondecode(fileread(FilePath));
-                for ii = 1:numel(tempList)
-                    tempList(ii).Parameters = jsonencode(tempList(ii).Parameters);
+                for ii = numel(tempList):-1:1
+                    switch tempList(ii).Type
+                        case {'TCPIP Socket', 'TCP/UDP IP Socket'}; essentialFields = {'IP', 'Port'};
+                        otherwise;                                  essentialFields = {};
+                    end
+
+                    if ~all(ismember(essentialFields, fields(tempList(ii).Parameters)))
+                        tempList(ii) = [];
+                    else
+                        tempList(ii).Parameters = jsonencode(tempList(ii).Parameters);
+                    end                    
                 end
     
                 List = struct2table(tempList, 'AsArray', true);
@@ -224,21 +234,26 @@ classdef ReceiverLib
 
 
         %-----------------------------------------------------------------%
-        function [IP, Port, Localhost_publicIP, Localhost_localIP] = MissingParameters(obj, instrSelected)
+        function [IP, Port, Timeout, Localhost_publicIP, Localhost_localIP] = MissingParameters(obj, instrSelected)
             % IP
-            if isfield(instrSelected.Parameters, 'IP');   IP = instrSelected.Parameters.IP;
-            else;                                         IP = '';
+            if isfield(instrSelected.Parameters, 'IP');                 IP = instrSelected.Parameters.IP;
+            else;                                                       IP = '';
             end
 
-            if strcmpi(IP, 'localhost');                  IP = '127.0.0.1';
+            if strcmpi(IP, 'localhost');                                IP = '127.0.0.1';
             end
         
             % Port
-            if isfield(instrSelected.Parameters, 'Port'); Port = instrSelected.Parameters.Port;
-            else;                                         Port = [];
+            if isfield(instrSelected.Parameters, 'Port');               Port = instrSelected.Parameters.Port;
+            else;                                                       Port = [];
             end
             
-            if ~isnumeric(Port);                          Port = str2double(Port);
+            if ~isnumeric(Port);                                        Port = str2double(Port);
+            end
+
+            % Timeout
+            if isfield(instrSelected.Parameters, 'Timeout');            Timeout = instrSelected.Parameters.Timeout;
+            else;                                                       Timeout = class.Constants.Timeout;
             end
         
             % Localhost_publicIP
