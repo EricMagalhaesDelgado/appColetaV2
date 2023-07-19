@@ -115,7 +115,7 @@
     "Family": "Receiver",
     "Name": "Keysight N9936B",
     "Tag": "N9936B",
-    "Band": "5 kHz - 14 GHz",
+    "Band": "5 kHz - 14.1 GHz",
     "Logo": "Instr_KeySight.png",
     "Image": "Instr_KeySight_N9936B.png",
     "connectType": [
