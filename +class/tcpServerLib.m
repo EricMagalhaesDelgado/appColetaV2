@@ -56,11 +56,11 @@ classdef tcpServerLib
                         otherwise
                             error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
                     end
-                    obj.Server.UserData(end+1,:) = {char(datetime('now', 'Format', 'dd/MM/yyyy HH:mm:ss')), obj.Server.ClientAddress, obj.Server.ClientPort, rawMsg, 'success'};
+                    obj.Server.UserData(end+1,:) = {datestr(now), obj.Server.ClientAddress, obj.Server.ClientPort, rawMsg, 'success'};
                     
                 catch ME
                     writeline(obj.Server, sprintf('Received message: %s\nError identifier: %s', rawMsg, ME.identifier))
-                    obj.Server.UserData(end+1,:) = {char(datetime('now', 'Format', 'dd/MM/yyyy HH:mm:ss')), obj.Server.ClientAddress, obj.Server.ClientPort, rawMsg, ME.message};
+                    obj.Server.UserData(end+1,:) = {datestr(now), obj.Server.ClientAddress, obj.Server.ClientPort, rawMsg, ME.message};
                 end
             end
         end
