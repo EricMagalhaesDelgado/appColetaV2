@@ -1,23 +1,9 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: July 10, 2023
-    % Version: 1.01
+    % Date...: July 20, 2023
+    % Version: 1.00
 
-    % !! BUG !!
-    % Na v. 1, o arquivo binário é criado por meio da função memmepfile. Ao 
-    % finalizar a escrita do arquivo, não consigo desmapeá-lo. Ao que parece, 
-    % o arquivo está visível em alguma outra área de trabalho, o que impede
-    % o desmapeamento.
-    % Até que se resolva o problema, o appColetaV2 gerará apenas arquivos do 
-    % novo formato (v.2).
-    % Testar o seguinte: ao invés de passar specObj como argumento de
-    % entrada, passar app, alterando diretamente app.specObj.
-    %
-    % !! BUG !!
-    % Na linha 413 - o que determina escrever ou não o valor da atenuação é
-    % ter o valor automático (e não o valor -1). Avaliar isso!
-    %
     % !! EVOLUÇÃO !!
     % Tirar referência à variável global appGeneral e depois eliminar
     % criação da variável global (lá no startup de WinAppColetaV2).
@@ -227,8 +213,8 @@ classdef RFlookBinLib
             fwrite(fileID, Offset3, 'uint32');
         
             fwrite(fileID, zeros(1, (20 + BitsPerSample * DataPoints) * AlocatedSamples, 'uint8'));
-            fwrite(fileID, jsonencode(struct('TaskName',          replace(Script.Name, {'"', ',', newline}, ''),            ...
-                                             'ID',                MetaData.ID,                                            ...
+            fwrite(fileID, jsonencode(struct('TaskName',          replace(Script.Name, {'"', ',', newline}, ''),          ...
+                                             'ThreadID',          MetaData.ID,                                            ...
                                              'Description',       replace(MetaData.Description, {'"', ',', newline}, ''), ...
                                              'Node',              Node,                                                   ...
                                              'Antenna',           specObj.Band(idx).Antenna,                              ...
@@ -334,7 +320,7 @@ classdef RFlookBinLib
                     fwrite(fileID_new, tempData);
                     fclose(fileID_new);
     
-                    system(sprintf('del /f "%s"', fileFullPath));
+                    system(sprintf('rm "%s"', fileFullPath));
             end
         end
 
