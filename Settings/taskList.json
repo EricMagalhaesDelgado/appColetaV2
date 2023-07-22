@@ -167,8 +167,77 @@
       "Enable": 1
     }
   },
-  {
+    {
     "Name": "MSAT_HOM_1",
+    "BitsPerSample": 8,
+    "Observation": {
+      "Type": "Samples",
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "not applicable"
+    },
+    "GPS": {
+      "Type": "manual",
+      "Latitude": -22.8250942,
+      "Longitude": -43.1785755,
+      "RevisitTime": []
+    },
+    "Band": [
+      {
+        "ID": 1,
+        "Description": "Faixa 1 de 3 (MCL-1 H)",
+        "ObservationSamples": 3600,
+        "FreqStart": 3.625E+9,
+        "FreqStop": 4.2E+9,
+        "StepWidth": 10000,
+        "Resolution": 10000,
+        "RFMode": "High Sensitivity",
+        "TraceMode": "ClearWrite",
+        "Detector": "Average/RMS",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.001,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      },
+      {
+        "ID": 2,
+        "Description": "Faixa 2 de 3 (MKU-2 LO_H)",
+        "ObservationSamples": 3600,
+        "FreqStart": 10.95E+9,
+        "FreqStop": 11.2E+9,
+        "StepWidth": 10000,
+        "Resolution": 10000,
+        "RFMode": "High Sensitivity",
+        "TraceMode": "ClearWrite",
+        "Detector": "Average/RMS",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.001,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      },
+      {
+        "ID": 3,
+        "Description": "Faixa 3 de 3 (MKU-2 HI_H)",
+        "ObservationSamples": 3600,
+        "FreqStart": 11.7E+9,
+        "FreqStop": 12.2E+9,
+        "StepWidth": 10000,
+        "Resolution": 10000,
+        "RFMode": "High Sensitivity",
+        "TraceMode": "ClearWrite",
+        "Detector": "Average/RMS",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.001,
+        "IntegrationFactor": 1,
+        "Trigger": 0,
+        "Enable": 1
+      }
+    ]
+  },
+  {
+    "Name": "MSAT_HOM_2",
     "BitsPerSample": 8,
     "Observation": {
       "Type": "Samples",
