@@ -87,6 +87,43 @@ classdef EMSatLib
 
 
         %-----------------------------------------------------------------%
+        function [pos, msgError] = TargetPositionGET(obj, antennaName, targetName)
+            pos = [];
+            msgError = '';
+
+            idx1  = find(strcmp({obj.Antenna.Name}, antennaName), 1);
+            IP   = obj.Antenna(idx1).IP;
+            Port = obj.Antenna(idx1).Port;
+
+            try
+                hACU = SocketCreation(obj, IP, Port);
+
+                idx2 = find(strcmp({obj.Antenna(idx1).Target.Name}, targetName), 1);
+                TargetID = obj.Antenna(idx1).Target(idx2).ID;
+
+                writeline(hACU, sprintf('TT %s', TargetID));
+                pause(class.Constants.antACUPause)
+
+                pos = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '(?<Azimuth>\d{6}) (?<Elevation>\d{6}) (?<Polarization>\d{6})', 'names');
+                if ~isempty(pos)
+                    pos = pos(end);
+                    
+                    pos.Azimuth      = str2double(pos.Azimuth)   / 1000;
+                    pos.Elevation    = str2double(pos.Elevation) / 1000;
+                    pos.Polarization = wrapTo360(str2double(pos.Polarization) / 1000);
+                end
+
+            catch  ME
+                msgError = ME.message;
+            end
+
+            if exist('hACU', 'var'); clear hACU
+            end
+        end
+
+
+
+        %-----------------------------------------------------------------%
         function [pos, msgError] = AntennaPositionGET(obj, antennaName)
             pos = [];
             msgError = '';
@@ -120,13 +157,13 @@ classdef EMSatLib
 
 
         %-----------------------------------------------------------------%
-        function msgError = AntennaSwitch(obj, antennaName)
+        function msgError = MatrixSwitch(obj, LNBName)
             % As of July 4, 2023, the L-Band Matrix is not switching to the
             % ports 19, 28 and 29.
             msgError = '';
             
             try
-                idx = obj.LNB.Port(find(strcmp(obj.LNB.Name, antennaName), 1));
+                idx = obj.LNB.Port(find(strcmp(obj.LNB.Name, LNBName), 1));
                 hSwitch = tcpclient(obj.switchSocket.IP, obj.switchSocket.Port);
 
                 for ii = 1:class.Constants.switchTimes
