@@ -1,4 +1,4 @@
-function [obj, warnMsg] = receiverConfig_SpecificBand(obj, idx, EMSatObj)
+function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
     
     newTask   = obj(idx).Task;
     instrInfo = obj(idx).Task.Receiver.Config;

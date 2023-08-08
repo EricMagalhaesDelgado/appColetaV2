@@ -1,7 +1,7 @@
-classdef specClass
+classdef specClass < handle
 
     % Author.: Eric Magalhães Delgado
-    % Date...: July 16, 2023
+    % Date...: August 08, 2023
     % Version: 1.00
 
     properties
@@ -48,15 +48,15 @@ classdef specClass
             obj(idx).Observation.BeginTime = datetime(newTask.Script.Observation.BeginTime, 'InputFormat', 'dd/MM/yyyy HH:mm:ss');
             obj(idx).Observation.EndTime   = datetime(newTask.Script.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss');
 
-            obj = obj.startup_lastGPS(idx, newTask.Script.GPS);
-            [obj, errorMsg] = obj.startup_ReceiverTest(idx, EMSatObj);
+            obj.startup_lastGPS(idx, newTask.Script.GPS);
+            errorMsg = obj.startup_ReceiverTest(idx, EMSatObj);
         end
     end
 
 
     methods (Access = protected)
         %-----------------------------------------------------------------%
-        function obj = startup_lastGPS(obj, idx, GPS)
+        function startup_lastGPS(obj, idx, GPS)
             if strcmp(GPS.Type, 'Manual')
                 obj(idx).lastGPS.Status    = -1;
                 obj(idx).lastGPS.Latitude  = GPS.Latitude;
@@ -67,12 +67,12 @@ classdef specClass
 
 
         %-----------------------------------------------------------------%
-        function [obj, errorMsg] = startup_ReceiverTest(obj, idx, EMSatObj)
+        function errorMsg = startup_ReceiverTest(obj, idx, EMSatObj)
             errorMsg = '';
 
             try
-                obj = fcn.receiverConfig_General(obj, idx);
-                [obj, warnMsg] = fcn.receiverConfig_SpecificBand(obj, idx, EMSatObj);
+                fcn.receiverConfig_General(obj, idx);
+                warnMsg = fcn.receiverConfig_SpecificBand(obj, idx, EMSatObj);
                 obj(idx).Status = 'Na fila';
 
                 if ~isempty(warnMsg)

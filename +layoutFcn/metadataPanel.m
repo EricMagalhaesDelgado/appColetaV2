@@ -16,9 +16,7 @@ function htmlCode = metadataPanel(app)
                                           'gpsType',       Script.GPS.Type));
     
     taskMetaData(2).group = 'RECEPTOR';
-    taskMetaData(2).value = struct('Reset',      Task.Receiver.Reset,             ...
-                                   'Sync',       Task.Receiver.Sync,              ...
-                                   'StepWidth',  StepWidth,                       ...
+    taskMetaData(2).value = struct('StepWidth',  StepWidth,                       ...
                                    'DataPoints', Script.Band(jj).instrDataPoints, ...
                                    'Resolution', Script.Band(jj).instrResolution);
     
@@ -35,6 +33,8 @@ function htmlCode = metadataPanel(app)
     taskMetaData(2).value.Detector          = Script.Band(jj).instrDetector;
     taskMetaData(2).value.TraceMode         = Script.Band(jj).TraceMode;
     taskMetaData(2).value.IntegrationFactor = Script.Band(jj).IntegrationFactor;
+    taskMetaData(2).value.Reset             =  Task.Receiver.Reset;
+    taskMetaData(2).value.Sync              =  Task.Receiver.Sync;
     
     taskMetaData(3).group = 'ANTENA';
     taskMetaData(3).value = jsondecode(app.specObj(ii).Band(jj).Antenna);

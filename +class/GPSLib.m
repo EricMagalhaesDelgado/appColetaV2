@@ -1,11 +1,13 @@
-classdef GPSLib
+classdef GPSLib < handle
 
     properties
         Config
-        List
-        Table = table('Size', [0, 6],                                                              ...
-                      'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
-                      'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
+        List   = table('Size', [0, 7],                                                              ...
+                       'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
+                       'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'})
+        Table  = table('Size', [0, 6],                                                              ...
+                       'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
+                       'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
     end
 
 
@@ -13,12 +15,12 @@ classdef GPSLib
         %-----------------------------------------------------------------%
         function obj = GPSLib(RootFolder)
             obj.Config = struct2table(jsondecode(fileread(fullfile(RootFolder, 'Settings', 'GPSLib.json'))));
-            obj.List   = obj.FileRead(RootFolder);
+            obj.FileRead(RootFolder);
         end
 
 
         %-----------------------------------------------------------------%
-        function [obj, idx, msgError] = Connect(obj, instrSelected)
+        function [idx, msgError] = Connect(obj, instrSelected)
             % Características do instrumento em que se deseja controlar:
             Type = instrSelected.Type;
             [IP, Port, BaudRate, Timeout] = obj.MissingParameters(instrSelected);
@@ -100,15 +102,15 @@ classdef GPSLib
 
 
         %-----------------------------------------------------------------%
-        function obj = ReconnectAttempt(obj, instrSelected)
-            obj = Connect(obj, instrSelected);
+        function ReconnectAttempt(obj, instrSelected)
+            Connect(obj, instrSelected);
         end
     end
 
 
     methods (Access = protected)
         %-----------------------------------------------------------------%
-        function List = FileRead(obj, RootFolder)
+        function FileRead(obj, RootFolder)
             
             try
                 tempList = jsondecode(fileread(fullfile(RootFolder, 'Settings', 'instrumentList.json')));
@@ -126,13 +128,11 @@ classdef GPSLib
                     end                    
                 end
     
-                List = struct2table(tempList, 'AsArray', true);
-                List(~strcmp(List.Family, 'GPS'),:) = [];
+                tempList = struct2table(tempList, 'AsArray', true);
+                tempList(~strcmp(tempList.Family, 'GPS'),:) = [];
 
-            catch
-                List = table('Size', [0, 7],                                                              ...
-                             'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
-                             'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'});            
+                obj.List = tempList;
+            catch  
             end
         end
 

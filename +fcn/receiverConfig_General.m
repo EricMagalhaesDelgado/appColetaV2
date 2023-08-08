@@ -1,4 +1,4 @@
-function obj = receiverConfig_General(obj, idx)
+function receiverConfig_General(obj, idx)
 
     newTask   = obj(idx).Task;
     instrInfo = obj(idx).Task.Receiver.Config;

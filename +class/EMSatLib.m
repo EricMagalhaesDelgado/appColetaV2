@@ -1,4 +1,4 @@
-classdef EMSatLib
+classdef EMSatLib < handle
 
     % Author.: Eric Magalhães Delgado & Vinicius Puga
     % Date...: July 21, 2023

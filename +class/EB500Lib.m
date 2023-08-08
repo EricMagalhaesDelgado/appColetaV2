@@ -1,4 +1,4 @@
-classdef EB500Lib
+classdef EB500Lib < handle
 
     % Author.: Eric Magalhães Delgado & Michel Cerqueira Kulhavy
     % Date...: July 07, 2023

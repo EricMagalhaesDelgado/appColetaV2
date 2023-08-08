@@ -1,4 +1,4 @@
-classdef ReceiverLib
+classdef ReceiverLib < handle
 
     % ?? EVOLUÇÃO ??
     % Inserir conexão VISA (TCPIP, SOCKET, USB etc)?! Caso sim, mapear objeto 
@@ -39,10 +39,12 @@ classdef ReceiverLib
 
     properties
         Config
-        List
-        Table = table('Size', [0, 6],                                                              ...
-                      'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
-                      'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
+        List   = table('Size', [0, 7],                                                              ...
+                       'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
+                       'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'});
+        Table  = table('Size', [0, 6],                                                              ...
+                       'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
+                       'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
     end
 
 
@@ -55,7 +57,7 @@ classdef ReceiverLib
 
 
         %-----------------------------------------------------------------%
-        function [obj, idx, msgError] = Connect(obj, instrSelected)
+        function [idx, msgError] = Connect(obj, instrSelected)
             % Características do instrumento em que se deseja controlar:
             Type   = instrSelected.Type;
             Tag    = instrSelected.Tag;
@@ -153,9 +155,9 @@ classdef ReceiverLib
 
 
         %-----------------------------------------------------------------%
-        function obj = ReconnectAttempt(obj, instrSelected, nBands, SpecificSCPI)
+        function ReconnectAttempt(obj, instrSelected, nBands, SpecificSCPI)
 
-            [obj, idx] = Connect(obj, instrSelected);
+            idx = Connect(obj, instrSelected);
 
             % Se ocorrer alguma queda de energia e o receptor desligar, ao
             % religar, o receptor voltará às suas configurações de fábrica,
@@ -186,7 +188,7 @@ classdef ReceiverLib
 
     methods (Access = protected)
         %-----------------------------------------------------------------%
-        function [List, msgError] = FileRead(obj, FilePath, RootFolder)
+        function [tempList, msgError] = FileRead(obj, FilePath, RootFolder)
             
             try
                 tempList = jsondecode(fileread(FilePath));
@@ -203,30 +205,28 @@ classdef ReceiverLib
                     end                    
                 end
     
-                List = struct2table(tempList, 'AsArray', true);
-                List(~strcmp(List.Family, 'Receiver'),:) = [];
+                tempList = struct2table(tempList, 'AsArray', true);
+                tempList(~strcmp(tempList.Family, 'Receiver'),:) = [];
 
                 % Essa validação é importante para o caso de ser aberto um
                 % arquivo externo com lista de instrumentos (ao invés do arquivo 
                 % "instrumentList.json" constante na subpasta "Settings".
 
                 if strcmp(FilePath, fullfile(RootFolder, 'Settings', 'instrumentList.json'))
-                    if height(List)
-                        if ~any(List.Enable)
-                            List.Enable(1) = 1;
+                    if height(tempList)
+                        if ~any(tempList.Enable)
+                            tempList.Enable(1) = 1;
                         end
                     else
-                        List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+                        tempList(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
                     end
+                    obj.List = tempList;
                 end
                 msgError = '';
 
             catch ME        
                 if strcmp(FilePath, fullfile(RootFolder, 'Settings', 'instrumentList.json'))
-                    List = table('Size', [0, 7],                                                              ...
-                                 'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
-                                 'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'});
-                    List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+                    obj.List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
                 end
                 msgError = ME.message;
             end
