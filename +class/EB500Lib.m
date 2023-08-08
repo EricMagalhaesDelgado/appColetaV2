@@ -4,6 +4,9 @@ classdef EB500Lib
     % Date...: July 07, 2023
     % Version: 1.01
 
+    % !! EVOLUÇÃO !!
+    % swapbytes (pode ser útil no leitor do EB500 - testar com tic/toc se é mais eficiente...)
+
     properties
         SelectivityMap
         Firmware

@@ -10,10 +10,11 @@ function [obj, warnMsg] = receiverConfig_SpecificBand(obj, idx, EMSatObj)
     warnMsg    = {};
 
     % Peculiaridades do receptor sob análise:
-    TraceMode_Values   = strsplit(instrInfo.Trace_Values{1}, ',');
+    TraceMode_Values   = strsplit(instrInfo.Trace_Values{1},     ',');
     AverageMode_Values = instrInfo.AverageMode_Values{1};
     Detector_Values    = strsplit(instrInfo.Detector_Values{1},  ',');
     LevelUnit_Values   = strsplit(instrInfo.LevelUnit_Values{1}, ',');
+    scpiVBW_Options    = strsplit(instrInfo.scpiVBW_Options{1},  ',');
 
     rawFields = {'TraceMode',        'AverageMode',     'AveragCount',     ...
                  'Detector',         'LevelUnit',       'FreqStart',       ...
@@ -82,6 +83,15 @@ function [obj, warnMsg] = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         StepWidth       = (rawBand(ii).FreqStop - rawBand(ii).FreqStart) ./ (rawBand(ii).instrDataPoints - 1);
         ResolutionValue = str2double(extractBefore(rawBand(ii).instrResolution, ' kHz')) .* 1e+3;
         Selectivity     = rawBand(ii).instrSelectivity;
+
+        % VBW
+        scpiVBW_Value = '';
+        if ~isempty(scpiVBW_Options{1})
+            switch rawBand(ii).instrVBW
+                case 'auto'; scpiVBW_Value = scpiVBW_Options{1};
+                otherwise;   scpiVBW_Value = replace(scpiVBW_Options{2}, '%VBWValue%', rawBand(ii).instrVBW);
+            end
+        end
         
         % SensitivityMode, Preamp, AttenuationMode, AttenuationValue
         if ~isempty(rawBand(ii).instrSensitivityMode)
@@ -114,6 +124,7 @@ function [obj, warnMsg] = receiverConfig_SpecificBand(obj, idx, EMSatObj)
                        '%StepWidth%',        num2str(StepWidth);        ...
                        '%ResolutionMode%',   num2str(ResolutionMode);   ...
                        '%ResolutionValue%',  num2str(ResolutionValue);  ...
+                       '%VBWOption%',        scpiVBW_Value;             ...
                        '%Selectivity%',      Selectivity;               ...
                        '%SensitivityMode%',  SensitivityMode;           ...
                        '%Preamp%',           num2str(Preamp);           ...
