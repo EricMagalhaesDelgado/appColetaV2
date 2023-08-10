@@ -59,7 +59,7 @@ classdef bandClass
     %                        ('Fileversion'), do nome base do arquivo a ser criado ('Basename'), 
     %                        do contador de arquivos ('Filecount'), do número de traços escritos 
     %                        em arquivos ('WritedSamples') e do atual arquivo('CurrentFile')
-    % (o) 'Antenna'        - JSON com nome da antena e seus parâmetros de configuração 
+    % (o) 'Antenna'        - Estrutura com nome da antena e seus parâmetros de configuração 
     %                        (altura, azimute, elevação e polarização).
     % (p) 'Status'         - true | false
     % (q) 'uuid'           - Identificador único.

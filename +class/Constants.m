@@ -1,6 +1,8 @@
 classdef (Abstract) Constants
 
     properties (Constant)
+        %-----------------------------------------------------------------%
+        appName         = 'appColeta'
         stationName     = 'EMSat'
 
         windowSize      = [1244, 660]
@@ -35,7 +37,9 @@ classdef (Abstract) Constants
         errorTimeTrigger     = 60                                           % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
         errorCountTrigger    = 10                                           % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the receiver
         errorGPSCountTrigger = 100                                          % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the GPS
+        errorPosTolerance    = .2                                           % Acceptable error in antenna position setup (azimuth, elevation and polarization)
     end
+
 
     methods (Static = true)
         %-----------------------------------------------------------------%

@@ -125,7 +125,7 @@ classdef EMSatLib < handle
 
         %-----------------------------------------------------------------%
         function [pos, msgError] = AntennaPositionGET(obj, antennaName)
-            pos = [];
+            pos      = [];
             msgError = '';
 
             idx  = find(strcmp({obj.Antenna.Name}, antennaName), 1);
