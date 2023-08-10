@@ -47,21 +47,21 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function msgError = AntennaPositionSET(obj, Antenna, Type)
+        function msgError = AntennaPositionSET(obj, targetPos)
             msgError = '';
 
-            idx1  = find(strcmp({obj.Antenna.Name}, Antenna.Name), 1);
+            idx1  = find(strcmp({obj.Antenna.Name}, targetPos.Name), 1);
             IP   = obj.Antenna(idx1).IP;
             Port = obj.Antenna(idx1).Port;
 
             try
                 hACU = SocketCreation(obj, IP, Port);
 
-                switch Type
+                switch targetPos.TrackingMode
                     case 'Target'
                         % Syntax: "TT 01 T"
 
-                        idx2 = find({obj.Antenna(idx1).Target.Name}, Antenna.TargetID, 1);
+                        idx2 = find({obj.Antenna(idx1).Target.Name}, targetPos.Target, 1);
                         TargetID = obj.Antenna(idx1).Target(idx2).ID;
 
                         writeline(hACU, sprintf('TT %s T', TargetID));
@@ -73,7 +73,7 @@ classdef EMSatLib < handle
                         % - Elevation:    -180.00 to 180.00
                         % - Polarization: -180.00 to 180.00
 
-                        writeline(hACU, sprintf('IA %.3f %.3f %.3f', wrapTo360(Antenna.Azimuth), wrapTo180(Antenna.Elevation), wrapTo180(Antenna.Polarization)))
+                        writeline(hACU, sprintf('IA %.3f %.3f %.3f', wrapTo360(targetPos.Azimuth), wrapTo180(targetPos.Elevation), wrapTo180(targetPos.Polarization)))
                 end
                 pause(class.Constants.antACUPause)
 
