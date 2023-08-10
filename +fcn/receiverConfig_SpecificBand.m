@@ -196,7 +196,7 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         taskBand(ii).rawMetaData  = scpiSet_Answer;
         taskBand(ii).DataPoints   = DataPoints;
         taskBand(ii).FlipArray    = FlipArray;
-        taskBand(ii).Antenna      = AntennaExtract(newTask, ii);
+        taskBand(ii).Antenna      = fcn.antennaParser(newTask.Antenna.MetaData, extractBefore(rawBand(ii).instrAntenna, ' '));
     end
 
     obj(idx).Band = taskBand;
@@ -214,24 +214,4 @@ function msg = msgConstructor(Type, Trigger, scpiSet_Config, scpiSet_Answer)
                            'scpiSet_Config: %s\n'        ...
                            'scpiSet_Answer: %s'], Trigger, scpiSet_Config, scpiSet_Answer);
     end
-end
-
-
-%-------------------------------------------------------------------------%
-function AntennaInfo = AntennaExtract(newTask, idx1)
-    AntennaName     = newTask.Script.Band(idx1).instrAntenna;
-    AntennaMetaData = rmfield(newTask.Antenna.MetaData, 'Installation');
-    AntennaFields   = fieldnames(AntennaMetaData);
-
-    if ~isempty(AntennaName)
-        idx2 = find(strcmp({AntennaMetaData.Name}, AntennaName), 1);
-        AntennaMetaData = AntennaMetaData(idx2);
-    end
-
-    for ii = numel(AntennaFields):-1:1
-        if AntennaMetaData.(AntennaFields{ii}) == "NA"
-            AntennaMetaData = rmfield(AntennaMetaData, AntennaFields{ii});
-        end
-    end
-    AntennaInfo = jsonencode(AntennaMetaData);
 end

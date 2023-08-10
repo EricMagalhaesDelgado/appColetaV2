@@ -37,7 +37,7 @@ function htmlCode = metadataPanel(app)
     taskMetaData(2).value.Sync              =  Task.Receiver.Sync;
     
     taskMetaData(3).group = 'ANTENA';
-    taskMetaData(3).value = jsondecode(app.specObj(ii).Band(jj).Antenna);
+    taskMetaData(3).value = app.specObj(ii).Band(jj).Antenna;
 
     taskMetaData(4).group = 'TEMPO DE REVISITA';
     taskMetaData(4).value = struct('Receiver', receiverRevisitTime, ...
@@ -47,7 +47,7 @@ function htmlCode = metadataPanel(app)
     taskMetaData(5).value = struct('Description',        Script.Band(jj).Description, ...
                                    'ObservationSamples', observationSamples);
     
-    htmlCode = class.Constants.metadataInfo(taskMetaData);
+    htmlCode = fcn.metadataInfo(taskMetaData);
 end
 
 

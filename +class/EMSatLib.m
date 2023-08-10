@@ -61,7 +61,7 @@ classdef EMSatLib < handle
                     case 'Target'
                         % Syntax: "TT 01 T"
 
-                        idx2 = find({obj.Antenna(idx1).Target.Name}, targetPos.Target, 1);
+                        idx2 = find(strcmp({obj.Antenna(idx1).Target.Name}, targetPos.Target), 1);
                         TargetID = obj.Antenna(idx1).Target(idx2).ID;
 
                         writeline(hACU, sprintf('TT %s T', TargetID));

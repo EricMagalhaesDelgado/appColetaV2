@@ -78,7 +78,7 @@ classdef specClass < handle
                 if ~isempty(warnMsg)
                     obj(idx).LOG(end+1) = struct('type', 'warning', 'time', obj(idx).Observation.Created, 'msg', warnMsg);
                 end
-                obj(idx).LOG(end+1) = struct('type', 'task', 'time', obj(idx).Observation.Created, 'msg', 'Incluída na fila a tarefa.');
+                obj(idx).LOG(end+1) = struct('type', 'task', 'time', char(datetime('now')), 'msg', 'Incluída na fila a tarefa.');
 
             catch ME
                 errorMsg = ME.message;
@@ -87,7 +87,7 @@ classdef specClass < handle
                     obj(idx) = [];
                 else
                     obj(idx).Status = 'Erro';
-                    obj(idx).LOG(end+1) = struct('type', 'error', 'time', obj(idx).Observation.Created, 'msg', errorMsg);    
+                    obj(idx).LOG(end+1) = struct('type', 'error', 'time', char(datetime('now')), 'msg', errorMsg);    
                 end
             end          
         end
