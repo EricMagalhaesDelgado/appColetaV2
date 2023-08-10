@@ -1,4 +1,4 @@
-function targetPos = antennaTracking(app, antennaMetaData)
+function targetPos = antennaTracking(app, antennaMetaData, d)
 
     errorTol  = class.Constants.errorPosTolerance;
     errorFlag = false; 
@@ -36,6 +36,7 @@ function targetPos = antennaTracking(app, antennaMetaData)
 
                 if errorFlag
                     if isa(app, 'auxApp.winAddTask')
+                        delete(d)                        
                         msg = sprintf(['<font style="font-size:11;">%s\n\nPosição atual:'            ...
                                        '\n• <span style="color: #808080;">Azimute</span>: %.3fº'     ...
                                        '\n• <span style="color: #808080;">Elevação</span>: %.3fº'    ...
@@ -59,6 +60,7 @@ function targetPos = antennaTracking(app, antennaMetaData)
 
             case 'Manual'
                 if isa(app, 'auxApp.winAddTask')
+                    delete(d)
                     msg = sprintf(['<font style="font-size:11;">O apontamento do conjunto antena/LNB "%s" deverá ser realizado manualmente.'                                    ...
                                    '\n\nDeseja reconfigurar esse apontamento para automático ("Target" ou "LookAngles")?</font>'], ...
                                    antennaName);
