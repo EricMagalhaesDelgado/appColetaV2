@@ -1,25 +1,55 @@
 function htmlCode = metadataInfo(taskMetaData)
-    d = class.Constants.english2portuguese();
-
+    
     htmlCode = '<font style="font-family: Helvetica; font-size: 10px;">';
     for ii = 1:numel(taskMetaData)
         htmlCode = sprintf('%s<b>%s</b>', htmlCode, taskMetaData(ii).group);
-        
-        structFields = fields(taskMetaData(ii).value);    
-        for jj = 1:numel(structFields)
-            Field = structFields{jj};
-            Value = taskMetaData(ii).value.(Field);
-            if isnumeric(Value)
-                Value = string(Value);
-            end
-    
-            if isKey(d, Field)
-                Field = d(Field);
-            end
-            
-            htmlCode = sprintf('%s\n• <span style="color: #808080;">%s:</span> %s', htmlCode, Field, Value);
-        end
+        htmlCode = structParser(taskMetaData(ii).value, htmlCode, 1);
         htmlCode = sprintf('%s\n\n', htmlCode);
     end
     htmlCode = replace(sprintf('%s</font>', strtrim(htmlCode)), newline, '<br>');
+end
+
+
+%-------------------------------------------------------------------------%
+function htmlCode = structParser(Data, htmlCode, Level)
+
+    d = class.Constants.english2portuguese();
+
+    structFields = fields(Data);    
+    for jj = 1:numel(structFields)
+        Field = structFields{jj};
+        Value = Data.(Field);
+
+        if isnumeric(Value)
+            Value = string(Value);
+
+        elseif (Level == 1) && isJSON(Value)
+            Value = structParser(jsondecode(Value), '', 2);
+        end
+
+        if isKey(d, Field)
+            Field = d(Field);
+        end
+        
+        switch Level
+            case 1; htmlCode = sprintf('%s\n• <span style="color: #808080;">%s:</span> %s',   htmlCode, Field, Value);
+            case 2; htmlCode = sprintf('%s\n..○ <span style="color: #808080;">%s:</span> %s', htmlCode, Field, Value);
+        end
+    end
+end
+
+
+%-------------------------------------------------------------------------%
+function status = isJSON(value)
+
+    try
+        if strcmp(value, '[]')
+            status = false;
+        else
+            jsondecode(value);
+            status = true;
+        end
+    catch
+        status = false;
+    end
 end

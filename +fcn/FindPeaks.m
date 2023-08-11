@@ -10,12 +10,12 @@ function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray, At
     aCoef = (FreqStop-FreqStart)/(DataPoints-1);
     bCoef = FreqStart-aCoef;
 
-    tempFig = figure;
-    findpeaks(smoothedArray, 'MinPeakProminence', Attributes.Proeminence,             ...
-                             'MinPeakDistance',   1000 * Attributes.Distance / aCoef, ...
-                             'MinPeakWidth',      1000 * Attributes.BW / aCoef,       ...
-                             'SortStr',           'descend',                          ...
-                             'Annotate',          'extents');             
+    tempFig = figure('Visible', 'off');
+    matlab.findpeaks_R2021b(smoothedArray, 'MinPeakProminence', Attributes.Proeminence,             ...
+                                           'MinPeakDistance',   1000 * Attributes.Distance / aCoef, ...
+                                           'MinPeakWidth',      1000 * Attributes.BW / aCoef,       ...
+                                           'SortStr',           'descend',                          ...
+                                           'Annotate',          'extents');             
 
     h = findobj(tempFig, Tag='HalfProminenceWidth');
     if ~isempty(h)
@@ -34,7 +34,7 @@ function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray, At
 
         if ~isempty(idxFreq)
             FreqCenter = (aCoef .* idxFreq + bCoef) ./ 1e+6;                                             % Em MHz
-            BandWidth  = idxBW .* aCoef ./ 1e+3;                                                           % Em kHz
+            BandWidth  = idxBW .* aCoef ./ 1e+3;                                                         % Em kHz
     
             peaksTable = table(idxFreq, FreqCenter, BandWidth, 'VariableNames', {'idx', 'FreqCenter', 'BW'});
         end

@@ -69,6 +69,7 @@ function Draw(app, ii, jj)
 
             KK = 100/app.specObj(ii).Band(jj).Mask.Validations;
             app.line_ClrWrite = plot(app.axes1, xArray, KK .* app.specObj(ii).Band(jj).Mask.BrokenArray, 'Tag', 'MaskPlot', 'Color', app.General.Colors(4,:));
+            plotFcn.DataTipModel(app.line_ClrWrite, '%%')
         end
 
         % Waterfall

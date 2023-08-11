@@ -1,7 +1,7 @@
 classdef EMSatLib < handle
 
     % Author.: Eric Magalhães Delgado & Vinicius Puga
-    % Date...: July 21, 2023
+    % Date...: August 11, 2023
     % Version: 1.00
 
     properties
@@ -157,24 +157,23 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function msgError = MatrixSwitch(obj, LNBName)
+        function msgError = MatrixSwitch(obj, Port)
             % As of July 4, 2023, the L-Band Matrix is not switching to the
             % ports 19, 28 and 29.
             msgError = '';
             
             try
-                idx = obj.LNB.Port(find(strcmp(obj.LNB.Name, LNBName), 1));
                 hSwitch = tcpclient(obj.switchSocket.IP, obj.switchSocket.Port);
 
                 for ii = 1:class.Constants.switchTimes
-                    writeline(hSwitch, obj.switchCommand.set(idx));
+                    writeline(hSwitch, obj.switchCommand.set(Port));
 
                     pause(class.Constants.switchPause)
-                    if strcmp(obj.switchCommand.get(idx), read(hSwitch, hSwitch.NumBytesAvailable, 'char'))
+                    if strcmp(obj.switchCommand.get(Port), read(hSwitch, hSwitch.NumBytesAvailable, 'char'))
                         break
                     else
                         if ii == class.Constants.switchTimes
-                            error('A matrix não aceitou a programação...')
+                            error('A matrix não aceitou a programação.')
                         end
                     end
                 end
@@ -305,11 +304,11 @@ classdef EMSatLib < handle
             
             for ii = 1:numel(obj.Antenna)
                 for jj = 1:numel(obj.Antenna(ii).Target)
-                    propTable(end+1,:) = {obj.Antenna(ii).Name, ...
-                                                obj.Antenna(ii).Target(jj).Name, ...
-                                                obj.Antenna(ii).Target(jj).Azimuth, ...
-                                                obj.Antenna(ii).Target(jj).Elevation, ...
-                                                obj.Antenna(ii).Target(jj).Polarization};
+                    propTable(end+1,:) = {obj.Antenna(ii).Name,                 ...
+                                          obj.Antenna(ii).Target(jj).Name,      ...
+                                          obj.Antenna(ii).Target(jj).Azimuth,   ...
+                                          obj.Antenna(ii).Target(jj).Elevation, ...
+                                          obj.Antenna(ii).Target(jj).Polarization};
                 end
             end
             propSummary = summary(propTable);
@@ -326,7 +325,7 @@ classdef EMSatLib < handle
             pause(class.Constants.antACUPause)
             if hACU.NumBytesAvailable
                 clear hACU
-                error('A ACU deve estar sendo controlada pelo Compass, o que impede o apontamento da antena e giro do LNB de forma automática...')
+                error('A ACU deve estar sendo controlada pelo Compass, o que impede o apontamento da antena e giro do LNB de forma automática.')
             end
         end
     end
