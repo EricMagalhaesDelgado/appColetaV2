@@ -30,7 +30,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.1,
         "IntegrationFactor": 1,
-        "Trigger": 1,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 2,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       },
       {
@@ -48,7 +56,10 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.1,
         "IntegrationFactor": 5,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": []
+        },
         "Enable": 1
       },
       {
@@ -66,7 +77,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.1,
         "IntegrationFactor": 1,
-        "Trigger": 2,
+        "MaskTrigger": {
+          "Status": 2,
+          "FindPeaks": {
+            "nSweeps": 5,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       }
     ]
@@ -101,7 +120,15 @@
       "LevelUnit": "dBµV",
       "RevisitTime": 1,
       "IntegrationFactor": 2,
-      "Trigger": 1,
+      "MaskTrigger": {
+        "Status": 1,
+        "FindPeaks": {
+          "nSweeps": 10,
+          "Proeminence": 30,
+          "Distance": 25,
+          "BW": 10
+        }
+      },
       "Enable": 1
     }
   },
@@ -135,7 +162,10 @@
       "LevelUnit": "dBµV",
       "RevisitTime": 0.1,
       "IntegrationFactor": 2,
-      "Trigger": 1,
+      "MaskTrigger": {
+        "Status": 0,
+        "FindPeaks": []
+      },
       "Enable": 1
     }
   },
@@ -169,7 +199,10 @@
       "LevelUnit": "dBµV",
       "RevisitTime": 0.1,
       "IntegrationFactor": 1,
-      "Trigger": 1,
+      "MaskTrigger": {
+        "Status": 1,
+        "FindPeaks": []
+      },
       "Enable": 1
     }
   },
@@ -204,7 +237,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.001,
         "IntegrationFactor": 1,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       },
       {
@@ -222,7 +263,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.001,
         "IntegrationFactor": 1,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       },
       {
@@ -240,7 +289,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.001,
         "IntegrationFactor": 1,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 0
       },
       {
@@ -258,7 +315,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 0.001,
         "IntegrationFactor": 1,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       }
     ]
@@ -294,7 +359,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 10,
         "IntegrationFactor": 3,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       },
       {
@@ -312,7 +385,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 10,
         "IntegrationFactor": 3,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       },
       {
@@ -330,7 +411,15 @@
         "LevelUnit": "dBm",
         "RevisitTime": 10,
         "IntegrationFactor": 3,
-        "Trigger": 0,
+        "MaskTrigger": {
+          "Status": 1,
+          "FindPeaks": {
+            "nSweeps": 10,
+            "Proeminence": 30,
+            "Distance": 25,
+            "BW": 10
+          }
+        },
         "Enable": 1
       }
     ]

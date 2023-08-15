@@ -1,7 +1,8 @@
-function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray, Attributes)
+function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray)
 
     peaksTable = [];
 
+    Attributes = specObj.Band(idx).Mask.FindPeaks;
     FreqStart  = specObj.Task.Script.Band(idx).FreqStart;
     FreqStop   = specObj.Task.Script.Band(idx).FreqStop;
     DataPoints = numel(smoothedArray);
@@ -17,7 +18,7 @@ function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray, At
                                                'SortStr',           'descend');
     for ii = height(idxRange):-1:1
         idxValidation = floor(idxRange(ii,1)):ceil(idxRange(ii,2));
-        if all(~validationArray(idxValidation), 'all')
+        if all(~validationArray(idxValidation))
             idxRange(ii,:) = [];
         end
     end

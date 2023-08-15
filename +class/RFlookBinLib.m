@@ -373,7 +373,9 @@ classdef RFlookBinLib
             end
 
             if ~isempty(specObj.Band(idx).Mask)
-                MetaStruct.Mask = jsonencode(specObj.Band(idx).Mask.Table);
+                MetaStruct.Mask = jsonencode(struct('Status',    MetaData.MaskTrigger.Status, ...
+                                                    'FindPeaks', specObj.Band(idx).Mask.FindPeaks, ...
+                                                    'Table',     specObj.Band(idx).Mask.Table));
             end
 
             MetaStruct = unicode2native(jsonencode(MetaStruct), 'UTF-8');

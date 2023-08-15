@@ -6,7 +6,7 @@ function htmlCode = metadataPanel(app)
     Task   = app.specObj(ii).Task;
     Script = Task.Script;
 
-    [observationType, observationSamples, StepWidth, receiverRevisitTime, gpsRevisitTime] = metadataPanel_ViewForm(app, ii, jj);
+    [observationType, observationSamples, StepWidth, receiverRevisitTime, gpsRevisitTime, maskTrigger] = metadataPanel_ViewForm(app, ii, jj);
     
     taskMetaData = struct('group', 'TAREFA',                                                         ...
                           'value', struct('Type',          Task.Type,                                ...
@@ -33,8 +33,8 @@ function htmlCode = metadataPanel(app)
     taskMetaData(2).value.Detector          = Script.Band(jj).instrDetector;
     taskMetaData(2).value.TraceMode         = Script.Band(jj).TraceMode;
     taskMetaData(2).value.IntegrationFactor = Script.Band(jj).IntegrationFactor;
-    taskMetaData(2).value.Reset             =  Task.Receiver.Reset;
-    taskMetaData(2).value.Sync              =  Task.Receiver.Sync;
+    taskMetaData(2).value.Reset             = Task.Receiver.Reset;
+    taskMetaData(2).value.Sync              = Task.Receiver.Sync;
     
     taskMetaData(3).group = 'ANTENA';
     taskMetaData(3).value = app.specObj(ii).Band(jj).Antenna;
@@ -45,14 +45,15 @@ function htmlCode = metadataPanel(app)
 
     taskMetaData(5).group = 'OUTROS ASPECTOS';
     taskMetaData(5).value = struct('Description',        Script.Band(jj).Description, ...
-                                   'ObservationSamples', observationSamples);
+                                   'ObservationSamples', observationSamples,          ...
+                                   'MaskTrigger',        maskTrigger);
     
     htmlCode = fcn.metadataInfo(taskMetaData);
 end
 
 
 %-------------------------------------------------------------------------%
-function [observationType, observationSamples, StepWidth, receiverRevisitTime, gpsRevisitTime] = metadataPanel_ViewForm(app, ii, jj)
+function [observationType, observationSamples, StepWidth, receiverRevisitTime, gpsRevisitTime, maskTrigger] = metadataPanel_ViewForm(app, ii, jj)
     Task   = app.specObj(ii).Task;
     Script = Task.Script;
 
@@ -65,7 +66,7 @@ function [observationType, observationSamples, StepWidth, receiverRevisitTime, g
 
     % ObservationSamples
     if observationType == "Quantidade específica de amostras"
-        observationSamples = Script.Band(jj).ObservationSamples;
+        observationSamples = Script.Band(jj).instrObservationSamples;
     else
         observationSamples = -1;
     end
@@ -100,5 +101,13 @@ function [observationType, observationSamples, StepWidth, receiverRevisitTime, g
         end
     else
         gpsRevisitTime = 'NA';
+    end
+
+    % MaskTrigger
+    if ~isempty(app.specObj(ii).Band(jj).Mask)
+        maskTrigger = struct('Status',    Task.Script.Band(jj).MaskTrigger.Status, ...
+                             'FindPeaks', app.specObj(ii).Band(jj).Mask.FindPeaks);
+    else
+        maskTrigger = 'NA';
     end
 end
