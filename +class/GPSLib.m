@@ -5,9 +5,9 @@ classdef GPSLib < handle
         List   = table('Size', [0, 7],                                                              ...
                        'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
                        'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'})
-        Table  = table('Size', [0, 6],                                                              ...
-                       'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
-                       'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
+        Table  = table('Size', [0, 4],                                          ...
+                       'VariableTypes', {'string', 'string', 'cell', 'string'}, ...
+                       'VariableNames', {'Family', 'Socket', 'Handle', 'Status'})
     end
 
 
@@ -89,7 +89,7 @@ classdef GPSLib < handle
                 end
 
                 hGPS.UserData = struct('instrSelected', instrSelected);
-                obj.Table{idx,:}   = {"GPS", Type, "", Socket, hGPS, "Connected"};
+                obj.Table{idx,:}   = {"GPS", Socket, hGPS, "Connected"};
       
             catch ME
                 msgError = ME.message;

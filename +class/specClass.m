@@ -1,11 +1,13 @@
-classdef specClass < handle
+classdef specClass < matlab.mixin.Copyable                                  % abstract class that provides a COPY method for copying handle objects
 
     % Author.: Eric Magalhães Delgado
-    % Date...: August 08, 2023
+    % Date...: August 15, 2023
     % Version: 1.00
 
     properties
         ID
+        IDN
+        
         Task        = class.taskClass.empty                                 % See "auxApp.winAddTask.mlapp"
         Observation = struct('Created',    '', ...                          % Datestring data type - Format: '24/02/2023 14:00:00'
                              'BeginTime', NaT, ...                          % Datetime data type
@@ -44,6 +46,8 @@ classdef specClass < handle
             obj(idx).hReceiver  = newTask.Receiver.Handle;
             obj(idx).hStreaming = newTask.Streaming.Handle;
             obj(idx).hGPS       = newTask.GPS.Handle;
+
+            obj(idx).IDN        = newTask.Receiver.Handle.UserData.IDN;
 
             obj(idx).Observation.BeginTime = datetime(newTask.Script.Observation.BeginTime, 'InputFormat', 'dd/MM/yyyy HH:mm:ss');
             obj(idx).Observation.EndTime   = datetime(newTask.Script.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss');

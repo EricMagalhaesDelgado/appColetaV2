@@ -55,14 +55,12 @@ end
 %-------------------------------------------------------------------------%
 function status = isJSON(value)
 
+    status = false;
+
     try
-        if strcmp(value, '[]')
-            status = false;
-        else
-            jsondecode(value);
+        if isstruct(jsondecode(value))
             status = true;
         end
-    catch
-        status = false;
+    catch        
     end
 end

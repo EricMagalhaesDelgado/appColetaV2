@@ -10,7 +10,15 @@ function [udpPortArray, idx] = udpSockets(udpPortArray, Port)
     
     if isempty(idx)
         idx = numel(udpPortArray)+1;
-        udpPortArray(idx) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian', 'Timeout', class.Constants.udpTimeout)};
-    end
 
+        % Inserido bloco try/catch prevendo possível erro na criação desse
+        % objeto decorrente de um bloqueio externo ao MATLAB (do sistema
+        % operacional, talvez).
+
+        try
+            udpPortArray(idx) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian', 'Timeout', class.Constants.udpTimeout)};
+        catch
+            idx = [];
+        end
+    end
 end

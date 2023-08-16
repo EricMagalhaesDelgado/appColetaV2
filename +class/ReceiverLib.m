@@ -42,9 +42,9 @@ classdef ReceiverLib < handle
         List   = table('Size', [0, 7],                                                              ...
                        'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
                        'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'});
-        Table  = table('Size', [0, 6],                                                              ...
-                       'VariableTypes', {'string', 'string', 'string', 'string', 'cell', 'string'}, ...
-                       'VariableNames', {'Family', 'Type', 'IDN', 'Socket', 'Handle', 'Status'})
+        Table  = table('Size', [0, 4],                                          ...
+                       'VariableTypes', {'string', 'string', 'cell', 'string'}, ...
+                       'VariableNames', {'Family', 'Socket', 'Handle', 'Status'})
     end
 
 
@@ -131,7 +131,7 @@ classdef ReceiverLib < handle
                             end
         
                             hReceiver.UserData = struct('IDN', IDN, 'ClientIP', ClientIP, 'nTasks', 0, 'SyncMode', '', 'instrSelected', instrSelected);
-                            obj.Table{idx,:}   = {"Receiver", Type, IDN, Socket, hReceiver, "Connected"};
+                            obj.Table{idx,:}   = {"Receiver", Socket, hReceiver, "Connected"};
                         else
                             obj.Table.Status(idx) = "Connected";
                         end        
