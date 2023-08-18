@@ -1,5 +1,5 @@
-function lastMaskValidation(app, brokeTrigger, ii, jj)
-    if brokeTrigger
+function lastMaskValidation(app, maskTrigger, ii, jj)
+    if maskTrigger
         Validations = app.specObj(ii).Band(jj).Mask.Validations;
         BrokenCount = app.specObj(ii).Band(jj).Mask.BrokenCount;
 

@@ -1,7 +1,7 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: July 20, 2023
+    % Date...: August 18, 2023
     % Version: 1.00
 
     % !! EVOLUÇÃO !!
@@ -334,6 +334,12 @@ classdef RFlookBinLib
             BitsPerSample = Script.BitsPerSample;
             Node          = specObj.hReceiver.UserData.IDN;
 
+            if ~isempty(MetaData.instrVBW)
+                instrVBW  = MetaData.instrVBW;
+            else                           
+                instrVBW  = '';
+            end
+
             AttMode_ID    = class.RFlookBinLib.str2id('Attenuation', MetaData.instrAttMode);
             gpsMode_ID    = class.RFlookBinLib.str2id('GPS',         Script.GPS.Type);
         
@@ -352,6 +358,7 @@ classdef RFlookBinLib
                                 'FreqStop',         MetaData.FreqStop,           ...
                                 'DataPoints',       MetaData.instrDataPoints,    ...
                                 'Resolution',       MetaData.instrResolution,    ...
+                                'VBW',              instrVBW,                    ...
                                 'Preamp',           MetaData.instrPreamp,        ...
                                 'AttMode',          MetaData.instrAttMode,       ...
                                 'AttFactor',        MetaData.instrAttFactor,     ...
@@ -360,7 +367,11 @@ classdef RFlookBinLib
                                 'TraceIntegration', MetaData.IntegrationFactor,  ...
                                 'Detector',         MetaData.instrDetector,      ...
                                 'RevisitTime',      MetaData.RevisitTime);
-        
+            
+            if isempty(instrVBW)
+                MetaStruct = rmfield(MetaStruct, 'VBW');
+            end
+            
             if AttMode_ID
                 MetaStruct = rmfield(MetaStruct, 'AttFactor');
             end
@@ -373,7 +384,7 @@ classdef RFlookBinLib
             end
 
             if ~isempty(specObj.Band(idx).Mask)
-                MetaStruct.Mask = jsonencode(struct('Status',    MetaData.MaskTrigger.Status, ...
+                MetaStruct.Mask = jsonencode(struct('Status',    MetaData.MaskTrigger.Status,      ...
                                                     'FindPeaks', specObj.Band(idx).Mask.FindPeaks, ...
                                                     'Table',     specObj.Band(idx).Mask.Table));
             end
