@@ -2,6 +2,7 @@
   {
     "Receiver": "R&S EB500",
     "Switch": "ETM",
+    "SwitchDefaultStatus": false,
     "Antennas": [
       "",
       "R&S ADD107",
@@ -11,6 +12,7 @@
   {
     "Receiver": "R&S FSW",
     "Switch": "EMSat",
+    "SwitchDefaultStatus": true,
     "Antennas": [
       "",
       "MCL-1 V",
@@ -42,6 +44,7 @@
   {
     "Receiver": "others",
     "Switch": "none",
+    "SwitchDefaultStatus": false,
     "Antennas": [
       "",
       "CRFS Low Band (10 MHz - 1.2 GHz)",

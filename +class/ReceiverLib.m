@@ -22,7 +22,7 @@ classdef ReceiverLib < handle
     % E esse objeto "TCPClient" possui os métodos "connect" e "disconnect", os quais tentam alterar ativamente o estado da conexão.
     %
     % O controle da conexão do appColeta com o objeto "tcpclient" pode ser feito com a exclusão do objeto (delete/clear) e posterior
-    % recriação, ou po meio da alteração do seu estado (método "connect" do objeto "TCPClient").
+    % recriação, ou por meio da alteração do seu estado (método "connect" do objeto "TCPClient").
     %
     % Notei, contudo, que o objeto "TCPCustomClient" às vezes é deletado, desvinculando o objeto "tcpclient" do "TCPClient". Quando isso
     % acontece, o MATLAB retorna os seguintes erros:
@@ -61,7 +61,7 @@ classdef ReceiverLib < handle
             % Características do instrumento em que se deseja controlar:
             Type   = instrSelected.Type;
             Tag    = instrSelected.Tag;
-            [IP, Port, Timeout, Localhost_publicIP, Localhost_localIP] = obj.MissingParameters(instrSelected);
+            [IP, Port, Timeout, Localhost_publicIP, Localhost_localIP] = obj.MissingParameters(instrSelected.Parameters);
             Socket = sprintf('%s:%d', IP, Port);
 
             % Consulta se há objeto "tcpclient" criado para o instrumento:
@@ -72,13 +72,13 @@ classdef ReceiverLib < handle
             if ~isempty(idx)
                 hReceiver = obj.Table.Handle{idx};
 
+                warning('off', 'MATLAB:structOnObject')
+                warning('off', 'transportlib:legacy:PropertyNotSupported')
+
                 % Três tentativas para reestabelecer a comunicação, caso
                 % esteja com falha.
                 for kk = 1:3
-                    try
-                        warning('off', 'MATLAB:structOnObject')
-                        warning('off', 'transportlib:legacy:PropertyNotSupported')
-                        
+                    try                        
                         if ~struct(struct(hReceiver).TCPCustomClient).Transport.Connected
                             struct(struct(hReceiver).TCPCustomClient).Transport.connect
                         end
@@ -234,36 +234,36 @@ classdef ReceiverLib < handle
 
 
         %-----------------------------------------------------------------%
-        function [IP, Port, Timeout, Localhost_publicIP, Localhost_localIP] = MissingParameters(obj, instrSelected)
+        function [IP, Port, Timeout, Localhost_publicIP, Localhost_localIP] = MissingParameters(obj, Parameters)
             % IP
-            if isfield(instrSelected.Parameters, 'IP');                 IP = instrSelected.Parameters.IP;
-            else;                                                       IP = '';
+            if isfield(Parameters, 'IP');                 IP = Parameters.IP;
+            else;                                         IP = '';
             end
 
-            if strcmpi(IP, 'localhost');                                IP = '127.0.0.1';
+            if strcmpi(IP, 'localhost');                  IP = '127.0.0.1';
             end
         
             % Port
-            if isfield(instrSelected.Parameters, 'Port');               Port = instrSelected.Parameters.Port;
-            else;                                                       Port = [];
+            if isfield(Parameters, 'Port');               Port = Parameters.Port;
+            else;                                         Port = [];
             end
             
-            if ~isnumeric(Port);                                        Port = str2double(Port);
+            if ~isnumeric(Port);                          Port = str2double(Port);
             end
 
             % Timeout
-            if isfield(instrSelected.Parameters, 'Timeout');            Timeout = instrSelected.Parameters.Timeout;
-            else;                                                       Timeout = class.Constants.Timeout;
+            if isfield(Parameters, 'Timeout');            Timeout = Parameters.Timeout;
+            else;                                         Timeout = class.Constants.Timeout;
             end
         
             % Localhost_publicIP
-            if isfield(instrSelected.Parameters, 'Localhost_publicIP'); Localhost_publicIP = instrSelected.Parameters.Localhost_publicIP;
-            else;                                                       Localhost_publicIP = '';
+            if isfield(Parameters, 'Localhost_publicIP'); Localhost_publicIP = Parameters.Localhost_publicIP;
+            else;                                         Localhost_publicIP = '';
             end
         
             % Localhost_localIP
-            if isfield(instrSelected.Parameters, 'Localhost_localIP');  Localhost_localIP = instrSelected.Parameters.Localhost_localIP;
-            else;                                                       Localhost_localIP = '';
+            if isfield(Parameters, 'Localhost_localIP');  Localhost_localIP = Parameters.Localhost_localIP;
+            else;                                         Localhost_localIP = '';
             end
         end
 

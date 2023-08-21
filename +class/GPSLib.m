@@ -23,7 +23,7 @@ classdef GPSLib < handle
         function [idx, msgError] = Connect(obj, instrSelected)
             % Características do instrumento em que se deseja controlar:
             Type = instrSelected.Type;
-            [IP, Port, BaudRate, Timeout] = obj.MissingParameters(instrSelected);
+            [IP, Port, BaudRate, Timeout] = obj.MissingParameters(instrSelected.Parameters);
 
             switch Type
                 case 'Serial';       Socket = Port;
@@ -36,14 +36,14 @@ classdef GPSLib < handle
 
             if ~isempty(idx)
                 hGPS = obj.Table.Handle{idx};
+                        
+                warning('off', 'MATLAB:structOnObject')
+                warning('off', 'transportlib:legacy:PropertyNotSupported')
 
                 % Três tentativas para reestabelecer a comunicação, caso
                 % esteja com falha.
                 for kk = 1:3
                     try
-                        warning('off', 'MATLAB:structOnObject')
-                        warning('off', 'transportlib:legacy:PropertyNotSupported')
-
                         switch Type
                             case 'Serial';       hTransport = struct(hGPS).Transport;
                             case 'TCPIP Socket'; hTransport = struct(struct(hGPS).TCPCustomClient).Transport;
@@ -138,28 +138,28 @@ classdef GPSLib < handle
 
 
         %-----------------------------------------------------------------%
-        function [IP, Port, BaudRate, Timeout] = MissingParameters(obj, instrSelected)
+        function [IP, Port, BaudRate, Timeout] = MissingParameters(obj, Parameters)
             % IP
-            if isfield(instrSelected.Parameters, 'IP');       IP = instrSelected.Parameters.IP;
-            else;                                             IP = '';
+            if isfield(Parameters, 'IP');       IP = Parameters.IP;
+            else;                               IP = '';
             end
 
-            if strcmpi(IP, 'localhost');                      IP = '127.0.0.1';
+            if strcmpi(IP, 'localhost');        IP = '127.0.0.1';
             end
         
             % Port
-            if isfield(instrSelected.Parameters, 'Port');     Port = instrSelected.Parameters.Port;
-            else;                                             Port = [];
+            if isfield(Parameters, 'Port');     Port = Parameters.Port;
+            else;                               Port = [];
             end
 
             % BaudRate
-            if isfield(instrSelected.Parameters, 'BaudRate'); BaudRate = instrSelected.Parameters.BaudRate;
-            else;                                             BaudRate = 9600;
+            if isfield(Parameters, 'BaudRate'); BaudRate = Parameters.BaudRate;
+            else;                               BaudRate = 9600;
             end
 
             % Timeout
-            if isfield(instrSelected.Parameters, 'Timeout');  Timeout = instrSelected.Parameters.Timeout;
-            else;                                             Timeout = class.Constants.Timeout;
+            if isfield(Parameters, 'Timeout');  Timeout = Parameters.Timeout;
+            else;                               Timeout = class.Constants.Timeout;
             end
         end
 
