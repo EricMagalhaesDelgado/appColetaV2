@@ -1,20 +1,19 @@
 [
     {
     "Family": "GPS",
-    "Name": "GPS Garmin GPSmap 62sc",
+    "Name": "GPS USB/Serial",
     "Type": "Serial",
     "Parameters": {
       "Port": "COM2",
       "BaudRate": 9600,
-      "Timeout": 5
+      "Timeout": 3
     },
     "Description": "GPS Garmin",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 1
   },
   {
     "Family": "GPS",
-    "Name": "GPS Smartphone",
+    "Name": "GPS TCPIP",
     "Type": "TCPIP Socket",
     "Parameters": {
       "IP": "192.168.10.30",
@@ -22,8 +21,7 @@
       "Timeout": 5
     },
     "Description": "GPS2IP (iOS)",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 0
   },
   {
     "Family": "Receiver",
@@ -35,13 +33,7 @@
       "Timeout": 5
     },
     "Description": "Modo servidor/cliente. Loopback (127.0.0.1).",
-    "Enable": 1,
-    "LOG": [
-      "{",
-      "  \"time\": \"01/12/2022 10:35:43\",",
-      "  \"info\": \"Conectado ao <b>TEKTRONIX,SA2500PC,B000000,7.050</b>.\"",
-      "}"
-    ]
+    "Enable": 1
   },
   {
     "Family": "Receiver",
@@ -53,13 +45,7 @@
       "Timeout": 5
     },
     "Description": "FSL-6 (10k - 6 GHz)",
-    "Enable": 1,
-    "LOG": [
-      "{",
-      "  \"time\": \"01/12/2022 10:36:27\",",
-      "  \"info\": \"Esperava-se instrumento da família <b>Rohde & Schwarz FSL</b>, mas identificado <b>Rohde&Schwarz,FSW-43,1331.5003K43/101365,4.30 SP1</b>.\"",
-      "}"
-    ]
+    "Enable": 0
   },
   {
     "Family": "Receiver",
@@ -71,13 +57,7 @@
       "Timeout": 5
     },
     "Description": "EMSat",
-    "Enable": 1,
-    "LOG": [
-      "{",
-      "  \"time\": \"01/12/2022 10:37:19\",",
-      "  \"info\": \"Unsuccessful open: Connection timed out: connect\"",
-      "}"
-    ]
+    "Enable": 1
   },
   {
     "Family": "Receiver",
@@ -89,8 +69,7 @@
       "Timeout": 5
     },
     "Description": "FSVR",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 0
   },
   {
     "Family": "Receiver",
@@ -102,8 +81,7 @@
       "Timeout": 5
     },
     "Description": "GR08",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 1
   },
   {
     "Family": "Receiver",
@@ -115,8 +93,7 @@
       "Timeout": 5
     },
     "Description": "GR08",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 0
   },
     {
     "Family": "Receiver",
@@ -128,8 +105,7 @@
       "Timeout": 5
     },
     "Description": "GR08",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 1
   },
     {
     "Family": "Receiver",
@@ -141,8 +117,7 @@
       "Timeout": 5
     },
     "Description": "GR08",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 1
   },
   {
     "Family": "Receiver",
@@ -154,8 +129,7 @@
       "Timeout": 5
     },
     "Description": "ETM Uberlândia/MG",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 1
   },
   {
     "Family": "Receiver",
@@ -170,7 +144,6 @@
       "Localhost_publicIP": "73.237.33.238"
     },
     "Description": "ETM Uberlândia/MG",
-    "Enable": 1,
-    "LOG": ""
+    "Enable": 1
   }
 ]

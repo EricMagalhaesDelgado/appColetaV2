@@ -20,23 +20,31 @@ function htmlCode = structParser(Data, htmlCode, Level)
         Field = structFields{jj};
         Value = Data.(Field);
 
-        if isempty(Value)
-            Value = "-1";
-
-        elseif isnumeric(Value)
-            Value = string(Value);
-
-        elseif Level == 1
-            if isstruct(Value)
-                Value = structParser(Value, '', 2);
-            elseif isJSON(Value)
-                Value = structParser(jsondecode(Value), '', 2);                
+        try
+            if isempty(Value)
+                Value = "-1";
+    
+            elseif isnumeric(Value)
+                Value = strjoin(string(Value), ', ');
+    
+            elseif iscell(Value)
+                Value = strjoin(Value, ', ');
+    
+            elseif Level == 1
+                if isstruct(Value)
+                    Value = structParser(Value, '', 2);
+                elseif isJSON(Value)
+                    Value = structParser(jsondecode(Value), '', 2);                
+                end
+    
+            elseif Level == 2
+                if isstruct(Value)
+                    Value = structParser(Value, '', 3);
+                end
             end
-
-        elseif Level == 2
-            if isstruct(Value)
-                Value = structParser(Value, '', 3);
-            end
+            
+        catch
+            continue
         end
 
         if isKey(d, Field)

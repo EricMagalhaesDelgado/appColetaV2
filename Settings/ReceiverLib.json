@@ -7,8 +7,7 @@
     "Logo": "Instr_Anritsu.png",
     "Image": "Instr_Anritsu_MS2720T.png",
     "connectType": [
-      "TCPIP Socket",
-      "TCPIP Visa"
+      "TCPIP Socket"
     ],
     "connectFlag": 1,
     "connectPort": 9001,
@@ -62,8 +61,7 @@
     "Logo": "Instr_KeySight.png",
     "Image": "Instr_KeySight_N9344C.png",
     "connectType": [
-      "TCPIP Socket",
-      "TCPIP Visa"
+      "TCPIP Socket"
     ],
     "connectFlag": 1,
     "connectPort": 5025,
@@ -123,8 +121,7 @@
     "Logo": "Instr_KeySight.png",
     "Image": "Instr_KeySight_N9936B.png",
     "connectType": [
-      "TCPIP Socket",
-      "TCPIP Visa"
+      "TCPIP Socket"
     ],
     "connectFlag": 1,
     "connectPort": 5025,
@@ -229,8 +226,7 @@
     "Logo": "Instr_R&S.png",
     "Image": "Instr_R&S_FSL.png",
     "connectType": [
-      "TCPIP Socket",
-      "TCPIP Visa"
+      "TCPIP Socket"
     ],
     "connectFlag": 1,
     "connectPort": 5025,
@@ -287,8 +283,7 @@
     "Logo": "Instr_R&S.png",
     "Image": "Instr_R&S_FSVR.png",
     "connectType": [
-      "TCPIP Socket",
-      "TCPIP Visa"
+      "TCPIP Socket"
     ],
     "connectFlag": 1,
     "connectPort": 5025,
@@ -345,8 +340,7 @@
     "Logo": "Instr_R&S.png",
     "Image": "Instr_R&S_FSW.png",
     "connectType": [
-      "TCPIP Socket",
-      "TCPIP Visa"
+      "TCPIP Socket"
     ],
     "connectFlag": 1,
     "connectPort": 5025,

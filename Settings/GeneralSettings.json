@@ -1,6 +1,7 @@
 {
   "userPath": "C:\\P&D",
   "openGL": "Hardware Full",
+  "startupInfo": false,
   "Waterfall": {
     "Colormap": "winter",
     "Depth": 512

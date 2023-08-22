@@ -2,9 +2,9 @@ classdef GPSLib < handle
 
     properties
         Config
-        List   = table('Size', [0, 7],                                                              ...
-                       'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
-                       'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'})
+        List   = table('Size', [0, 6],                                                      ...
+                       'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double'}, ...
+                       'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable'})
         Table  = table('Size', [0, 4],                                          ...
                        'VariableTypes', {'string', 'string', 'cell', 'string'}, ...
                        'VariableNames', {'Family', 'Socket', 'Handle', 'Status'})
@@ -113,22 +113,7 @@ classdef GPSLib < handle
         function FileRead(obj, RootFolder)
             
             try
-                tempList = jsondecode(fileread(fullfile(RootFolder, 'Settings', 'instrumentList.json')));
-                for ii = numel(tempList):-1:1
-                    switch tempList(ii).Type
-                        case 'Serial';       essentialFields = {'Port', 'BaudRate'};
-                        case 'TCPIP Socket'; essentialFields = {'IP', 'Port'};
-                        otherwise;           essentialFields = {};
-                    end
-
-                    if ~all(ismember(essentialFields, fields(tempList(ii).Parameters)))
-                        tempList(ii) = [];
-                    else
-                        tempList(ii).Parameters = jsonencode(tempList(ii).Parameters);
-                    end                    
-                end
-    
-                tempList = struct2table(tempList, 'AsArray', true);
+                tempList = fcn.instrumentListRead(fullfile(RootFolder, 'Settings', 'instrumentList.json'));
                 tempList(~strcmp(tempList.Family, 'GPS'),:) = [];
 
                 obj.List = tempList;

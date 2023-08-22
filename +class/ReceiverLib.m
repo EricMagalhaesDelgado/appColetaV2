@@ -39,9 +39,9 @@ classdef ReceiverLib < handle
 
     properties
         Config
-        List   = table('Size', [0, 7],                                                              ...
-                       'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double', 'cell'}, ...
-                       'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable', 'LOG'});
+        List   = table('Size', [0, 6],                                                      ...
+                       'VariableTypes', {'cell', 'cell', 'cell', 'cell', 'cell', 'double'}, ...
+                       'VariableNames', {'Family', 'Name', 'Type', 'Parameters', 'Description', 'Enable'});
         Table  = table('Size', [0, 4],                                          ...
                        'VariableTypes', {'string', 'string', 'cell', 'string'}, ...
                        'VariableNames', {'Family', 'Socket', 'Handle', 'Status'})
@@ -52,7 +52,7 @@ classdef ReceiverLib < handle
         %-----------------------------------------------------------------%
         function obj = ReceiverLib(RootFolder)
             obj.Config = struct2table(jsondecode(fileread(fullfile(RootFolder, 'Settings', 'ReceiverLib.json'))));
-            obj.List   = obj.FileRead(fullfile(RootFolder, 'Settings', 'instrumentList.json'), RootFolder);
+            obj.List   = obj.FileRead(RootFolder);
         end
 
 
@@ -188,46 +188,25 @@ classdef ReceiverLib < handle
 
     methods (Access = protected)
         %-----------------------------------------------------------------%
-        function [tempList, msgError] = FileRead(obj, FilePath, RootFolder)
+        function [tempList, msgError] = FileRead(obj, RootFolder)
             
             try
-                tempList = jsondecode(fileread(FilePath));
-                for ii = numel(tempList):-1:1
-                    switch tempList(ii).Type
-                        case {'TCPIP Socket', 'TCP/UDP IP Socket'}; essentialFields = {'IP', 'Port'};
-                        otherwise;                                  essentialFields = {};
-                    end
-
-                    if ~all(ismember(essentialFields, fields(tempList(ii).Parameters)))
-                        tempList(ii) = [];
-                    else
-                        tempList(ii).Parameters = jsonencode(tempList(ii).Parameters);
-                    end                    
-                end
-    
-                tempList = struct2table(tempList, 'AsArray', true);
+                tempList = fcn.instrumentListRead(fullfile(RootFolder, 'Settings', 'instrumentList.json'));
                 tempList(~strcmp(tempList.Family, 'Receiver'),:) = [];
 
-                % Essa validação é importante para o caso de ser aberto um
-                % arquivo externo com lista de instrumentos (ao invés do arquivo 
-                % "instrumentList.json" constante na subpasta "Settings".
-
-                if strcmp(FilePath, fullfile(RootFolder, 'Settings', 'instrumentList.json'))
-                    if height(tempList)
-                        if ~any(tempList.Enable)
-                            tempList.Enable(1) = 1;
-                        end
-                    else
-                        tempList(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+                if height(tempList)
+                    if ~any(tempList.Enable)
+                        tempList.Enable(1) = 1;
                     end
-                    obj.List = tempList;
+                else
+                    tempList(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
                 end
+
+                obj.List = tempList;
                 msgError = '';
 
             catch ME        
-                if strcmp(FilePath, fullfile(RootFolder, 'Settings', 'instrumentList.json'))
-                    obj.List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
-                end
+                obj.List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
                 msgError = ME.message;
             end
         end
