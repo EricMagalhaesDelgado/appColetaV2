@@ -1,7 +1,22 @@
 {
+  "stationInfo": {
+    "Name": "EMSat",
+    "Computer": ""
+  },
   "userPath": "C:\\P&D",
-  "openGL": "Hardware Full",
+  "openGL": "hardware",
   "startupInfo": false,
+  "tcpServer": {
+    "Status": 0,
+    "IP": "172.24.5.159",
+    "Port": 8910,
+    "Key": "123456",
+    "ClientList": [
+      "Zabbix",
+      "Jupyter",
+      "Matlab"
+    ]
+  },
   "Waterfall": {
     "Colormap": "winter",
     "Depth": 512

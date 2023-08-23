@@ -3,7 +3,6 @@ classdef (Abstract) Constants
     properties (Constant)
         %-----------------------------------------------------------------%
         appName         = 'appColeta'
-        stationName     = 'EMSat'
 
         windowSize      = [1244, 660]
         windowMinSize   = [ 750, 660]
@@ -28,15 +27,6 @@ classdef (Abstract) Constants
         fileMaxSize     = 100e+6                                            % 100 MB
 
         checkIP         = 'http://checkip.dyndns.org'
-
-        udpDefaultPort  = 24001                                             % See "EB500Lib.json"
-        gpsDefaultPort  = {'COM1', 24002}                                   % See "GPSLib.json"
-
-        tcpServerStatus = 0
-        tcpServerIP     = '172.24.5.159'                                    % OpenVPN address
-        tcpServerPort   = 8910
-        tcpServerKey    = '123456'
-        tcpServerClient = {'Zabbix', 'Jupyter', 'Matlab'}
 
         FindPeaks       = struct('nSweeps',     10, ...
                                  'Proeminence', 30, ...

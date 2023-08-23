@@ -3,6 +3,7 @@ classdef tcpServerLib < handle
     properties
         App
         Server
+        Time
         LOG
     end
 
@@ -13,21 +14,23 @@ classdef tcpServerLib < handle
             obj.App = app;
 
             try
-                obj.Server = tcpserver(class.Constants.tcpServerIP, class.Constants.tcpServerPort);
+                obj.Server = tcpserver(app.General.tcpServer.IP, app.General.tcpServer.Port);
             catch
-                obj.Server = tcpserver(class.Constants.tcpServerPort);
+                obj.Server = tcpserver(app.General.tcpServer.Port);
             end
             configureTerminator(obj.Server, "CR/LF")
             configureCallback(obj.Server, "terminator", @(~,~)obj.receivedMessage)
 
-            obj.LOG = table('Size', [0, 8],                                                                                    ...
-                            'VariableTypes', {'string', 'string', 'double', 'string', 'string', 'string', 'double', 'string'}, ...
-                            'VariableNames', {'Timestamp', 'ClientAddress', 'ClientPort', 'Message', 'ClientName', 'Request', 'NumBytesWritten', 'Status'});
+            obj.Time = datetime('now', 'Format', 'dd/MM/yyyy HH:mm:ss');
+            obj.LOG  = table('Size', [0, 8],                                                                                    ...
+                             'VariableTypes', {'string', 'string', 'double', 'string', 'string', 'string', 'double', 'string'}, ...
+                             'VariableNames', {'Timestamp', 'ClientAddress', 'ClientPort', 'Message', 'ClientName', 'Request', 'NumBytesWritten', 'Status'});
         end
 
 
         %-----------------------------------------------------------------%
         function receivedMessage(obj)
+            app = obj.App;
 
         % O servidor se comunica com apenas um único cliente, negando tentativas 
         % de conexão de outros clientes enquanto estiver ativa a comunicação com 
@@ -66,22 +69,23 @@ classdef tcpServerLib < handle
                             mustBeTextScalar(decodedMsg.Request)
     
                             % Verifica se o cliente passou o valor correto de "Key".
-                            % (configurado no arquivo "Constants.m")
-                            if ~strcmp(decodedMsg.Key, class.Constants.tcpServerKey)
+                            % (configurado no arquivo "GeneralSettings.json")
+                            if ~strcmp(decodedMsg.Key, app.General.tcpServer.Key)
                                 error('tcpServerLib:IncorrectKey', 'Incorrect key')
                             end
     
                             % Verifica se o nome do cliente está na lista de possíveis 
                             % nomes que o servidor se comunica.
-                            % (configurado no arquivo "Constants.m")
-                            if ~isempty(class.Constants.tcpServerClient) && ~ismember(decodedMsg.ClientName, class.Constants.tcpServerClient)
+                            % (configurado no arquivo "GeneralSettings.json")
+                            if ~isempty(app.General.tcpServer.ClientList) && ~ismember(decodedMsg.ClientName, app.General.tcpServer.ClientList)
                                 error('tcpServerLib:UnauthorizedClient', 'Unauthorized client')
                             end
             
                             % Requisições...
                             switch decodedMsg.Request
-                                case 'TaskList'; msg = TaskList(obj);
-                                otherwise;       error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
+                                case 'StationInfo'; msg = StationInfo(obj);
+                                case 'TaskList';    msg = TaskList(obj);
+                                otherwise;          error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
                             end
     
                             sendMessageToClient(obj, struct('Request', rawCell{ii}, 'Answer', msg))
@@ -127,6 +131,22 @@ classdef tcpServerLib < handle
                                 Request,                    ...
                                 obj.Server.NumBytesWritten, ...
                                 statusMsg};
+        end
+
+
+        %-----------------------------------------------------------------%
+        function stationInfo = StationInfo(obj)
+            app = obj.App;
+            stationInfo = struct('stationInfo', app.General.stationInfo, ...
+                                 'position',    struct('IDN', {}, 'gpsType', {}, 'Latitude', {}, 'Longitude', {}));
+
+            for ii = 1:numel(app.specObj)
+                stationInfo.position(ii) = struct('IDN',       app.specObj(ii).IDN,                  ...
+                                                  'gpsType',   app.specObj(ii).Task.Script.GPS.Type, ...
+                                                  'gpsStatus', app.specObj(ii).lastGPS.Status,       ...
+                                                  'Latitude',  app.specObj(ii).lastGPS.Latitude,     ...
+                                                  'Longitude', app.specObj(ii).lastGPS.Longitude);
+            end
         end
 
 
