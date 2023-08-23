@@ -31,14 +31,5 @@
   "Integration": {
     "Trace": 10,
     "SampleTime": 10
-  },
-  "File": {
-    "Size": 1.0E+8
-  },
-  "FindPeaks": {
-    "nSweeps": 10,
-    "Proeminence": 30,
-    "Distance": 25,
-    "BW": 10
   }
 }

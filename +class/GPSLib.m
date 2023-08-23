@@ -15,7 +15,11 @@ classdef GPSLib < handle
         %-----------------------------------------------------------------%
         function obj = GPSLib(RootFolder)
             obj.Config = struct2table(jsondecode(fileread(fullfile(RootFolder, 'Settings', 'GPSLib.json'))));
-            obj.FileRead(RootFolder);
+
+            tempList = obj.FileRead(RootFolder);
+            if ~isempty(tempList)
+                obj.List = tempList;
+            end
         end
 
 
@@ -105,23 +109,26 @@ classdef GPSLib < handle
         function ReconnectAttempt(obj, instrSelected)
             Connect(obj, instrSelected);
         end
-    end
 
 
-    methods (Access = protected)
         %-----------------------------------------------------------------%
-        function FileRead(obj, RootFolder)
-            
+        function [tempList, msgError] = FileRead(obj, RootFolder)
+
             try
                 tempList = fcn.instrumentListRead(fullfile(RootFolder, 'Settings', 'instrumentList.json'));
                 tempList(~strcmp(tempList.Family, 'GPS'),:) = [];
 
-                obj.List = tempList;
-            catch  
+                msgError = '';
+
+            catch ME
+                tempList = [];
+                msgError = ME.message;
             end
         end
+    end
 
 
+    methods (Access = protected)
         %-----------------------------------------------------------------%
         function [IP, Port, BaudRate, Timeout] = MissingParameters(obj, Parameters)
             % IP

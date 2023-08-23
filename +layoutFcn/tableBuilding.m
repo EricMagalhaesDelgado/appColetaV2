@@ -6,7 +6,7 @@ function tableBuilding(app, idx)
     
     for ii = 1:numel(app.specObj)
         EndTime = '-';
-        if ~isnat(app.specObj(ii).Observation.EndTime)
+        if ~isnat(app.specObj(ii).Observation.EndTime) && ~isinf(app.specObj(ii).Observation.EndTime)
             EndTime = datestr(app.specObj(ii).Observation.EndTime, 'dd/mm/yyyy HH:MM:SS');
         end
 

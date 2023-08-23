@@ -183,13 +183,11 @@ classdef ReceiverLib < handle
                 end
             end
         end
-    end
 
 
-    methods (Access = protected)
         %-----------------------------------------------------------------%
         function [tempList, msgError] = FileRead(obj, RootFolder)
-            
+
             try
                 tempList = fcn.instrumentListRead(fullfile(RootFolder, 'Settings', 'instrumentList.json'));
                 tempList(~strcmp(tempList.Family, 'Receiver'),:) = [];
@@ -199,16 +197,24 @@ classdef ReceiverLib < handle
                         tempList.Enable(1) = 1;
                     end
                 else
-                    tempList(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+                    tempList(end+1,:) = DefaultInstrument(obj);
                 end
-
-                obj.List = tempList;
                 msgError = '';
 
-            catch ME        
-                obj.List(end+1,:) = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1, ''};
+            catch ME
+                tempList          = obj.List;
+                tempList(end+1,:) = DefaultInstrument(obj);
+
                 msgError = ME.message;
             end
+        end
+    end
+
+
+    methods (Access = protected)
+        %-----------------------------------------------------------------%
+        function defaultIntrument = DefaultInstrument(obj)
+            defaultIntrument = {'Receiver', 'Tektronix SA2500', 'TCPIP Socket', '{"IP":"127.0.0.1","Port":"34835","Timeout":5}', 'Modo servidor/cliente. Loopback (127.0.0.1).', 1};
         end
 
 

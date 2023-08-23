@@ -1,18 +1,12 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: August 18, 2023
+    % Date...: August 22, 2023
     % Version: 1.00
-
-    % !! EVOLUÇÃO !!
-    % Tirar referência à variável global appGeneral e depois eliminar
-    % criação da variável global (lá no startup de WinAppColetaV2).
 
 	methods(Static = true)
         %-----------------------------------------------------------------%
-        function [fileCount, CurrentFile] = OpenFile(specObj, idx)
-            global appGeneral
-
+        function [fileCount, CurrentFile] = OpenFile(specObj, idx, userPath)
             baseName   = specObj.Band(idx).File.Basename;
             fileCount  = specObj.Band(idx).File.Filecount+1;
             fileID     = [];
@@ -21,7 +15,7 @@ classdef RFlookBinLib
 
             switch specObj.Band(idx).File.Fileversion
                 case 'RFlookBin v.1/1'
-                    fileName = fullfile(appGeneral.userPath, sprintf('~%s_%.0f.bin', baseName, fileCount));
+                    fileName = fullfile(userPath, sprintf('~%s_%.0f.bin', baseName, fileCount));
                     fileID   = fopen(fileName, 'w');
 
                     AlocatedSamples    = class.RFlookBinLib.v1_WriteHeader(fileID, specObj, idx);
@@ -33,7 +27,7 @@ classdef RFlookBinLib
                     fileMemMap = class.RFlookBinLib.v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2);
         
                 case 'RFlookBin v.2/1'
-                    fileName = fullfile(appGeneral.userPath, sprintf('%s_%.0f.bin', baseName, fileCount));
+                    fileName = fullfile(userPath, sprintf('%s_%.0f.bin', baseName, fileCount));
                     fileID   = fopen(fileName, 'w');
                     
                     class.RFlookBinLib.v2_WriteHeader(fileID, specObj, idx)
@@ -87,10 +81,9 @@ classdef RFlookBinLib
                     end
         
                 case 'RFlookBin v.2/1'
-                    global appGeneral
                     fileID = specObj.Band(idx).File.CurrentFile.Handle;
 
-                    if ftell(fileID) > appGeneral.File.Size
+                    if ftell(fileID) > class.Constants.fileMaxSize
                         fclose(fileID);
 
                         [specObj.Band(idx).File.Filecount, ...
@@ -123,17 +116,15 @@ classdef RFlookBinLib
         % ## RFlookBin v.1/1 ##
         %-----------------------------------------------------------------%
         function AlocatedSamples = v1_WriteHeader(fileID, specObj, idx)
-            global appGeneral
-
             Script          = specObj.Task.Script;
             MetaData        = Script.Band(idx);
             BitsPerSample   = Script.BitsPerSample;
             DataPoints      = MetaData.instrDataPoints;
 
             if strcmp(specObj.Task.Script.Observation.Type, 'Samples')
-                AlocatedSamples = min([specObj.Task.Script.Band(idx).instrObservationSamples, ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints))]);
+                AlocatedSamples = min([specObj.Task.Script.Band(idx).instrObservationSamples, ceil(class.Constants.fileMaxSize ./ (BitsPerSample * DataPoints))]);
             else
-                AlocatedSamples = ceil(appGeneral.File.Size ./ (BitsPerSample * DataPoints));
+                AlocatedSamples = ceil(class.Constants.fileMaxSize ./ (BitsPerSample * DataPoints));
             end
         
             fwrite(fileID, 'RFlookBin v.1/1', 'char*1');

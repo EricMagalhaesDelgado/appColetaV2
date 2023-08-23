@@ -23,7 +23,9 @@ classdef (Abstract) Constants
         udpTimeout      = 3                                                 % Maximum time in seconds to receive a specific number of datagrams 
         idnTimeout      = 1                                                 % Maximum time in seconds to extract IDN info from receiver
         gpsTimeout      = 1                                                 % Maximum time in seconds to receive bytes from GPS
-        fileVersion     = 'RFlookBin v.2/1'
+
+        fileVersion     = 'RFlookBin v.2/1'                                 % 'RFlookBin v.1/1' | 'RFlookBin v.2/1'
+        fileMaxSize     = 100e+6                                            % 100 MB
 
         checkIP         = 'http://checkip.dyndns.org'
 
@@ -33,6 +35,13 @@ classdef (Abstract) Constants
         tcpServerStatus = 0
         tcpServerIP     = '172.24.5.159'                                    % OpenVPN address
         tcpServerPort   = 8910
+        tcpServerKey    = '123456'
+        tcpServerClient = {'Zabbix', 'Jupyter', 'Matlab'}
+
+        FindPeaks       = struct('nSweeps',     10, ...
+                                 'Proeminence', 30, ...
+                                 'Distance',    25, ...
+                                 'BW',          10)
 
         errorTimeTrigger     = 60                                           % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
         errorCountTrigger    = 10                                           % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the receiver
