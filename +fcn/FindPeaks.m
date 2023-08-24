@@ -12,7 +12,7 @@ function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray)
     bCoef = FreqStart-aCoef;
 
     % Findpeaks
-    idxRange = matlab.findpeaks(smoothedArray, 'MinPeakProminence', Attributes.Proeminence,             ...
+    [idxRange, pkProeminence] = matlab.findpeaks(smoothedArray, 'MinPeakProminence', Attributes.Proeminence,             ...
                                                'MinPeakDistance',   1000 * Attributes.Distance / aCoef, ...
                                                'MinPeakWidth',      1000 * Attributes.BW / aCoef,       ...
                                                'SortStr',           'descend');
@@ -20,6 +20,7 @@ function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray)
         idxValidation = floor(idxRange(ii,1)):ceil(idxRange(ii,2));
         if all(~validationArray(idxValidation))
             idxRange(ii,:) = [];
+            pkProeminence(ii) = [];
         end
     end
 
@@ -28,6 +29,6 @@ function peaksTable = FindPeaks(specObj, idx, smoothedArray, validationArray)
         FreqCenter = (aCoef .* idxFreq + bCoef) ./ 1e+6;                    % Em MHz
         BandWidth  = (idxRange(:,2)-idxRange(:,1)) * aCoef / 1e+3;          % Em kHz
 
-        peaksTable = table(round(idxFreq), FreqCenter, BandWidth, 'VariableNames', {'idx', 'FreqCenter', 'BW'});
+        peaksTable = table(round(idxFreq), round(FreqCenter, 3), round(BandWidth, 1), round(pkProeminence, 1), 'VariableNames', {'idx', 'FreqCenter', 'BW', 'Proeminence'});
     end
 end

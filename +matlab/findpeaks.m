@@ -1,4 +1,4 @@
-function wxPk = findpeaks(Yin, varargin)
+function [wxPk, Ppk] = findpeaks(Yin, varargin)
 %FINDPEAKS Find local peaks in data
 
 % Copyright 2007-2022 The MathWorks, Inc.
@@ -8,7 +8,7 @@ narginchk(1,22);
 isInMATLAB = coder.target('MATLAB');
 
 % extract the parameters from the input argument list
-[y, ~, x, ~, minH, minP, minW, maxW, ~, minT, ~, ~, ~, refW] = parse_inputs(isInMATLAB, Yin, varargin{:});
+[y, ~, x, ~, minH, minP, minW, maxW, minD, minT, maxN, sortDir, ~, refW] = parse_inputs(isInMATLAB, Yin, varargin{:});
 
 % find indices of all finite and infinite peaks and the inflection points
 [iFinite, iInfinite, iInflect] = getAllPeaks(y);
@@ -21,7 +21,24 @@ iPk = removePeaksBelowThreshold(y,iPk,minT);
 % obtain the indices of each peak (iPk), the prominence base (bPk), and
 % the x- and y- coordinates of the peak base (bxPk, byPk) and the width
 % (wxPk)
-[~, ~, ~, ~, wxPk] = signal.internal.findpeaks.findExtents(y, x, iPk, iFinite, iInfinite, iInflect, minP, minW, maxW, refW);
+[iPk, bPk, ~, ~, wxPk] = signal.internal.findpeaks.findExtents(y, x, iPk, iFinite, iInfinite, iInflect, minP, minW, maxW, refW);
+
+% find the indices of the largest peaks within the specified distance
+idx = findPeaksSeparatedByMoreThanMinPeakDistance(y,x,iPk,minD,sortDir);
+
+iPk  = iPk(idx);
+bPk  = bPk(idx);
+wxPk = wxPk(idx,:);
+
+% use the index vector to fetch the correct peaks.
+if(length(idx)>maxN)
+    idx  = idx(1:maxN);
+    iPk  = iPk(1:maxN);
+    bPk  = bPk(1:maxN);
+    wxPk = wxPk(1:maxN,:);
+end
+
+Ppk = y(iPk) - bPk;
 
 
 %--------------------------------------------------------------------------
