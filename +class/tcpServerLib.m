@@ -83,12 +83,12 @@ classdef tcpServerLib < handle
             
                             % Requisições...
                             switch decodedMsg.Request
-                                case 'StationInfo'; msg = StationInfo(obj);
-                                case 'TaskList';    msg = TaskList(obj);
-                                otherwise;          error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
+                                case 'PositionList'; msg = PositionList(obj);
+                                case 'TaskList';     msg = TaskList(obj);
+                                otherwise;           error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
                             end
     
-                            sendMessageToClient(obj, struct('Request', rawCell{ii}, 'Answer', msg))
+                            sendMessageToClient(obj, struct('Request', decodedMsg.Request, 'Answer', msg))
                             logTableFill(obj, rawMsg, decodedMsg, 'success')
                             
                         catch ME
@@ -135,17 +135,18 @@ classdef tcpServerLib < handle
 
 
         %-----------------------------------------------------------------%
-        function stationInfo = StationInfo(obj)
+        function positionList = PositionList(obj)
             app = obj.App;
-            stationInfo = struct('stationInfo', app.General.stationInfo, ...
-                                 'position',    struct('IDN', {}, 'gpsType', {}, 'Latitude', {}, 'Longitude', {}));
+            positionList = struct('stationInfo',  app.General.stationInfo, ...
+                                  'positionList', struct('ID', {}, 'IDN', {}, 'gpsType', {}, 'Latitude', {}, 'Longitude', {}));
 
             for ii = 1:numel(app.specObj)
-                stationInfo.position(ii) = struct('IDN',       app.specObj(ii).IDN,                  ...
-                                                  'gpsType',   app.specObj(ii).Task.Script.GPS.Type, ...
-                                                  'gpsStatus', app.specObj(ii).lastGPS.Status,       ...
-                                                  'Latitude',  app.specObj(ii).lastGPS.Latitude,     ...
-                                                  'Longitude', app.specObj(ii).lastGPS.Longitude);
+                positionList.positionInfo(ii) = struct('ID',        app.specObj(ii).ID,                   ...
+                                                       'IDN',       app.specObj(ii).IDN,                  ...
+                                                       'gpsType',   app.specObj(ii).Task.Script.GPS.Type, ...
+                                                       'gpsStatus', app.specObj(ii).lastGPS.Status,       ...
+                                                       'Latitude',  app.specObj(ii).lastGPS.Latitude,     ...
+                                                       'Longitude', app.specObj(ii).lastGPS.Longitude);
             end
         end
 
@@ -153,7 +154,9 @@ classdef tcpServerLib < handle
         %-----------------------------------------------------------------%
         function taskList = TaskList(obj)            
             app = obj.App;
-            taskList = struct();
+
+            taskList = struct('stationInfo', app.General.stationInfo, ...
+                              'taskList',    struct('ID', {}, 'IDN', {}, 'TaskName', {}, 'Observation', {}, 'Band', {}, 'MaskTable', {}, 'Status', {}));
             
             for ii = 1:numel(app.specObj)
                 taskList(ii).ID           = app.specObj(ii).ID;
@@ -163,10 +166,12 @@ classdef tcpServerLib < handle
                                                    'BeginTime', app.specObj(ii).Observation.BeginTime,  ...
                                                    'EndTime',   app.specObj(ii).Observation.EndTime);
                 
+                maskTable = [];
                 for jj = 1:numel(app.specObj(ii).Band)
                     Mask = app.specObj(ii).Band(jj).Mask;
                     if ~isempty(Mask)
-                        Mask = rmfield(Mask, {'Array', 'BrokenArray'});
+                        maskTable = Mask.Table;
+                        Mask = rmfield(Mask, {'Table', 'Array', 'BrokenArray'});
                     end
 
                     taskList(ii).Band(jj) = struct('FreqStart',          app.specObj(ii).Task.Script.Band(jj).FreqStart,                ...
@@ -175,7 +180,9 @@ classdef tcpServerLib < handle
                                                    'nSweeps',            app.specObj(ii).Band(jj).nSweeps,                              ...
                                                    'Mask',               Mask);
                 end
-                taskList(ii).Status       = app.specObj(ii).Status;
+
+                taskList(ii).MaskTable = maskTable;
+                taskList(ii).Status    = app.specObj(ii).Status;
             end
         end
     end

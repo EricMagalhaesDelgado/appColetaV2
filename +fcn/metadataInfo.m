@@ -24,8 +24,8 @@ function htmlCode = structParser(Data, htmlCode, Level)
             if isempty(Value)
                 Value = "-1";
     
-            elseif isnumeric(Value)
-                Value = strjoin(string(Value), ', ');
+            elseif isnumeric(Value) || islogical(Value)
+                Value = strjoin(string(double(Value)), ', ');
     
             elseif iscell(Value)
                 Value = strjoin(Value, ', ');

@@ -46,5 +46,5 @@ writeline(obj, ['<JSON>' jsonencode(struct('Key', '123456', 'ClientName', 'Matla
 %%
 % TESTE 5:
 % Informações corretas - requisitado a informação do tipo "TaskList"
-
-writeline(obj, ['<JSON>' jsonencode(struct('Key', '123456', 'ClientName', 'Matlab', 'Request', 'TaskList')) '</JSON>'])
+writeline(obj, ['<JSON>' jsonencode(struct('Key', '123456', 'ClientName', 'Matlab', 'Request', 'PositionList')) '</JSON>'])
+writeline(obj, ['<JSON>' jsonencode(struct('Key', '123456', 'ClientName', 'Matlab', 'Request', 'TaskList'))     '</JSON>'])
