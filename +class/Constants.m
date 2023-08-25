@@ -2,7 +2,7 @@ classdef (Abstract) Constants
 
     properties (Constant)
         %-----------------------------------------------------------------%
-        appName         = 'appColeta'
+        appName         = 'appColetaV2'
 
         windowSize      = [1244, 660]
         windowMinSize   = [ 750, 660]
@@ -14,6 +14,7 @@ classdef (Abstract) Constants
         gps2loc_City    = 'city'
         gps2loc_Unit    = 'principalSubdivisionCode'
 
+        userPaths       = {fullfile(getenv('USERPROFILE'), 'Documents'); fullfile(getenv('USERPROFILE'), 'Downloads')}
         Interactions    = {'datacursor', 'zoomin', 'restoreview'}
 
         yMinLimRange    = 80                                                % Minimum y-Axis limit range

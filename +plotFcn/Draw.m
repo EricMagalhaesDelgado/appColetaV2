@@ -38,13 +38,13 @@ function Draw(app, ii, jj)
                 maskTable = app.specObj(ii).Band(jj).Mask.Table;
                 for kk = 1:height(maskTable)
                     newObj = plot(app.axes1, [maskTable.FreqStart(kk), maskTable.FreqStop(kk)], [maskTable.THR(kk), maskTable.THR(kk)], 'red', ...
-                                  'Marker', 'o', 'MarkerEdgeColor', 'red', 'MarkerFaceColor', 'red', 'MarkerSize', 4, 'Tag', 'Mask');
+                                  Marker='o', MarkerEdgeColor='red', MarkerFaceColor='red', MarkerSize=4, Tag='Mask');
                     plotFcn.DataTipModel(newObj, LevelUnit)
                 end
             end
     
             % ClearWrite, MinHold, Average and MaxHold
-            app.line_ClrWrite = plot(app.axes1, xArray, newArray, 'Tag', 'ClrWrite', 'Color', app.General.Colors(4,:));
+            app.line_ClrWrite = plot(app.axes1, xArray, newArray, Color=app.General.Colors(4,:), Tag='ClrWrite');
             plotFcn.DataTipModel(app.line_ClrWrite, LevelUnit)
             
             if app.Button_MinHold.Value
@@ -62,29 +62,36 @@ function Draw(app, ii, jj)
                 plotFcn.DataTipModel(app.line_MaxHold, LevelUnit)
             end
 
+            if app.Button_peakExcursion.Value
+                plotFcn.peakExcursion(app, ii, jj, newArray)
+            end
+
         else
             % MASK PLOT
             ylabel(app.axes1, 'Rompimento (%)');
             set(app.axes1, XLim=[FreqStart, FreqStop], YLim=[.1, 100], YScale='log')
 
             KK = 100/app.specObj(ii).Band(jj).Mask.Validations;
-            app.line_ClrWrite = plot(app.axes1, xArray, KK .* app.specObj(ii).Band(jj).Mask.BrokenArray, 'Tag', 'MaskPlot', 'Color', app.General.Colors(4,:));
+            app.line_ClrWrite = plot(app.axes1, xArray, KK .* app.specObj(ii).Band(jj).Mask.BrokenArray, Color=app.General.Colors(4,:), Tag='MaskPlot');
             plotFcn.DataTipModel(app.line_ClrWrite, '%%')
         end
 
         % Waterfall
-        app.surface_WFall = image(app.axes2, xArray, 1:app.specObj(ii).Band(jj).Waterfall.Depth, app.specObj(ii).Band(jj).Waterfall.Matrix(idx2,:), 'CDataMapping', 'scaled', 'Tag', 'Waterfall');
+        app.surface_WFall = image(app.axes2, xArray, 1:app.specObj(ii).Band(jj).Waterfall.Depth, app.specObj(ii).Band(jj).Waterfall.Matrix(idx2,:), CDataMapping='scaled', Tag='Waterfall');
         plotFcn.DataTipModel(app.surface_WFall, LevelUnit)
 
     else
         if ~app.Button_MaskPlot.Value
             % ORDINARY PLOT (SPECTRUM + MASK THRESHOLD)
             app.line_ClrWrite.YData = newArray;
-            if ~isempty(app.line_MinHold); app.line_MinHold.YData = min(app.line_MinHold.YData, newArray);
+            
+            if ~isempty(app.line_MinHold);  app.line_MinHold.YData = min(app.line_MinHold.YData, newArray);
             end
-            if ~isempty(app.line_Average); app.line_Average.YData = ((app.General.Integration.Trace-1)*app.line_Average.YData + newArray) / app.General.Integration.Trace;
+            if ~isempty(app.line_Average);  app.line_Average.YData = ((app.General.Integration.Trace-1)*app.line_Average.YData + newArray) / app.General.Integration.Trace;
             end
-            if ~isempty(app.line_MaxHold); app.line_MaxHold.YData = max(app.line_MaxHold.YData, newArray);
+            if ~isempty(app.line_MaxHold);  app.line_MaxHold.YData = max(app.line_MaxHold.YData, newArray);
+            end
+            if ~isempty(app.peakExcursion); plotFcn.peakExcursion(app, ii, jj, newArray);
             end
 
         else

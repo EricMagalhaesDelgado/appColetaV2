@@ -7,6 +7,7 @@ function StartUp(app)
     app.line_MinHold  = [];
     app.line_Average  = [];
     app.line_MaxHold  = [];
+    app.peakExcursion = [];
     app.surface_WFall = [];
     
 end
