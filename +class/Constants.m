@@ -3,6 +3,8 @@ classdef (Abstract) Constants
     properties (Constant)
         %-----------------------------------------------------------------%
         appName         = 'appColetaV2'
+        appRelease      = 'R2023a'
+        appVersion      = '1.41'
 
         windowSize      = [1244, 660]
         windowMinSize   = [ 750, 660]
@@ -27,7 +29,9 @@ classdef (Abstract) Constants
         Timeout         = 10                                                % Maximum time in seconds to extract valid info from receiver
         udpTimeout      = 3                                                 % Maximum time in seconds to receive a specific number of datagrams 
         idnTimeout      = 1                                                 % Maximum time in seconds to extract IDN info from receiver
+        
         gpsTimeout      = 1                                                 % Maximum time in seconds to receive bytes from GPS
+        gpsUpdateRate   = 1                                                 % Minimum revisit time (limitation of the GPS receiver - in general: 1 second)
 
         fileVersion     = 'RFlookBin v.2/1'                                 % 'RFlookBin v.1/1' | 'RFlookBin v.2/1'
         fileMaxSize     = 100e+6                                            % 100 MB
