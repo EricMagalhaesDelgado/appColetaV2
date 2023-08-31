@@ -1,6 +1,6 @@
 {
   "stationInfo": {
-    "Name": "EMSat",
+    "Name": "ERMx-DF-00",
     "Computer": ""
   },
   "userPath": "C:\\P&D",
@@ -8,7 +8,7 @@
   "startupInfo": false,
   "tcpServer": {
     "Status": 0,
-    "IP": "172.24.5.159",
+    "IP": "",
     "Port": 8910,
     "Key": "123456",
     "ClientList": [

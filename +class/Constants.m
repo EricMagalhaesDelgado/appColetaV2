@@ -33,6 +33,8 @@ classdef (Abstract) Constants
         gpsTimeout      = 1                                                 % Maximum time in seconds to receive bytes from GPS
         gpsUpdateRate   = 1                                                 % Minimum revisit time (limitation of the GPS receiver - in general: 1 second)
 
+        tcpServerPeriod = 300                                               % in seconds
+
         fileVersion     = 'RFlookBin v.2/1'                                 % 'RFlookBin v.1/1' | 'RFlookBin v.2/1'
         fileMaxSize     = 100e+6                                            % 100 MB
 

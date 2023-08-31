@@ -78,9 +78,10 @@ classdef ReceiverLib < handle
                 % Três tentativas para reestabelecer a comunicação, caso
                 % esteja com falha.
                 for kk = 1:3
-                    try                        
-                        if ~struct(struct(hReceiver).TCPCustomClient).Transport.Connected
-                            struct(struct(hReceiver).TCPCustomClient).Transport.connect
+                    try
+                        hTransport = struct(struct(hReceiver).TCPCustomClient).Transport;
+                        if ~hTransport.Connected
+                            hTransport.connect
                         end
                         IDN = obj.ConnectionStatus(hReceiver);
                         break

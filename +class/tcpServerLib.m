@@ -3,6 +3,12 @@ classdef tcpServerLib < handle
     properties
         App
         Server
+
+        % Armazenado em "Timer" um handle para um objeto timer, o qual tem
+        % como objetivo avaliar o status do servidor, realizando tentativa 
+        % de reconexão, caso aplicável.
+        Timer
+        
         Time
         LOG
     end
@@ -11,20 +17,57 @@ classdef tcpServerLib < handle
     methods
         %-----------------------------------------------------------------%
         function obj = tcpServerLib(app)
-            obj.App = app;
-
-            try
-                obj.Server = tcpserver(app.General.tcpServer.IP, app.General.tcpServer.Port);
-            catch
-                obj.Server = tcpserver(app.General.tcpServer.Port);
-            end
-            configureTerminator(obj.Server, "CR/LF")
-            configureCallback(obj.Server, "terminator", @(~,~)obj.receivedMessage)
-
+            obj.App  = app;
             obj.Time = datetime('now', 'Format', 'dd/MM/yyyy HH:mm:ss');
             obj.LOG  = table('Size', [0, 8],                                                                                    ...
                              'VariableTypes', {'string', 'string', 'double', 'string', 'string', 'string', 'double', 'string'}, ...
                              'VariableNames', {'Timestamp', 'ClientAddress', 'ClientPort', 'Message', 'ClientName', 'Request', 'NumBytesWritten', 'Status'});
+            
+            obj.TimerCreation(app)
+        end
+
+
+        %-----------------------------------------------------------------%
+        function TimerCreation(obj, app)
+            obj.Timer = timer("ExecutionMode", "fixedSpacing",                  ...
+                              "BusyMode",      "queue",                         ...
+                              "StartDelay",    0,                               ...
+                              "Period",        class.Constants.tcpServerPeriod, ...
+                              "TimerFcn",      {@obj.ConnectAttempt, app});
+            start(obj.Timer)
+        end
+
+
+        %-----------------------------------------------------------------%
+        function ConnectAttempt(obj, src, evt, app)
+            IP   = app.General.tcpServer.IP;
+            Port = app.General.tcpServer.Port;
+
+            try
+                if isa(obj.Server, 'tcpserver.internal.TCPServer')
+                    % Obter o handle para o objeto de baixo nível da interface
+                    % tcpserver - o "GenericTransport", o qual possui propriedade 
+                    % indicando o status do socket ("Connected"), além de métodos 
+                    % que possibilitam reconexão ("connect" e "disconnect").
+
+                    hTransport = struct(struct(struct(obj.Server).Client).ClientImpl).Transport;    
+                    if ~hTransport.Connected
+                        hTransport.connect
+                    end
+
+                else
+                    fcn.tcpSockets_PortRelease(Port)
+    
+                    if ~isempty(IP); obj.Server = tcpserver(IP, Port);
+                    else;            obj.Server = tcpserver(Port);
+                    end
+                    
+                    configureTerminator(obj.Server, "CR/LF")
+                    configureCallback(obj.Server, "terminator", @(~,~)obj.receivedMessage)
+                end
+
+            catch
+            end
         end
 
 
