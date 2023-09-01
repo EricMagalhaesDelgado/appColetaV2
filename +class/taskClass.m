@@ -15,7 +15,7 @@ classdef taskClass
     end
 
     % Propriedades:    
-    % (a) 'Type'      - 'Monitoração ordinária' | 'Drive-test' | 'Rompimento de Máscara Espectral'
+    % (a) 'Type'      - 'Monitoração regular' | 'Drive-test' | 'Rompimento de Máscara Espectral' 
     % (b) 'Script'    - registro de "taskList.json" possivelmente editado, uma vez que os campos
     %                   "BitsPerSamples", "Observation" e "GPS" são editáveis.
     % (c) 'MaskFile'  - aplicável apenas para uma monitoração do tipo "Rompimento 

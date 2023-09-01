@@ -79,26 +79,24 @@ classdef tcpServerLib < handle
         % de conexão de outros clientes enquanto estiver ativa a comunicação com 
         % o cliente (socket criado).
 
-        % O cliente deve enviar uma mensagem textual encapsulada pelas tags <JSON> 
-        % e </JSON>. A mensagem deve respeitar a sintaxe JSON e possuir as 
-        % seguintes chaves: "Key", "ClientName" e "Request".
+        % O cliente deve enviar uma mensagem textual encapsulada respeitando a 
+        % sintaxe JSON e possuir as seguintes chaves: "Key", "ClientName" e "Request".
 
         % O trigger no servidor não é o número de bytes recebidos, mas a chegada 
         % do terminador "CR/LF", que o cliente deve embutir na sua requisição.
     
         % Caso o cliente seja criado no MATLAB, a comunicação pode se dar da 
         % seguinte forma:
-        % - writeline(tcpClient, ['<JSON>' jsonencode(msg) '</JSON>'])
-        % - write(tcpClient, sprintf('<JSON>%s</JSON>\r\n', jsonencode(msg)))
+        % - writeline(tcpClient, jsonencode(msg))
+        % - write(tcpClient, sprintf('%s\r\n', jsonencode(msg)))
 
             while obj.Server.NumBytesAvailable
-                rawMsg  = readline(obj.Server);
-                rawCell = extractBetween(rawMsg, '<JSON>', '</JSON>');
+                rawMsg = readline(obj.Server);
                 
-                if ~isempty(rawCell)
-                    for ii = 1:numel(rawCell)
+                if ~isempty(rawMsg)
+                    for ii = 1:numel(rawMsg)
                         try
-                            decodedMsg = jsondecode(rawCell{ii});
+                            decodedMsg = jsondecode(rawMsg{ii});
     
                             % Verifica se a mensagem apresenta apenas as chaves
                             % "Key", "ClientName" e "Request".
@@ -126,6 +124,7 @@ classdef tcpServerLib < handle
             
                             % Requisições...
                             switch decodedMsg.Request
+                                case 'Diagnostic';   msg = Diagnostic(obj);
                                 case 'PositionList'; msg = PositionList(obj);
                                 case 'TaskList';     msg = TaskList(obj);
                                 otherwise;           error('tcpServerLib:UnexpectedRequest', 'Unexpected Request')
@@ -135,8 +134,8 @@ classdef tcpServerLib < handle
                             logTableFill(obj, rawMsg, decodedMsg, 'success')
                             
                         catch ME
-                            sendMessageToClient(obj, struct('Request', rawCell{ii}, 'Answer', ME.identifier))
-                            logTableFill(obj, rawMsg, rawCell{ii}, ME.message)
+                            sendMessageToClient(obj, struct('Request', rawMsg{ii}, 'Answer', ME.identifier))
+                            logTableFill(obj, rawMsg, rawMsg{ii}, ME.message)
                         end
                     end
     
@@ -178,36 +177,130 @@ classdef tcpServerLib < handle
 
 
         %-----------------------------------------------------------------%
-        function positionList = PositionList(obj)
+        function answer = Diagnostic(obj)
             app = obj.App;
-            positionList = struct('stationInfo',  app.General.stationInfo, ...
-                                  'positionList', struct('ID', {}, 'IDN', {}, 'gpsType', {}, 'Latitude', {}, 'Longitude', {}));
+            answer = struct('stationInfo',  app.General.stationInfo, ...
+                            'Diagnostic',   struct('EnvVariables', {}, 'SystemInfo', {}, 'LogicalDisk', {}));
 
-            for ii = 1:numel(app.specObj)
-                positionList.positionInfo(ii) = struct('ID',        app.specObj(ii).ID,                   ...
-                                                       'IDN',       app.specObj(ii).IDN,                  ...
-                                                       'gpsType',   app.specObj(ii).Task.Script.GPS.Type, ...
-                                                       'gpsStatus', app.specObj(ii).lastGPS.Status,       ...
-                                                       'Latitude',  app.specObj(ii).lastGPS.Latitude,     ...
-                                                       'Longitude', app.specObj(ii).lastGPS.Longitude);
+            % A seguir os campos que irão formar essa mensagem de diagnóstico
+            % do appColeta.
+            envFields = ["COMPUTERNAME", ...
+                         "MATLAB_ARCH", ...
+                         "MODEL", ...
+                         "PROCESSOR_ARCHITECTURE", ...
+                         "PROCESSOR_IDENTIFIER", ...
+                         "PROCESSOR_LEVEL", ...
+                         "SERIAL", ...
+                         "TYPE2"];
+            sysNames   = ["Host Name"                 ...                   % English values
+                          "OS Name"                   ...
+                          "OS Version"                ...
+                          "Product ID"                ...
+                          "Original Install Date"     ...
+                          "System Boot Time"          ...
+                          "System Manufacturer"       ...
+                          "System Model"              ...
+                          "System Type"               ...
+                          "BIOS Version"              ...
+                          "Total Physical Memory"     ...
+                          "Available Physical Memory" ...
+                          "Virtual Memory: Max Size"  ...
+                          "Virtual Memory: Available" ...
+                          "Virtual Memory: In Use"    ...
+                          "Nome do host"                      ...           % Portuguese values
+                          "Nome do sistema operacional"       ...
+                          "Versão do sistema operacional"     ...
+                          "Identificação do produto"          ...
+                          "Data da instalação original"       ...
+                          "Tempo de Inicialização do Sistema" ...
+                          "Fabricante do sistema"             ...
+                          "Modelo do sistema"                 ...
+                          "Tipo de sistema"                   ...
+                          "Versão do BIOS"                    ...
+                          "Memória física total"              ...
+                          "Memória física disponível"         ...
+                          "Memória Virtual: Tamanho Máximo"   ...
+                          "Memória Virtual: Disponível"       ...
+                          "Memória Virtual: Em Uso"];
+            sysValues  = repmat(replace(sysNames(1:15), {' ', ':'}, {'', ''}), [1 2]);
+            sysDict    = dictionary(sysNames, sysValues);            
+            discFields = "DeviceID,FileSystem,FreeSpace,Size";            
+            
+            % Environment variable
+            envVariables = getenv();
+            envKeys      = keys(envVariables, 'uniform');
+            envValues    = values(envVariables, 'uniform');
+            
+            [~, idx1]  = ismember(envFields, envKeys);
+            idx1(~idx1) = [];
+            answer.Diagnostic(1).EnvVariables = table(envKeys(idx1), envValues(idx1), 'VariableNames', {'env', 'value'});            
+            
+            % System info (Prompt1)
+            [status, cmdout] = system('systeminfo');
+            if ~status
+                try
+                    cmdout = strtrim(splitlines(cmdout));
+                    cmdout(cellfun(@(x) isempty(x), cmdout)) = [];
+            
+                    cmdout_Cell = cellfun(@(x) regexp(x, '(?<parameter>[A-Z]\D+)[:]\s+(?<value>.+)', 'names'), cmdout, 'UniformOutput', false);
+                    systemInfo  = struct('parameter', {}, 'value', {});
+                    
+                    for ii = 1:numel(cmdout_Cell)
+                        if ~isempty(cmdout_Cell{ii})
+                            keyName = cmdout_Cell{ii}.parameter;
+                            if isKey(sysDict, keyName)
+                                systemInfo(end+1) = struct('parameter', sysDict(keyName), 'value', cmdout_Cell{ii}.value);
+                            end
+                        end
+                    end
+                    answer.Diagnostic(1).SystemInfo = systemInfo;
+                catch
+                end
+            end            
+            
+            % Disc info (Prompt2)
+            [status, cmdout] = system("wmic LOGICALDISK get " + discFields);
+            if ~status
+                try
+                    cmdout = strtrim(splitlines(cmdout));
+                    cmdout(cellfun(@(x) isempty(x), cmdout)) = [];
+            
+                    answer.Diagnostic(1).LogicalDisk = cellfun(@(x) regexp(x, '(?<DeviceID>[A-Z]:)\s+(?<FileSystem>\w+)\s+(?<FreeSpace>\d+)\s+(?<Size>\d+)', 'names'), cmdout(2:end));
+                catch
+                end
             end
         end
 
 
         %-----------------------------------------------------------------%
-        function taskList = TaskList(obj)            
+        function answer = PositionList(obj)
+            app = obj.App;
+            answer = struct('stationInfo',  app.General.stationInfo, ...
+                            'positionList', struct('IDN', {}, 'gpsType', {}, 'gpsStatus', {}, 'Latitude', {}, 'Longitude', {}));
+
+            for ii = 1:numel(app.specObj)
+                answer.positionList(ii) = struct('IDN',       app.specObj(ii).IDN,                  ...
+                                                 'gpsType',   app.specObj(ii).Task.Script.GPS.Type, ...
+                                                 'gpsStatus', app.specObj(ii).lastGPS.Status,       ...
+                                                 'Latitude',  app.specObj(ii).lastGPS.Latitude,     ...
+                                                 'Longitude', app.specObj(ii).lastGPS.Longitude);
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function answer = TaskList(obj)            
             app = obj.App;
 
-            taskList = struct('stationInfo', app.General.stationInfo, ...
-                              'taskList',    struct('ID', {}, 'IDN', {}, 'TaskName', {}, 'Observation', {}, 'Band', {}, 'MaskTable', {}, 'Status', {}));
+            answer = struct('stationInfo', app.General.stationInfo, ...
+                            'taskList',    struct('IDN', {}, 'TaskName', {}, 'Observation', {}, 'Band', {}, 'MaskTable', {}, 'Status', {}));
             
             for ii = 1:numel(app.specObj)
-                taskList(ii).ID           = app.specObj(ii).ID;
-                taskList(ii).IDN          = app.specObj(ii).IDN;
-                taskList(ii).TaskName     = app.specObj(ii).Task.Script.Name;
-                taskList(ii).Observation  = struct('Type',      app.specObj(ii).Task.Script.Observation.Type, ...
-                                                   'BeginTime', app.specObj(ii).Observation.BeginTime,  ...
-                                                   'EndTime',   app.specObj(ii).Observation.EndTime);
+                answer.taskList(ii).IDN          = app.specObj(ii).IDN;
+                answer.taskList(ii).TaskName     = app.specObj(ii).Task.Script.Name;
+                answer.taskList(ii).Observation  = struct('Type',      app.specObj(ii).Task.Script.Observation.Type, ...
+                                                          'BeginTime', app.specObj(ii).Observation.BeginTime,        ...
+                                                          'EndTime',   app.specObj(ii).Observation.EndTime);
                 
                 maskTable = [];
                 for jj = 1:numel(app.specObj(ii).Band)
@@ -217,15 +310,19 @@ classdef tcpServerLib < handle
                         Mask = rmfield(Mask, {'Table', 'Array', 'BrokenArray'});
                     end
 
-                    taskList(ii).Band(jj) = struct('FreqStart',          app.specObj(ii).Task.Script.Band(jj).FreqStart,                ...
-                                                   'FreqStop',           app.specObj(ii).Task.Script.Band(jj).FreqStop,                 ...
-                                                   'ObservationSamples', app.specObj(ii).Task.Script.Band(jj).instrObservationSamples,  ...
-                                                   'nSweeps',            app.specObj(ii).Band(jj).nSweeps,                              ...
-                                                   'Mask',               Mask);
+                    answer.taskList(ii).Band(jj) = struct('FreqStart',          app.specObj(ii).Task.Script.Band(jj).FreqStart,                ...
+                                                          'FreqStop',           app.specObj(ii).Task.Script.Band(jj).FreqStop,                 ...
+                                                          'ObservationSamples', app.specObj(ii).Task.Script.Band(jj).instrObservationSamples,  ...
+                                                          'nSweeps',            app.specObj(ii).Band(jj).nSweeps,                              ...
+                                                          'Mask',               Mask);
                 end
 
-                taskList(ii).MaskTable = maskTable;
-                taskList(ii).Status    = app.specObj(ii).Status;
+                if ~strcmp(app.specObj(ii).Task.Script.Observation.Type, 'Samples')
+                    answer.taskList(ii).Band = rmfield(answer.taskList(ii).Band, 'ObservationSamples');
+                end
+
+                answer.taskList(ii).MaskTable = maskTable;
+                answer.taskList(ii).Status    = app.specObj(ii).Status;            % 'Na fila' | 'Em andamento' | 'Cancelada' | 'Concluída' | 'Erro'
             end
         end
     end
