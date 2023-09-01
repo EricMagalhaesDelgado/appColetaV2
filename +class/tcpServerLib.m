@@ -179,8 +179,12 @@ classdef tcpServerLib < handle
         %-----------------------------------------------------------------%
         function answer = Diagnostic(obj)
             app = obj.App;
-            answer = struct('stationInfo',  app.General.stationInfo, ...
-                            'Diagnostic',   struct('EnvVariables', {}, 'SystemInfo', {}, 'LogicalDisk', {}));
+            answer = struct('stationInfo',  app.General.stationInfo,                                           ...
+                            'Diagnostic',   struct('appColeta', struct('Release', class.Constants.appRelease,  ...
+                                                                       'Version', class.Constants.appVersion), ...
+                                                   'EnvVariables', [], ...
+                                                   'SystemInfo',   [], ...
+                                                   'LogicalDisk',  []));
 
             % A seguir os campos que irão formar essa mensagem de diagnóstico
             % do appColeta.
@@ -233,7 +237,7 @@ classdef tcpServerLib < handle
             
             [~, idx1]  = ismember(envFields, envKeys);
             idx1(~idx1) = [];
-            answer.Diagnostic(1).EnvVariables = table(envKeys(idx1), envValues(idx1), 'VariableNames', {'env', 'value'});            
+            answer.Diagnostic.EnvVariables = table(envKeys(idx1), envValues(idx1), 'VariableNames', {'env', 'value'});
             
             % System info (Prompt1)
             [status, cmdout] = system('systeminfo');
@@ -253,7 +257,7 @@ classdef tcpServerLib < handle
                             end
                         end
                     end
-                    answer.Diagnostic(1).SystemInfo = systemInfo;
+                    answer.Diagnostic.SystemInfo = systemInfo;
                 catch
                 end
             end            
@@ -265,7 +269,7 @@ classdef tcpServerLib < handle
                     cmdout = strtrim(splitlines(cmdout));
                     cmdout(cellfun(@(x) isempty(x), cmdout)) = [];
             
-                    answer.Diagnostic(1).LogicalDisk = cellfun(@(x) regexp(x, '(?<DeviceID>[A-Z]:)\s+(?<FileSystem>\w+)\s+(?<FreeSpace>\d+)\s+(?<Size>\d+)', 'names'), cmdout(2:end));
+                    answer.Diagnostic.LogicalDisk = cellfun(@(x) regexp(x, '(?<DeviceID>[A-Z]:)\s+(?<FileSystem>\w+)\s+(?<FreeSpace>\d+)\s+(?<Size>\d+)', 'names'), cmdout(2:end));
                 catch
                 end
             end
