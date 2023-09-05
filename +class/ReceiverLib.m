@@ -120,7 +120,7 @@ classdef ReceiverLib < handle
                             % hReceiver = visadev(sprintf('TCPIP::%s::%d::SOCKET', IP, Port));
                     end
                     hReceiver.Timeout = Timeout;
-                end                
+                end
 
                 if ~isempty(IDN)
                     if contains(IDN, Tag, "IgnoreCase", true) 

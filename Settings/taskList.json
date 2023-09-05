@@ -34,7 +34,7 @@
           "Status": 0,
           "FindPeaks": {
             "nSweeps": 2,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -60,7 +60,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 9,
-            "Proeminence": 20,
+            "Prominence": 20,
             "Distance": 25,
             "BW": 200
           }
@@ -86,7 +86,7 @@
           "Status": 2,
           "FindPeaks": {
             "nSweeps": 37,
-            "Proeminence": 10,
+            "Prominence": 10,
             "Distance": 25,
             "BW": 50
           }
@@ -112,7 +112,7 @@
           "Status": 3,
           "FindPeaks": {
             "nSweeps": 37,
-            "Proeminence": 10,
+            "Prominence": 10,
             "Distance": 25,
             "BW": 100
           }
@@ -159,7 +159,7 @@
           "Status": 0,
           "FindPeaks": {
             "nSweeps": 5,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -202,7 +202,7 @@
         "Status": 1,
         "FindPeaks": {
           "nSweeps": 10,
-          "Proeminence": 30,
+          "Prominence": 30,
           "Distance": 25,
           "BW": 10
         }
@@ -319,7 +319,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -345,7 +345,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -371,7 +371,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -397,7 +397,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -441,7 +441,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -467,7 +467,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
@@ -493,7 +493,7 @@
           "Status": 1,
           "FindPeaks": {
             "nSweeps": 10,
-            "Proeminence": 30,
+            "Prominence": 30,
             "Distance": 25,
             "BW": 10
           }
