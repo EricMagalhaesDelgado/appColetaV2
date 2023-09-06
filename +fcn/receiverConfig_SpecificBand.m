@@ -66,21 +66,22 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         % FreqStart/FreqStop
         if strcmp(newTask.Antenna.Switch, 'EMSat')
             antIndex    = find(strcmp(EMSatObj.LNB.Name, rawBand(ii).instrAntenna), 1);
-            lnbOffset   = double(EMSatObj.LNB.Offset(antIndex));
-            FlipArray   = EMSatObj.LNB.Inverted(antIndex);
 
-            freqBand    = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - lnbOffset);
+            freqBand    = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
             FreqStart   = min(freqBand);
             FreqStop    = max(freqBand);
-
             antennaName = extractBefore(rawBand(ii).instrAntenna, ' ');
-            switchPort  = EMSatObj.LNB.Port(find(strcmp(EMSatObj.LNB.Name, rawBand(ii).instrAntenna), 1));
+            
+            FlipArray   = EMSatObj.LNB.Inverted(antIndex);
+            SwitchPort  = EMSatObj.LNB.SwitchPort(antIndex);
+            LNBChannel  = EMSatObj.LNB.LNBChannel(antIndex);
+
         else
-            FlipArray   = [];
             FreqStart   = rawBand(ii).FreqStart;
             FreqStop    = rawBand(ii).FreqStop;
-
             antennaName = newTask.Antenna.MetaData.Name;
+
+            FlipArray   = [];
         end
 
         % DataPoints, StepWidth, Resolution, Selectivity
@@ -203,8 +204,9 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         taskBand(ii).FlipArray    = FlipArray;
         taskBand(ii).Antenna      = fcn.antennaParser(newTask.Antenna.MetaData, antennaName);
 
-        if exist('switchPort', 'var')
-            taskBand(ii).Antenna.switchPort = switchPort;
+        if exist('SwitchPort', 'var')
+            taskBand(ii).Antenna.SwitchPort = SwitchPort;
+            taskBand(ii).Antenna.LNBChannel = LNBChannel;
         end
     end
 
