@@ -65,16 +65,27 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         
         % FreqStart/FreqStop
         if strcmp(newTask.Antenna.Switch, 'EMSat')
-            antIndex    = find(strcmp(EMSatObj.LNB.Name, rawBand(ii).instrAntenna), 1);
+            antennaLNBName = rawBand(ii).instrAntenna;
+            antennaName    = extractBefore(rawBand(ii).instrAntenna, ' ');
+            antIndex       = find(strcmp(EMSatObj.LNB.Name, antennaLNBName), 1);
 
-            freqBand    = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
-            FreqStart   = min(freqBand);
-            FreqStop    = max(freqBand);
-            antennaName = extractBefore(rawBand(ii).instrAntenna, ' ');
+            freqBand       = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
+            FreqStart      = min(freqBand);
+            FreqStop       = max(freqBand);
             
-            FlipArray   = EMSatObj.LNB.Inverted(antIndex);
-            SwitchPort  = EMSatObj.LNB.SwitchPort(antIndex);
-            LNBChannel  = EMSatObj.LNB.LNBChannel(antIndex);
+            FlipArray      = EMSatObj.LNB.Inverted(antIndex);
+            SwitchPort     = EMSatObj.LNB.SwitchPort(antIndex);
+            LNBChannel     = EMSatObj.LNB.LNBChannel(antIndex);
+
+            idx1 = find(strcmp({EMSatObj.Antenna.Name}, extractBefore(rawBand(ii).instrAntenna, ' ')), 1);
+            idx2 = -1;
+            for kk = 1:numel(EMSatObj.Antenna(idx1).LNB)
+                if ismember(antennaLNBName, EMSatObj.Antenna(idx1).LNB(kk).Name)
+                    idx2 = kk;
+                    break
+                end
+            end
+            LNBIndex    = [idx1, idx2];
 
         else
             FreqStart   = rawBand(ii).FreqStart;
@@ -207,6 +218,7 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         if exist('SwitchPort', 'var')
             taskBand(ii).Antenna.SwitchPort = SwitchPort;
             taskBand(ii).Antenna.LNBChannel = LNBChannel;
+            taskBand(ii).Antenna.LNBIndex   = LNBIndex;
         end
     end
 

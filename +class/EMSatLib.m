@@ -40,10 +40,10 @@ classdef EMSatLib < handle
             end
 
             % LNB commands
-            lnbCommand = {'<0001/LBCHN=1', '>0001/LBCHN=1 16.200MHz'; ...
-                          '<0001/LBCHN=2', '>0001/LBCHN=2 17.200MHz'; ...
-                          '<0001/LBCHN=3', '>0001/LBCHN=3 18.200MHz'; ...
-                          '<0001/LBCHN=4', '>0001/LBCHN=4 19.200MHz'};
+            lnbCommand = {'<0001/LBCHN=1', '>0001/LBCHN=1'; ...
+                          '<0001/LBCHN=2', '>0001/LBCHN=2'; ...
+                          '<0001/LBCHN=3', '>0001/LBCHN=3'; ...
+                          '<0001/LBCHN=4', '>0001/LBCHN=4'};
             lnbCommand = table((1:4)', lnbCommand(:,1), lnbCommand(:,2), 'VariableNames', {'Port', 'set', 'get'});
             
             % Antenna/LNB list
@@ -203,7 +203,7 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function msgError = MatrixSwitch(obj, SwitchPort, LNBChannel, antennaLNBName)
+        function msgError = MatrixSwitch(obj, SwitchPort, LNBChannel, LNDIndex)
             % As of July 4, 2023, the L-Band Matrix is not switching to the
             % ports 19, 28 and 29.
             msgError = '';
@@ -230,21 +230,16 @@ classdef EMSatLib < handle
             end
 
             % LNB
-            if LNBChannel ~= -1                
-                idx1 = find(strcmp({obj.Antenna.Name}, extractBefore(antennaLNBName, ' ')), 1);
-                idx2 = [];
-                for ii = 1:numel(obj.Antenna(idx1).LNB)
-                    if ismember(antennaLNBName, obj.Antenna(idx1).LNB(ii).Name)
-                        idx2 = ii;
-                        break
-                    end
-                end
+            if LNBChannel ~= -1
+                IP   = obj.Antenna(LNDIndex(1)).LNB(LNDIndex(2)).IP;
+                Port = obj.Antenna(LNDIndex(1)).LNB(LNDIndex(2)).Port;
 
                 try
-                    hLNB = tcpclient(obj.Antenna(idx1).LNB(idx2).IP, obj.Antenna(idx1).LNB(idx2).Port);
+                    hLNB = tcpclient(IP, Port);
+                    configureTerminator(hLNB, "CR/LF")
     
                     for ii = 1:class.Constants.switchTimes
-                        if strcmp(obj.LNBCommand.get(LNBChannel), writeread(hLNB, obj.LNBCommand.set(LNBChannel)))
+                        if contains(writeread(hLNB, obj.LNBCommand.set{LNBChannel}), obj.LNBCommand.get{LNBChannel})
                             break
                         else
                             if ii == class.Constants.switchTimes
