@@ -1,11 +1,8 @@
 classdef EMSatLib < handle
 
     % Author.: Eric Magalhães Delgado & Vinicius Puga
-    % Date...: September 05, 2023
+    % Date...: September 07, 2023
     % Version: 1.01
-
-    % !! PENDENTE !!
-    % Pendente implementação do controle da ACU GD-123T (Banda Ka)
 
     properties
         %-----------------------------------------------------------------%
@@ -100,10 +97,24 @@ classdef EMSatLib < handle
 
                     %-----------------------------------------------------%
                     case 'GD-123T'
-                        % !! PENDENTE !!!
-                        error('Pendente implementação do controle da ACU GD-123T.')
+                        switch targetPos.TrackingMode
+                            case 'Target'
+                                % Syntax: "POS 1,0" | "POS 2,0" | ... | "POS 50,0"
+        
+                                idx2 = find(strcmp({obj.TargetList(idx1).Target.Name}, targetPos.Target), 1);
+                                TargetID = obj.TargetList(idx1).Target(idx2).ID;
+        
+                                writeline(hACU, sprintf('POS %s,0', TargetID));
+        
+                            case 'LookAngles'
+                                % Syntax: "TRACK 0,AAA.AAA,EEE.EEE,0.000"
+                                % Range:
+                                % - Azimuth:         0.00 to 360.00
+                                % - Elevation:    -180.00 to 180.00
+        
+                                writeline(hACU, sprintf('TRACK 0,%.3f,%.3f,0.000', wrapTo360(targetPos.Azimuth), wrapTo180(targetPos.Elevation)))
+                        end
                 end
-                pause(class.Constants.antACUPause)
 
             catch  ME
                 msgError = ME.message;
@@ -126,28 +137,24 @@ classdef EMSatLib < handle
             try
                 hACU = SocketCreation(obj, IP, Port);
 
-                switch obj.Antenna(idx1).ACU.Model
-                    %-----------------------------------------------------%
-                    case 'GD-7200'
-                        idx2 = find(strcmp({obj.TargetList(idx1).Target.Name}, targetName), 1);
-                        TargetID = obj.TargetList(idx1).Target(idx2).ID;
-        
-                        writeline(hACU, sprintf('TT %s', TargetID));
-                        pause(class.Constants.antACUPause)
-        
-                        pos = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '(?<Azimuth>\d{6}) (?<Elevation>\d{6}) (?<Polarization>\d{6})', 'names');
-                        if ~isempty(pos)
-                            pos = pos(end);
-                            
-                            pos.Azimuth      = str2double(pos.Azimuth)   / 1000;
-                            pos.Elevation    = str2double(pos.Elevation) / 1000;
-                            pos.Polarization = wrapTo360(str2double(pos.Polarization) / 1000);
-                        end
+                idx2 = find(strcmp({obj.TargetList(idx1).Target.Name}, targetName), 1);
+                TargetID = obj.TargetList(idx1).Target(idx2).ID;
 
-                    %-----------------------------------------------------%
+                regExp = RegularExpression(obj, 'TargetPosition', obj.Antenna(idx1).ACU.Model);
+
+                switch obj.Antenna(idx1).ACU.Model
+                    case 'GD-7200'
+                        pos = WriteRead(obj, hACU, sprintf('TT %s', TargetID));
+                        div = 1000;
+
                     case 'GD-123T'
-                        % !! PENDENTE !!!
-                        error('Pendente implementação do controle da ACU GD-123T.')
+                        pos = writeread(hACU, sprintf('SAT? %s', TargetID));
+                        div = 1;
+                end
+
+                pos = regexp(pos, regExp, 'names');
+                if ~isempty(pos)
+                    pos = PositionParser(obj, pos, div);
                 end
 
             catch  ME
@@ -173,24 +180,16 @@ classdef EMSatLib < handle
                 hACU = SocketCreation(obj, IP, Port);
 
                 switch obj.Antenna(idx1).ACU.Model
-                    %-----------------------------------------------------%
                     case 'GD-7200'
-                        writeline(hACU, '/ CONFIGS ENCODERS CURRENT')
-                        pause(class.Constants.antACUPause)
-        
-                        pos = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '(?<Azimuth>\d{1,3}.\d{1,3}) (?<Elevation>\d{1,3}.\d{1,3}) (?<Polarization>[-]?\d{1,3}.\d{1,3})', 'names');
-                        if ~isempty(pos)
-                            pos = pos(end);
-                            
-                            pos.Azimuth      = str2double(pos.Azimuth);
-                            pos.Elevation    = str2double(pos.Elevation);
-                            pos.Polarization = wrapTo360(str2double(pos.Polarization));
-                        end
+                        pos = WriteRead(obj, hACU, '/ CONFIGS ENCODERS CURRENT');
 
-                    %-----------------------------------------------------%
                     case 'GD-123T'
-                        % !! PENDENTE !!!
-                        error('Pendente implementação do controle da ACU GD-123T.')
+                        pos = writeread(hACU, 'STAT');
+                end
+
+                pos = regexp(pos, RegularExpression(obj, 'AntennaPosition', obj.Antenna(idx1).ACU.Model), 'names');
+                if ~isempty(pos)
+                    pos = PositionParser(obj, pos, 1);
                 end
 
             catch  ME
@@ -213,6 +212,9 @@ classdef EMSatLib < handle
                 hSwitch = tcpclient(obj.Switch.IP, obj.Switch.Port);
 
                 for ii = 1:class.Constants.switchTimes
+                    % Essencial a substituição do WRITEREAD pelo conjunto
+                    % WRITELINE + PAUSE + READ.
+
                     writeline(hSwitch, obj.SwitchCommand.set(SwitchPort));
 
                     pause(class.Constants.switchPause)
@@ -255,25 +257,10 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function TargetListUpdate(obj, RootFolder)
-            PAUSE = 1;
-
-            % Switch
-            switchStruct = struct('IP', '192.168.0.116', 'Port', 4000);
+        function TargetListUpdate(obj, FullFileName)
 
             % Antenna config
-            LNBTemplate  = struct('Name', {}, 'IP', {}, 'Port', {});
-
-            antStruct(1) = struct('Name', 'MCL-1', 'ACU', struct('Model', 'GD-7200', 'IP', '10.21.205.45',    'Port', 4002), 'LNB', LNBTemplate, 'LOG', '');
-            antStruct(2) = struct('Name', 'MCL-2', 'ACU', struct('Model', 'GD-7200', 'IP', '10.21.205.45',    'Port', 4003), 'LNB', LNBTemplate, 'LOG', '');
-            antStruct(3) = struct('Name', 'MCL-3', 'ACU', struct('Model', '',        'IP', '',                'Port',   -1), 'LNB', LNBTemplate, 'LOG', '');
-            antStruct(4) = struct('Name', 'MCC-1', 'ACU', struct('Model', 'GD-7200', 'IP', '10.21.205.45',    'Port', 4006), 'LNB', LNBTemplate, 'LOG', '');
-            antStruct(5) = struct('Name', 'MKU-1', 'ACU', struct('Model', 'GD-7200', 'IP', '10.21.205.45',    'Port', 4004), 'LNB', LNBTemplate, 'LOG', '');
-            antStruct(6) = struct('Name', 'MKU-2', 'ACU', struct('Model', 'GD-7200', 'IP', '10.21.205.45',    'Port', 4005), 'LNB', LNBTemplate, 'LOG', '');
-            antStruct(7) = struct('Name', 'MKA-1', 'ACU', struct('Model', 'GD-123T', 'IP', '192.168.241.102', 'Port', 4660), 'LNB', LNBTemplate, 'LOG', '');
-
-            antStruct(7).LNB(1) = struct('Name', {{'MKA-1 LO_R', 'MKA-1 MID_R', 'MKA-1 MID_HI_R', 'MKA-1 HI_R'}}, 'IP', '192.168.241.102', 'Port', 4662, 'DeviceAddress', '0001');
-            antStruct(7).LNB(2) = struct('Name', {{'MKA-1 LO_L', 'MKA-1 MID_L', 'MKA-1 MID_HI_L', 'MKA-1 HI_L'}}, 'IP', '192.168.241.102', 'Port', 4663, 'DeviceAddress', '0001');
+            antStruct    = obj.Antenna;
 
             % Target list
             tgtStruct(1) = struct('Name', 'MCL-1', 'Target', []);
@@ -292,54 +279,79 @@ classdef EMSatLib < handle
                     continue
                 end
 
+                tgtStruct(ii).Target = struct('ID', {}, 'Name', {}, 'Azimuth', {}, 'Elevation', {}, 'Polarization', {});
+
                 try
                     hACU = SocketCreation(obj, IP, Port);
 
+                    regExp = RegularExpression(obj, 'TargetPosition', antStruct(ii).ACU.Model);
+
                     switch antStruct(ii).ACU.Model
-                        %-------------------------------------------------%
                         case 'GD-7200'
-                            writeline(hACU, '/ CONFIGS SITE ANTENNA')
-                            pause(PAUSE)
-        
-                            if ~contains(read(hACU, hACU.NumBytesAvailable, 'char'), antStruct(ii).Name)
+                            % O WRITEREAD funciona aqui, mas é perigoso porque 
+                            % a resposta da ACU possui um caractere "<" após 
+                            % a quebra de linha. Consequentemente, esse caractere
+                            % fica no buffer, podendo causar uma leitura equivocada 
+                            % à frente, numa outra comunicação. Recomendável
+                            % usar o WRITELINE seguido e um READ. O PAUSE é 
+                            % essencial!
+
+                            antennaName = WriteRead(obj, hACU, '/ CONFIGS SITE ANTENNA');
+                            if ~contains(antennaName, antStruct(ii).Name)
                                 error('Não se trata da antena correta...')
                             end
-        
-                            writeline(hACU, '/ TRACKING TRACK LS')
-                            pause(PAUSE)
-                            
-                            tgtList = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '\d{1,2} X T(?<ID>\d{2}) "(?<Name>.*)"', 'names', 'dotexceptnewline');
 
-                        %-------------------------------------------------%
-                        case 'GD-123T'
-                            % PENDENTE !!!
+                            % O WRITEREAD não funciona aqui porque a resposta 
+                            % da ACU possui diversas quebras de linha. Dessa forma, 
+                            % o WRITEREAD, por ser uma concatenação dos métodos 
+                            % WRITELINE e READLINE, não funciona...
+                            % Deve-se usar um WRITELINE seguido de um PAUSE 
+                            % e um READ (e não READLINE!). O PAUSE é essencial 
+                            % pois a ACU demora alguns milisegundos para apresentar 
+                            % a sua resposta completamente (cerca de 800 bytes).
 
-                            tgtList = [];
-                    end
-
-                    if ~isempty(tgtList)
-                        tgtList(deblank({tgtList.Name}) == "") = [];
-                        
-                        tgtStruct(ii).Target = struct('ID', {}, 'Name', {}, 'Azimuth', {}, 'Elevation', {}, 'Polarization', {});
-                        for jj = 1:numel(tgtList)
-                            writeline(hACU, sprintf('TT %s', tgtList(jj).ID))
-                            pause(PAUSE)
-
-                            tgtInfo = regexp(read(hACU, hACU.NumBytesAvailable, 'char'), '\d{2} \d{2} \d{4} (?<Azimuth>\d{6}) (?<Elevation>\d{6}) (?<Polarization>\d{6})', 'names');
-                            if ~isempty(tgtInfo)
-                                tgtInfo = tgtInfo(end);
+                            tgtList = WriteRead(obj, hACU, '/ TRACKING TRACK LS');
+                            tgtList = regexp(tgtList, '\d{1,2} X T(?<ID>\d{2}) "(?<Name>.*)"', 'names', 'dotexceptnewline');
+                            if ~isempty(tgtList)
+                                tgtList(deblank({tgtList.Name}) == "") = [];
                                 
-                                tgtInfo.Azimuth      = str2double(tgtInfo.Azimuth)   / 1000;
-                                tgtInfo.Elevation    = str2double(tgtInfo.Elevation) / 1000;
-                                tgtInfo.Polarization = wrapTo360(str2double(tgtInfo.Polarization) / 1000);
-                                
-                                tgtStruct(ii).Target(end+1) = struct('ID',           tgtList(jj).ID,    ...
-                                                                     'Name',         tgtList(jj).Name,  ...
-                                                                     'Azimuth',      tgtInfo.Azimuth,   ...
-                                                                     'Elevation',    tgtInfo.Elevation, ...
-                                                                     'Polarization', tgtInfo.Polarization);
+                                for jj = 1:numel(tgtList)
+                                    % Novamente...
+                                    % O WRITEREAD funciona aqui, mas é perigoso porque 
+                                    % a resposta da ACU possui um caractere "<" após 
+                                    % a quebra de linha. O PAUSE aqui também é essencial.
+
+                                    tgtInfo = WriteRead(obj, hACU, sprintf('TT %s', tgtList(jj).ID));
+                                    tgtInfo = regexp(tgtInfo, regExp, 'names');
+                                    if ~isempty(tgtInfo)
+                                        tgtInfo.ID   = tgtList(jj).ID;
+                                        tgtInfo.Name = tgtList(jj).Name;
+
+                                        tgtStruct(ii).Target(end+1) = PositionParser(obj, tgtInfo, 1000);
+                                    end
+                                end
                             end
-                        end
+
+                        case 'GD-123T'
+                            for jj = 1:50
+                                % Diferente do outro modelo de ACU (GD-7200), 
+                                % a GD-123T apresenta respostas sem caracteres
+                                % adicionais à quebra de linha. É possível,
+                                % portanto, uso do WRITEREAD.
+
+                                tgtName = replace(writeread(hACU, sprintf('SATDB? %d', jj)), '"', '');
+                                if ismember(tgtName, {'', 'N BADD'})
+                                    continue
+                                end
+
+                                tgtInfo = regexp(writeread(hACU, sprintf('SAT? %d', jj)), regExp, 'names');
+                                if ~isempty(tgtInfo)
+                                    tgtInfo.ID   = num2str(jj);
+                                    tgtInfo.Name = tgtName;
+
+                                    tgtStruct(ii).Target(end+1) = PositionParser(obj, tgtInfo, 1);
+                                end
+                            end
                     end
                     clear hACU
 
@@ -351,37 +363,12 @@ classdef EMSatLib < handle
                 end                
             end
 
-            % LNB
-            lnbTable         = table('Size', [24, 5] ,                                                           ...
-                                     'VariableNames', {'Name', 'Offset', 'Inverted', 'SwitchPort', 'LNBChannel'}, ...
-                                     'VariableTypes', {'string', 'uint64', 'double', 'double', 'double'});
-            lnbTable(1:24,:) = {'MCL-1 V',         5150000050, 1,  1, -1; ...
-                                'MCL-1 H',         5150000050, 1,  2, -1; ...
-                                'MCL-2 V',         5150000050, 1,  3, -1; ...
-                                'MCL-2 H',         5150000050, 1,  4, -1; ...
-                                'MCC-1 L',         5150000050, 1,  5, -1; ...
-                                'MCC-1 R',         5150000050, 1,  6, -1; ...
-                                'MCL-3 V',         5760000050, 1,  7, -1; ...
-                                'MCL-3 H',         5760000050, 1,  8, -1; ...
-                                'MKU-1 LO_V',      9750000000, 0,  9, -1; ...
-                                'MKU-1 HI_V',     10750000000, 0, 10, -1; ...
-                                'MKU-1 LO_H',      9750000000, 0, 11, -1; ...
-                                'MKU-1 HI_H',     10750000000, 0, 12, -1; ...
-                                'MKU-2 LO_V',      9750000000, 0, 13, -1; ...
-                                'MKU-2 HI_V',     10750000000, 0, 14, -1; ...
-                                'MKU-2 LO_H',      9750000000, 0, 15, -1; ...
-                                'MKU-2 HI_H',     10750000000, 0, 16, -1; ...
-                                'MKA-1 LO_R',     16200000000, 0, 23,  1; ...
-                                'MKA-1 MID_R',    17200000000, 0, 23,  2; ...
-                                'MKA-1 MID_HI_R', 18200000000, 0, 23,  3; ...
-                                'MKA-1 HI_R',     19200000000, 0, 23,  4; ...
-                                'MKA-1 LO_L',     16200000000, 0, 24,  1; ...
-                                'MKA-1 MID_L',    17200000000, 0, 24,  2; ...
-                                'MKA-1 MID_HI_L', 18200000000, 0, 24,  3; ...
-                                'MKA-1 HI_L',     19200000000, 0, 24,  4};
-
             % JSON file
-            writematrix(jsonencode(struct('Switch', switchStruct, 'Antenna', antStruct, 'LNB', lnbTable, 'TargetList', tgtStruct, 'GeneratedDate', datestr(now, 'dd/mm/yyyy HH:MM:SS')), 'PrettyPrint', true), fullfile(RootFolder, 'Settings', 'EMSatLib.json'), "FileType", "text", "QuoteStrings", "none")
+            writematrix(jsonencode(struct('Switch',        obj.Switch, ...
+                                          'Antenna',       antStruct,  ...
+                                          'LNB',           obj.LNB,    ...
+                                          'TargetList',    tgtStruct,  ...
+                                          'GeneratedDate', datestr(now, 'dd/mm/yyyy HH:MM:SS')), 'PrettyPrint', true), FullFileName, "FileType", "text", "QuoteStrings", "none")
         end
 
 
@@ -422,6 +409,54 @@ classdef EMSatLib < handle
             if hACU.NumBytesAvailable
                 clear hACU
                 error('A ACU deve estar sendo controlada pelo Compass, o que impede o apontamento da antena e giro do LNB de forma automática.')
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function receivedMessage = WriteRead(obj, hACU, requiredInfo)
+            writeline(hACU, requiredInfo);
+            pause(class.Constants.antACUPause)
+
+            receivedMessage = read(hACU, hACU.NumBytesAvailable, 'char');
+        end
+
+
+        %-----------------------------------------------------------------%
+        function regExp = RegularExpression(obj, srcFcn, ACUModel)
+
+            switch srcFcn
+                case 'TargetPosition'
+                    switch ACUModel
+                        case 'GD-7200'; regExp = '(?<Azimuth>\d{6}) (?<Elevation>\d{6}) (?<Polarization>\d{6})';
+                        case 'GD-123T'; regExp = '(?<Azimuth>\d{1,3}[.]\d{1,3}),(?<Elevation>\d{1,3}[.]\d{1,3}),[-]?\d{1,3}[.]\d{1,3}';
+                    end
+
+                case 'AntennaPosition'
+                    switch ACUModel
+                        case 'GD-7200'; regExp = '(?<Azimuth>\d{1,3}[.]\d{1,3}) (?<Elevation>\d{1,3}[.]\d{1,3}) (?<Polarization>[-]?\d{1,3}[.]\d{1,3})';
+                        case 'GD-123T'; regExp = '(?<Azimuth>\d{1,3}[.]\d+),(?<Elevation>\d{1,3}[.]\d+),\d+[.]\d+,\d+[.]?\d*,[-]?\d+.\d+';
+                    end
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function tgtPos = PositionParser(obj, tgtPos, Divisor)
+
+            % O tgtPos é uma estrutura gerada pela avaliação da expressão
+            % regular, já possuindo os campos "Azimuth", "Elevation" e
+            % "Polarization" (restrito à ACU GD-7200).
+
+            tgtPos = tgtPos(end);
+
+            tgtPos.Azimuth   = str2double(tgtPos.Azimuth)/Divisor;
+            tgtPos.Elevation = str2double(tgtPos.Elevation)/Divisor;
+
+            if isfield(tgtPos, 'Polarization')
+                tgtPos.Polarization = wrapTo360(str2double(tgtPos.Polarization)/Divisor);
+            else
+                tgtPos.Polarization = 0;
             end
         end
     end

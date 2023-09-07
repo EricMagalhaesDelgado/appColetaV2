@@ -508,7 +508,7 @@
           "Name": "teste",
           "Azimuth": 330.594,
           "Elevation": 59.893,
-          "Polarization": 359.82
+          "Polarization": 308.641
         }
       ]
     },
@@ -756,8 +756,8 @@
         {
           "ID": "49",
           "Name": "teste2",
-          "Azimuth": 283.453,
-          "Elevation": 16.609,
+          "Azimuth": 280.525,
+          "Elevation": 17.553,
           "Polarization": 324.08
         }
       ]
@@ -774,28 +774,28 @@
           "Name": "NSS-806",
           "Azimuth": 348.956,
           "Elevation": 62.861,
-          "Polarization": 268.176
+          "Polarization": 253.762
         },
         {
           "ID": "03",
           "Name": "IS-37e",
           "Azimuth": 50.501,
           "Elevation": 51.098,
-          "Polarization": 268.176
+          "Polarization": 253.762
         },
         {
           "ID": "04",
           "Name": "SES 6",
           "Azimuth": 6.883,
           "Elevation": 63.135,
-          "Polarization": 268.176
+          "Polarization": 253.762
         },
         {
           "ID": "05",
           "Name": "AM3",
           "Azimuth": 320.323,
           "Elevation": 56.585,
-          "Polarization": 268.176
+          "Polarization": 253.762
         },
         {
           "ID": "06",
@@ -821,16 +821,16 @@
         {
           "ID": "46",
           "Name": "NSS7 OPT",
-          "Azimuth": 49.344,
-          "Elevation": 49.695,
-          "Polarization": 268.176
+          "Azimuth": 53.405,
+          "Elevation": 52.097,
+          "Polarization": 253.762
         },
         {
           "ID": "48",
           "Name": "905 OPT",
-          "Azimuth": 41.198,
-          "Elevation": 54.585,
-          "Polarization": 268.176
+          "Azimuth": 43.461,
+          "Elevation": 56.276,
+          "Polarization": 253.762
         }
       ]
     },
@@ -1071,15 +1071,15 @@
         {
           "ID": "49",
           "Name": "Test2",
-          "Azimuth": 2.699,
-          "Elevation": 63.2,
+          "Azimuth": 2.777,
+          "Elevation": 63.157,
           "Polarization": 1.941
         },
         {
           "ID": "50",
           "Name": "Test",
-          "Azimuth": 326.531,
-          "Elevation": 58.638,
+          "Azimuth": 326.558,
+          "Elevation": 58.636,
           "Polarization": 330.059
         }
       ]
@@ -1329,8 +1329,128 @@
     },
     {
       "Name": "MKA-1",
-      "Target": []
+      "Target": [
+        {
+          "ID": "2",
+          "Name": "IM-5 F2",
+          "Azimuth": 331.7,
+          "Elevation": 60.1,
+          "Polarization": 0
+        },
+        {
+          "ID": "4",
+          "Name": "DT-SPACEWAY",
+          "Azimuth": 282.8,
+          "Elevation": 19.6,
+          "Polarization": 0
+        },
+        {
+          "ID": "5",
+          "Name": "HM-AMAZONAS\u0005",
+          "Azimuth": 320,
+          "Elevation": 56.6,
+          "Polarization": 0
+        },
+        {
+          "ID": "6",
+          "Name": "ES-3B",
+          "Azimuth": 69.45,
+          "Elevation": 32,
+          "Polarization": 0
+        },
+        {
+          "ID": "7",
+          "Name": "ES-65WA",
+          "Azimuth": 313.45,
+          "Elevation": 53.45,
+          "Polarization": 0
+        },
+        {
+          "ID": "9",
+          "Name": "ALYAH3",
+          "Azimuth": 293.7,
+          "Elevation": 37.1,
+          "Polarization": 0
+        },
+        {
+          "ID": "10",
+          "Name": "10",
+          "Azimuth": 313.5,
+          "Elevation": 53.7,
+          "Polarization": 0
+        },
+        {
+          "ID": "11",
+          "Name": "SATNAME11",
+          "Azimuth": 282,
+          "Elevation": 10,
+          "Polarization": 0
+        },
+        {
+          "ID": "12",
+          "Name": "SATNAME12",
+          "Azimuth": 321.57,
+          "Elevation": 56.98,
+          "Polarization": 0
+        },
+        {
+          "ID": "13",
+          "Name": "SATNAME13",
+          "Azimuth": 315.18,
+          "Elevation": 53.811,
+          "Polarization": 0
+        },
+        {
+          "ID": "14",
+          "Name": "SATNAME14",
+          "Azimuth": 303.23,
+          "Elevation": 45.99,
+          "Polarization": 0
+        },
+        {
+          "ID": "15",
+          "Name": "SATNAME15",
+          "Azimuth": 320,
+          "Elevation": 10,
+          "Polarization": 0
+        },
+        {
+          "ID": "16",
+          "Name": "SATNAME16",
+          "Azimuth": 313.75,
+          "Elevation": 53.85,
+          "Polarization": 0
+        },
+        {
+          "ID": "17",
+          "Name": "STARONED1",
+          "Azimuth": 294.2,
+          "Elevation": 37.3,
+          "Polarization": 0
+        },
+        {
+          "ID": "18",
+          "Name": "SATNAME18",
+          "Azimuth": 302.1,
+          "Elevation": 45.6,
+          "Polarization": 0
+        },
+        {
+          "ID": "19",
+          "Name": "SATNAME19",
+          "Azimuth": 282.8,
+          "Elevation": 19.6,
+          "Polarization": 0
+        },
+        {
+          "ID": "20",
+          "Name": "SATNAME20",
+          "Azimuth": 285,
+          "Elevation": 23,
+          "Polarization": 0
+        }
+      ]
     }
   ],
-  "GeneratedDate": "05/09/2023 22:51:54"
+  "GeneratedDate": "07/09/2023 02:24:29"
 }
