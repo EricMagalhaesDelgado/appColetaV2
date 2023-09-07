@@ -15,7 +15,7 @@ function htmlCode = structParser(Data, htmlCode, Level)
 
     d = class.Constants.english2portuguese();
 
-    structFields = fields(Data);    
+    structFields = fields(Data);
     for jj = 1:numel(structFields)
         Field = structFields{jj};
         Value = Data.(Field);
@@ -32,14 +32,18 @@ function htmlCode = structParser(Data, htmlCode, Level)
     
             elseif Level == 1
                 if isstruct(Value)
-                    Value = structParser(Value, '', 2);
+                    Value = structParser(Value,               '', 2);
+                elseif istable(Value)
+                    Value = structParser(table2struct(Value), '', 2);
                 elseif isJSON(Value)
-                    Value = structParser(jsondecode(Value), '', 2);                
+                    Value = structParser(jsondecode(Value),   '', 2);                
                 end
     
             elseif Level == 2
                 if isstruct(Value)
                     Value = structParser(Value, '', 3);
+                elseif istable(Value)
+                    Value = structParser(table2struct(Value), '', 3);
                 end
             end
             

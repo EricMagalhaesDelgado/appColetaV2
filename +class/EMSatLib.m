@@ -95,7 +95,6 @@ classdef EMSatLib < handle
                                 writeline(hACU, sprintf('IA %.3f %.3f %.3f', wrapTo360(targetPos.Azimuth), wrapTo180(targetPos.Elevation), wrapTo180(targetPos.Polarization)))
                         end
 
-                    %-----------------------------------------------------%
                     case 'GD-123T'
                         switch targetPos.TrackingMode
                             case 'Target'
@@ -257,36 +256,24 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function TargetListUpdate(obj, FullFileName)
+        function [antList, tgtList] = TargetListUpdate(obj, FullFileName)
 
-            % Antenna config
-            antStruct    = obj.Antenna;
+            antList = obj.Antenna;
+            tgtList = struct('Name', {obj.Antenna.Name}, 'Target', struct('ID', {}, 'Name', {}, 'Azimuth', {}, 'Elevation', {}, 'Polarization', {}));
 
-            % Target list
-            tgtStruct(1) = struct('Name', 'MCL-1', 'Target', []);
-            tgtStruct(2) = struct('Name', 'MCL-2', 'Target', []);
-            tgtStruct(3) = struct('Name', 'MCL-3', 'Target', []);
-            tgtStruct(4) = struct('Name', 'MCC-1', 'Target', []);
-            tgtStruct(5) = struct('Name', 'MKU-1', 'Target', []);
-            tgtStruct(6) = struct('Name', 'MKU-2', 'Target', []);
-            tgtStruct(7) = struct('Name', 'MKA-1', 'Target', []);
-
-            for ii = 1:numel(antStruct)
-                IP   = antStruct(ii).ACU.IP;
-                Port = antStruct(ii).ACU.Port;
+            for ii = 1:numel(antList)
+                IP   = antList(ii).ACU.IP;
+                Port = antList(ii).ACU.Port;
 
                 if isempty(IP)
                     continue
                 end
 
-                tgtStruct(ii).Target = struct('ID', {}, 'Name', {}, 'Azimuth', {}, 'Elevation', {}, 'Polarization', {});
-
                 try
                     hACU = SocketCreation(obj, IP, Port);
 
-                    regExp = RegularExpression(obj, 'TargetPosition', antStruct(ii).ACU.Model);
-
-                    switch antStruct(ii).ACU.Model
+                    regExp = RegularExpression(obj, 'TargetPosition', antList(ii).ACU.Model);
+                    switch antList(ii).ACU.Model
                         case 'GD-7200'
                             % O WRITEREAD funciona aqui, mas é perigoso porque 
                             % a resposta da ACU possui um caractere "<" após 
@@ -297,7 +284,7 @@ classdef EMSatLib < handle
                             % essencial!
 
                             antennaName = WriteRead(obj, hACU, '/ CONFIGS SITE ANTENNA');
-                            if ~contains(antennaName, antStruct(ii).Name)
+                            if ~contains(antennaName, antList(ii).Name)
                                 error('Não se trata da antena correta...')
                             end
 
@@ -310,24 +297,24 @@ classdef EMSatLib < handle
                             % pois a ACU demora alguns milisegundos para apresentar 
                             % a sua resposta completamente (cerca de 800 bytes).
 
-                            tgtList = WriteRead(obj, hACU, '/ TRACKING TRACK LS');
-                            tgtList = regexp(tgtList, '\d{1,2} X T(?<ID>\d{2}) "(?<Name>.*)"', 'names', 'dotexceptnewline');
-                            if ~isempty(tgtList)
-                                tgtList(deblank({tgtList.Name}) == "") = [];
+                            tgtList2 = WriteRead(obj, hACU, '/ TRACKING TRACK LS');
+                            tgtList2 = regexp(tgtList2, '\d{1,2} X T(?<ID>\d{2}) "(?<Name>.*)"', 'names', 'dotexceptnewline');
+                            if ~isempty(tgtList2)
+                                tgtList2(deblank({tgtList2.Name}) == "") = [];
                                 
-                                for jj = 1:numel(tgtList)
+                                for jj = 1:numel(tgtList2)
                                     % Novamente...
                                     % O WRITEREAD funciona aqui, mas é perigoso porque 
                                     % a resposta da ACU possui um caractere "<" após 
                                     % a quebra de linha. O PAUSE aqui também é essencial.
 
-                                    tgtInfo = WriteRead(obj, hACU, sprintf('TT %s', tgtList(jj).ID));
+                                    tgtInfo = WriteRead(obj, hACU, sprintf('TT %s', tgtList2(jj).ID));
                                     tgtInfo = regexp(tgtInfo, regExp, 'names');
                                     if ~isempty(tgtInfo)
-                                        tgtInfo.ID   = tgtList(jj).ID;
-                                        tgtInfo.Name = tgtList(jj).Name;
+                                        tgtInfo.ID   = tgtList2(jj).ID;
+                                        tgtInfo.Name = tgtList2(jj).Name;
 
-                                        tgtStruct(ii).Target(end+1) = PositionParser(obj, tgtInfo, 1000);
+                                        tgtList(ii).Target(end+1) = PositionParser(obj, tgtInfo, 1000);
                                     end
                                 end
                             end
@@ -349,14 +336,14 @@ classdef EMSatLib < handle
                                     tgtInfo.ID   = num2str(jj);
                                     tgtInfo.Name = tgtName;
 
-                                    tgtStruct(ii).Target(end+1) = PositionParser(obj, tgtInfo, 1);
+                                    tgtList(ii).Target(end+1) = PositionParser(obj, tgtInfo, 1);
                                 end
                             end
                     end
                     clear hACU
 
                 catch ME
-                    antStruct(ii).LOG{end+1} = ME.message;
+                    antList(ii).LOG = ME.message;
 
                     if exist('hACU', 'var'); clear hACU
                     end
@@ -365,36 +352,57 @@ classdef EMSatLib < handle
 
             % JSON file
             writematrix(jsonencode(struct('Switch',        obj.Switch, ...
-                                          'Antenna',       antStruct,  ...
+                                          'Antenna',       antList,    ...
                                           'LNB',           obj.LNB,    ...
-                                          'TargetList',    tgtStruct,  ...
+                                          'TargetList',    tgtList,    ...
                                           'GeneratedDate', datestr(now, 'dd/mm/yyyy HH:MM:SS')), 'PrettyPrint', true), FullFileName, "FileType", "text", "QuoteStrings", "none")
         end
 
 
         %-----------------------------------------------------------------%
-        function [propTable, propSummary] = TargetProperties(obj)
+        function [propTable, propSummary] = TargetProperties(obj, tgtList)
 
-            % Em 21/07/2023 executei essa função, identificando os seguintes
+            % Em 07/09/2023 executei essa função, identificando os seguintes
             % limites:
-            % (a) Azimuth:     0.118 a 356.300 graus (limites em auxApp.winAddTask: 0 a 360 graus)
-            % (b) Elevation:  15.397 a  63.306 graus (limites em auxApp.winAddTask: 0 a  90 graus)
-            % (c) Polarização: 0.200 a 355.700 graus (limites em auxApp.winAddTask: 0 a 360 graus)
+            % (a) Azimuth:     0.118 a 356.297 graus (limites em auxApp.winAddTask: 0 a 360 graus)
+            % (b) Elevation:  10.000 a  63.306 graus (limites em auxApp.winAddTask: 0 a  90 graus)
+            % (c) Polarização: 0.000 a 355.700 graus (limites em auxApp.winAddTask: 0 a 360 graus)
 
-            propTable = table('Size', [0,5], ...
-                                    'VariableTypes', {'cell', 'cell', 'double', 'double', 'double'}, ...
-                                    'VariableNames', {'antenna', 'target', 'azimuth', 'elevation', 'polarization'});
+            if nargin == 1
+                tgtList = obj.TargetList;
+            end
+
+            propTable = table('Size', [0,5],                                                   ...
+                              'VariableTypes', {'cell', 'cell', 'double', 'double', 'double'}, ...
+                              'VariableNames', {'Antenna', 'Target', 'Azimuth', 'Elevation', 'Polarization'});
             
-            for ii = 1:numel(obj.TargetList)
-                for jj = 1:numel(obj.TargetList(ii).Target)
-                    propTable(end+1,:) = {obj.TargetList(ii).Name,                 ...
-                                          obj.TargetList(ii).Target(jj).Name,      ...
-                                          obj.TargetList(ii).Target(jj).Azimuth,   ...
-                                          obj.TargetList(ii).Target(jj).Elevation, ...
-                                          obj.TargetList(ii).Target(jj).Polarization};
+            for ii = 1:numel(tgtList)
+                for jj = 1:numel(tgtList(ii).Target)
+                    propTable(end+1,:) = {tgtList(ii).Name,                 ...
+                                          tgtList(ii).Target(jj).Name,      ...
+                                          tgtList(ii).Target(jj).Azimuth,   ...
+                                          tgtList(ii).Target(jj).Elevation, ...
+                                          tgtList(ii).Target(jj).Polarization};
                 end
             end
-            propSummary = summary(propTable);
+
+            % Sumarização:
+            if height(propTable)
+                [antennaList, ~, antennaListIndex] = unique(propTable.Antenna);
+    
+                TargetPerAntenna = jsonencode(table(antennaList, accumarray(antennaListIndex, 1), 'VariableNames', {'Antenna', 'Count'}));
+                positionSummary  = struct('Azimuth',      struct('Min', min(propTable.Azimuth),      'Median', median(propTable.Azimuth),      'Max', max(propTable.Azimuth)),   ...
+                                          'Elevation',    struct('Min', min(propTable.Elevation),    'Median', median(propTable.Elevation),    'Max', max(propTable.Elevation)), ...
+                                          'Polarization', struct('Min', min(propTable.Polarization), 'Median', median(propTable.Polarization), 'Max', max(propTable.Polarization)));
+    
+                propSummary = struct('TargetCount',      height(propTable),         ...
+                                     'TargetPerAntenna', TargetPerAntenna,          ...
+                                     'Azimuth',          positionSummary.Azimuth,   ...
+                                     'Elevation',        positionSummary.Elevation, ...
+                                     'Polarization',     positionSummary.Polarization);
+            else
+                propSummary = struct('TargetCount',      0);
+            end
         end
     end
 
