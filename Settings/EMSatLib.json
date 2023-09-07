@@ -508,7 +508,7 @@
           "Name": "teste",
           "Azimuth": 330.594,
           "Elevation": 59.893,
-          "Polarization": 308.641
+          "Polarization": 308.635
         }
       ]
     },
@@ -756,8 +756,8 @@
         {
           "ID": "49",
           "Name": "teste2",
-          "Azimuth": 280.525,
-          "Elevation": 17.553,
+          "Azimuth": 282.422,
+          "Elevation": 16.736,
           "Polarization": 324.08
         }
       ]
@@ -821,15 +821,15 @@
         {
           "ID": "46",
           "Name": "NSS7 OPT",
-          "Azimuth": 53.405,
-          "Elevation": 52.097,
+          "Azimuth": 46.413,
+          "Elevation": 47.379,
           "Polarization": 253.762
         },
         {
           "ID": "48",
           "Name": "905 OPT",
-          "Azimuth": 43.461,
-          "Elevation": 56.276,
+          "Azimuth": 40.669,
+          "Elevation": 54.102,
           "Polarization": 253.762
         }
       ]
@@ -1071,14 +1071,14 @@
         {
           "ID": "49",
           "Name": "Test2",
-          "Azimuth": 2.777,
-          "Elevation": 63.157,
+          "Azimuth": 2.646,
+          "Elevation": 63.222,
           "Polarization": 1.941
         },
         {
           "ID": "50",
           "Name": "Test",
-          "Azimuth": 326.558,
+          "Azimuth": 326.499,
           "Elevation": 58.636,
           "Polarization": 330.059
         }
@@ -1452,5 +1452,5 @@
       ]
     }
   ],
-  "GeneratedDate": "07/09/2023 02:24:29"
+  "GeneratedDate": "07/09/2023 11:52:02"
 }

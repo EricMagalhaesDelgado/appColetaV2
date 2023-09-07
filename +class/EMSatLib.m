@@ -390,7 +390,7 @@ classdef EMSatLib < handle
             if height(propTable)
                 [antennaList, ~, antennaListIndex] = unique(propTable.Antenna);
     
-                TargetPerAntenna = jsonencode(table(antennaList, accumarray(antennaListIndex, 1), 'VariableNames', {'Antenna', 'Count'}));
+                TargetPerAntenna = table(antennaList, accumarray(antennaListIndex, 1), 'VariableNames', {'Antenna', 'Count'});
                 positionSummary  = struct('Azimuth',      struct('Min', min(propTable.Azimuth),      'Median', median(propTable.Azimuth),      'Max', max(propTable.Azimuth)),   ...
                                           'Elevation',    struct('Min', min(propTable.Elevation),    'Median', median(propTable.Elevation),    'Max', max(propTable.Elevation)), ...
                                           'Polarization', struct('Min', min(propTable.Polarization), 'Median', median(propTable.Polarization), 'Max', max(propTable.Polarization)));

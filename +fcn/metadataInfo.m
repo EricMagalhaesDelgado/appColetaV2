@@ -31,19 +31,17 @@ function htmlCode = structParser(Data, htmlCode, Level)
                 Value = strjoin(Value, ', ');
     
             elseif Level == 1
-                if isstruct(Value)
-                    Value = structParser(Value,               '', 2);
-                elseif istable(Value)
-                    Value = structParser(table2struct(Value), '', 2);
+                if isstruct(Value) || istable(Value)
+                    Value = array2scalar(Value);
+                    Value = structParser(Value, '', 2);
                 elseif isJSON(Value)
                     Value = structParser(jsondecode(Value),   '', 2);                
                 end
     
             elseif Level == 2
-                if isstruct(Value)
+                if isstruct(Value) || istable(Value)
+                    Value = array2scalar(Value);
                     Value = structParser(Value, '', 3);
-                elseif istable(Value)
-                    Value = structParser(table2struct(Value), '', 3);
                 end
             end
             
@@ -66,7 +64,6 @@ end
 
 %-------------------------------------------------------------------------%
 function status = isJSON(value)
-
     status = false;
 
     try
@@ -74,5 +71,28 @@ function status = isJSON(value)
             status = true;
         end
     catch        
+    end
+end
+
+
+%-------------------------------------------------------------------------%
+function editedValue = array2scalar(rawValue)
+    if istable(rawValue)
+        rawValue = table2struct(rawValue);
+    end
+
+    % Conversão aplicável apenas a estruturas não escalares que possuem 
+    % dois campos.
+    if numel(rawValue) > 1
+        structFields = fields(rawValue);
+        if numel(structFields) == 2
+            for ii = 1:numel(rawValue)
+                editedValue.(matlab.lang.makeValidName(rawValue(ii).(structFields{1}))) = rawValue(ii).(structFields{2});
+            end
+        else
+            editedValue = -1;
+        end
+    else
+        editedValue = rawValue;
     end
 end
