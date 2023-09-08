@@ -124,6 +124,7 @@ classdef tcpServerLib < handle
             
                             % Requisições...
                             switch decodedMsg.Request
+                                case 'StationInfo';  msg = StationInfo(obj);
                                 case 'Diagnostic';   msg = Diagnostic(obj);
                                 case 'PositionList'; msg = PositionList(obj);
                                 case 'TaskList';     msg = TaskList(obj);
@@ -173,6 +174,13 @@ classdef tcpServerLib < handle
                                 Request,                    ...
                                 obj.Server.NumBytesWritten, ...
                                 statusMsg};
+        end
+
+
+        %-----------------------------------------------------------------%
+        function answer = StationInfo(obj)
+            app = obj.App;
+            answer = struct('stationInfo',  app.General.stationInfo);
         end
 
 

@@ -1,7 +1,10 @@
 {
   "stationInfo": {
     "Name": "ERMx-DF-00",
-    "Computer": ""
+    "Computer": "",
+    "Type": "Fixed",
+    "Latitude": -1,
+    "Longitude": -1
   },
   "userPath": "C:\\P&D",
   "openGL": "hardware",
