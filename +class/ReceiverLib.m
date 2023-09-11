@@ -274,7 +274,7 @@ classdef ReceiverLib < handle
                 if hReceiver.NumBytesAvailable
                     IDN = readline(hReceiver);
                     if ~isempty(IDN)
-                        IDN = replace(deblank(IDN), {'"', ''''}, {'', ''});
+                        IDN = replace(strtrim(IDN), {'"', ''''}, {'', ''});
                         break
                     end
                 end

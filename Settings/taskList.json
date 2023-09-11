@@ -31,7 +31,7 @@
         "RevisitTime": 0.1,
         "IntegrationFactor": 1,
         "MaskTrigger": {
-          "Status": 0,
+          "Status": 3,
           "FindPeaks": {
             "nSweeps": 2,
             "Prominence": 30,
@@ -43,84 +43,6 @@
       },
       {
         "ID": 2,
-        "Description": "Faixa 1 de 3",
-        "ObservationSamples": -1,
-        "FreqStart": 7.6E+7,
-        "FreqStop": 1.08E+8,
-        "StepWidth": 5000,
-        "Resolution": 30000,
-        "VBW": "RBW/10",
-        "RFMode": "Low Distortion",
-        "TraceMode": "ClearWrite",
-        "Detector": "Sample",
-        "LevelUnit": "dBm",
-        "RevisitTime": 0.1,
-        "IntegrationFactor": 1,
-        "MaskTrigger": {
-          "Status": 1,
-          "FindPeaks": {
-            "nSweeps": 9,
-            "Prominence": 20,
-            "Distance": 25,
-            "BW": 200
-          }
-        },
-        "Enable": 1
-      },
-      {
-        "ID": 3,
-        "Description": "Faixa 3 de 4",
-        "ObservationSamples": -1,
-        "FreqStart": 7.6E+7,
-        "FreqStop": 1.08E+8,
-        "StepWidth": 5000,
-        "Resolution": 30000,
-        "VBW": "RBW/10",
-        "RFMode": "Low Distortion",
-        "TraceMode": "ClearWrite",
-        "Detector": "Sample",
-        "LevelUnit": "dBm",
-        "RevisitTime": 0.1,
-        "IntegrationFactor": 1,
-        "MaskTrigger": {
-          "Status": 2,
-          "FindPeaks": {
-            "nSweeps": 37,
-            "Prominence": 10,
-            "Distance": 25,
-            "BW": 50
-          }
-        },
-        "Enable": 1
-      },
-      {
-        "ID": 4,
-        "Description": "Faixa 1 de 3",
-        "ObservationSamples": -1,
-        "FreqStart": 7.6E+7,
-        "FreqStop": 1.08E+8,
-        "StepWidth": 5000,
-        "Resolution": 30000,
-        "VBW": "RBW/10",
-        "RFMode": "Low Distortion",
-        "TraceMode": "ClearWrite",
-        "Detector": "Sample",
-        "LevelUnit": "dBm",
-        "RevisitTime": 0.1,
-        "IntegrationFactor": 1,
-        "MaskTrigger": {
-          "Status": 3,
-          "FindPeaks": {
-            "nSweeps": 37,
-            "Prominence": 10,
-            "Distance": 25,
-            "BW": 100
-          }
-        },
-        "Enable": 1
-      },
-      {
-        "ID": 5,
         "Description": "Faixa 2 de 3",
         "ObservationSamples": -1,
         "FreqStart": 1.08E+8,
@@ -138,10 +60,10 @@
           "Status": 0,
           "FindPeaks": []
         },
-        "Enable": 0
+        "Enable": 1
       },
       {
-        "ID": 6,
+        "ID": 3,
         "Description": "Faixa 3 de 3",
         "ObservationSamples": -1,
         "FreqStart": 4.5E+8,
@@ -164,7 +86,7 @@
             "BW": 10
           }
         },
-        "Enable": 0
+        "Enable": 1
       }
     ]
   },
