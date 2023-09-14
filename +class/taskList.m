@@ -41,54 +41,19 @@ classdef taskList
             try
                 List = jsondecode(fileread(FileFullPath));
                 msgError = '';
-                
-                for ii = 1:numel(List)
-                    switch List(ii).Observation.Type
-                        case 'Duration'
-                            List(ii).Observation.Duration = lower(List(ii).Observation.Duration);
-                            if ismember(List(ii).Observation.Duration, {'inf', 'infinite'})
-                                List(ii).Observation.Duration = inf;
-                            else
-                                durationStr = regexpi(List(ii).Observation.Duration, '(?<value>\d+)\s*(?<unit>(seconds|second|sec|minutes|minute|min|hours|hour|hr))', 'names');
-                                if ~isempty(durationStr)
-                                    switch durationStr.unit
-                                        case {'seconds', 'second', 'sec'}; List(ii).Observation.Duration = str2double(durationStr.value);
-                                        case {'minutes', 'minute', 'min'}; List(ii).Observation.Duration = str2double(durationStr.value)*60;
-                                        case {'hours', 'hour', 'hr'};      List(ii).Observation.Duration = str2double(durationStr.value)*3600;
-                                    end
-                                else
-                                    List(ii).Observation.Duration = 600;
-                                end
-                            end
-                            List(ii).Observation.BeginTime = '';
-                            List(ii).Observation.EndTime   = '';
-    
-                        case 'Time'
-                            List(ii).Observation.Duration = [];
-    
-                        case 'Samples'
-                            List(ii).Observation = struct('Type', 'Samples', 'BeginTime', '', 'EndTime', '', 'Duration', []);
-                    end
-        
-                    % Garante que ao menos um fluxo esteja ativo.
-                    if ~any([List(ii).Band.Enable])
-                        List(ii).Band(1).Enable = 1;
-                    end
 
-                    % Elimina fluxos não ativos, caso leitura seja acionada do winAppColetaV2.
-                    for jj = numel(List(ii).Band):-1:1
-                        if ~List(ii).Band(jj).Enable && strcmp(srcFcn, 'winAppColetaV2')
-                            List(ii).Band(jj) = [];
-                            continue
-                        end
-                    end
+                % O trecho de código a seguir busca identificar a versão do 
+                % "taskList.json". No arquivo não há um campo indicando a
+                % sua versão, mas ao deserializar o arquivo da release R2022a,
+                % a estrutura resultante terá quatro campos: "Name", "BitsPerSample", 
+                % "Duration" e "Band". Por outro lado, o arquivo da release R2023a 
+                % terá cinco campos: "Name", "BitsPerSample", "Observation", "GPS" 
+                % e "Band".
 
-                    % Ordena números dos IDs de cada fluxo, caso tenha sido objeto de alguma edição manual equivocada,
-                    % além de garantir que será usado a representação esperada pelo app do símbolo "micro".
-                    for jj = 1:numel(List(ii).Band)
-                        List(ii).Band(jj).ID = jj;
-                        List(ii).Band(jj).LevelUnit = class.taskList.str2str(List(ii).Band(jj).LevelUnit);
-                    end
+                if isequal(fields(List), {'Name';'BitsPerSample';'Duration';'Band'})
+                    List = class.taskList.v1Parser(List);
+                else
+                    List = class.taskList.v2Parser(List, srcFcn);
                 end
 
             catch ME
@@ -141,7 +106,6 @@ classdef taskList
         
         %-----------------------------------------------------------------%
         function List = DefaultTask()
-
             List = struct('Name', 'Tarefa 1',                                                                         ...
                           'BitsPerSample', 8,                                                                         ...
                           'Observation', struct('Type', 'Duration', 'BeginTime', '', 'EndTime', '', 'Duration', 600), ...
@@ -163,6 +127,107 @@ classdef taskList
                                                 'MaskTrigger',         struct('Status',     0,  ...
                                                                               'FindPeaks', []), ...
                                                 'Enable',              1));
+        end
+
+
+        %-----------------------------------------------------------------%
+        function List = v1Parser(oldList)
+            for ii = 1:numel(oldList)
+                List(ii,1).Name        = oldList(ii).Name;
+                List(ii).BitsPerSample = oldList(ii).BitsPerSample;
+                List(ii).Observation   = struct('Type', 'Duration', 'BeginTime', '', 'EndTime', '', 'Duration', oldList(ii).Duration);
+                List(ii).GPS           = struct('Type', 'auto', 'Latitude', [], 'Longitude', [], 'RevisitTime', 10);
+
+                for jj = 1:numel(oldList(ii).Band)
+                    if oldList(ii).Band(jj).Trigger
+                        maskTrigger = 2;
+                    else
+                        maskTrigger = 0;
+                    end
+
+                    List(ii).Band(jj) = struct('ID',                 oldList(ii).Band(jj).ThreadID,          ...
+                                               'Description',        oldList(ii).Band(jj).Description,       ...
+                                               'ObservationSamples', -1,                                     ...
+                                               'FreqStart',          oldList(ii).Band(jj).FreqStart,         ...
+                                               'FreqStop',           oldList(ii).Band(jj).FreqStop,          ...
+                                               'StepWidth',          oldList(ii).Band(jj).StepWidth,         ...
+                                               'Resolution',         oldList(ii).Band(jj).Resolution,        ...
+                                               'VBW',                'auto',                                 ...
+                                               'RFMode',             oldList(ii).Band(jj).RFMode,            ...
+                                               'TraceMode',          oldList(ii).Band(jj).TraceMode,         ...
+                                               'Detector',           oldList(ii).Band(jj).Detector,          ...
+                                               'LevelUnit',          oldList(ii).Band(jj).LevelUnit,         ...
+                                               'RevisitTime',        oldList(ii).Band(jj).RevisitTime,       ...
+                                               'IntegrationFactor',  oldList(ii).Band(jj).IntegrationFactor, ...
+                                               'MaskTrigger',        struct('Status', maskTrigger, 'FindPeaks', []), ...
+                                               'Enable',             oldList(ii).Band(jj).Enable);
+                end
+
+                % Validações finais.
+                List = class.taskList.ParserValidation(List, ii);
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function List = v2Parser(List, srcFcn)
+            for ii = 1:numel(List)
+                switch List(ii).Observation.Type
+                    case 'Duration'
+                        List(ii).Observation.Duration = lower(List(ii).Observation.Duration);
+                        if ismember(List(ii).Observation.Duration, {'inf', 'infinite'})
+                            List(ii).Observation.Duration = inf;
+                        else
+                            durationStr = regexpi(List(ii).Observation.Duration, '(?<value>\d+)\s*(?<unit>(seconds|second|sec|minutes|minute|min|hours|hour|hr))', 'names');
+                            if ~isempty(durationStr)
+                                switch durationStr.unit
+                                    case {'seconds', 'second', 'sec'}; List(ii).Observation.Duration = str2double(durationStr.value);
+                                    case {'minutes', 'minute', 'min'}; List(ii).Observation.Duration = str2double(durationStr.value)*60;
+                                    case {'hours', 'hour', 'hr'};      List(ii).Observation.Duration = str2double(durationStr.value)*3600;
+                                end
+                            else
+                                List(ii).Observation.Duration = 600;
+                            end
+                        end
+                        List(ii).Observation.BeginTime = '';
+                        List(ii).Observation.EndTime   = '';
+
+                    case 'Time'
+                        List(ii).Observation.Duration = [];
+
+                    case 'Samples'
+                        List(ii).Observation = struct('Type', 'Samples', 'BeginTime', '', 'EndTime', '', 'Duration', []);
+                end
+
+                % Elimina fluxos não ativos, caso leitura seja acionada do winAppColetaV2.
+                if strcmp(srcFcn, 'winAppColetaV2')
+                    nBands = numel(List(ii).Band);
+                    for jj = nBands:-1:1
+                        if ~List(ii).Band(jj).Enable
+                            List(ii).Band(jj) = [];
+                        end
+                    end
+                end
+
+                % Validações finais.
+                List = class.taskList.ParserValidation(List, ii);
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function List = ParserValidation(List, ii)
+            % Garante que ao menos um fluxo esteja ativo.
+            if ~any([List(ii).Band.Enable])
+                List(ii).Band(1).Enable = 1;
+            end
+
+            % Ordena números dos IDs de cada fluxo, caso tenha sido objeto de alguma edição manual equivocada,
+            % além de garantir que será usado a representação esperada pelo app do símbolo "micro".
+            for jj = 1:numel(List(ii).Band)
+                List(ii).Band(jj).ID = jj;
+                List(ii).Band(jj).LevelUnit = class.taskList.str2str(List(ii).Band(jj).LevelUnit);
+            end
         end
 
 
