@@ -64,7 +64,7 @@ classdef EB500Lib < handle
                 udpTic = tic;
                 t = toc(udpTic);
                 while t < Timeout
-                    specDatagram = [specDatagram, read(hStreaming)];
+                    specDatagram = [specDatagram, read(hStreaming, hStreaming.NumDatagramsAvailable)];
 
                     if numel(specDatagram) > EB500Obj.nDatagrams                        
                         break
