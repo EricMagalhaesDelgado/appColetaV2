@@ -1,8 +1,8 @@
 classdef EB500Lib < handle
 
     % Author.: Eric Magalhães Delgado & Michel Cerqueira Kulhavy
-    % Date...: July 07, 2023
-    % Version: 1.01
+    % Date...: September 15, 2023
+    % Version: 1.02
 
     % !! EVOLUÇÃO !!
     % swapbytes (pode ser útil no leitor do EB500 - testar com tic/toc se é mais eficiente...)
@@ -59,6 +59,8 @@ classdef EB500Lib < handle
                 specDatagram = [];
 
                 writeline(hReceiver, specObj.Band(ii).SpecificSCPI.configSET);
+
+                flush(hStreaming)
                 class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver)
 
                 udpTic = tic;
@@ -74,11 +76,11 @@ classdef EB500Lib < handle
                 class.EB500Lib.DatagramRead_OnOff('Close', udpPort, hReceiver)
 
                 if isempty(specDatagram)
-                    error(sprintf(['ERROR - Não identificada a estimativa do número de datagramas que representam um único traço.\n' ...
-                                   'Possíveis causas:\n'                                                                     ...
-                                   '(a) Perda de conectividade com o EB500.\n'                                               ...
-                                   '(b) <i>Firewall</i> bloqueando fluxo UDP gerado pelo EB500.\n'                           ...
-                                   '(c) Não redirecionamento de porta do roteador (no caso de não ser uma conexão direta ao EB500).']))
+                    error(['ERROR - Não identificada a estimativa do número de datagramas que representam um único traço do fluxo %d.\n' ...
+                           'Possíveis causas:\n'                                                                     ...
+                           '(a) Perda de conectividade com o EB500.\n'                                               ...
+                           '(b) <i>Firewall</i> bloqueando fluxo UDP gerado pelo EB500.\n'                           ...
+                           '(c) Não redirecionamento de porta do roteador (no caso de não ser uma conexão direta ao EB500).'], ii)
                 end
 
                 % Delete datagrams sent by an unexpected source
@@ -110,16 +112,15 @@ classdef EB500Lib < handle
                         end
                     end
                 end
-                numel(specDatagram)
                 
                 if nTerminator
                     specObj.Band(ii).Datagrams = round(nDatagrams/nTerminator);
                 else
-                    error(sprintf(['ERROR - Não identificada a estimativa do número de datagramas que representam um único traço.\n' ...
-                                   'Possíveis causas:\n'                                                                     ...
-                                   '(a) Perda de conectividade com o EB500.\n'                                               ...
-                                   '(b) <i>Firewall</i> bloqueando fluxo UDP gerado pelo EB500.\n'                           ...
-                                   '(c) Não redirecionamento de porta do roteador (no caso de não ser uma conexão direta ao EB500).']))
+                    error(['ERROR - Não identificada a estimativa do número de datagramas que representam um único traço do fluxo %d.\n' ...
+                           'Possíveis causas:\n'                                                                     ...
+                           '(a) Perda de conectividade com o EB500.\n'                                               ...
+                           '(b) <i>Firewall</i> bloqueando fluxo UDP gerado pelo EB500.\n'                           ...
+                           '(c) Não redirecionamento de porta do roteador (no caso de não ser uma conexão direta ao EB500).'], ii)
                 end
             end
         end
@@ -133,7 +134,8 @@ classdef EB500Lib < handle
             newArray     = zeros(1, taskInfo.DataPoints, 'single');
             Flag_success = false;
             specDatagram = [];
-                        
+
+            flush(hStreaming)
             class.EB500Lib.DatagramRead_OnOff('Open', udpPort, hReceiver)
             
             udpTic = tic;
@@ -221,12 +223,13 @@ classdef EB500Lib < handle
         function DatagramRead_OnOff(Type, udpPort, hReceiver)
             switch Type
                 case 'Open'
-                    writeline(hReceiver, sprintf('TRAC:UDP:TAG:ON "%s", %.0f, PSCAN;:TRAC:UDP:FLAG:ON "%s", %.0f, "VOLTage:AC", "OPT"', ...
-                        hReceiver.UserData.ClientIP, udpPort, hReceiver.UserData.ClientIP, udpPort));
+                    writeline(hReceiver, sprintf('TRACE:UDP:TAG:ON "%s", %.0f, PSCAN',                 hReceiver.UserData.ClientIP, udpPort))
+                    writeline(hReceiver, sprintf('TRACE:UDP:FLAG:ON "%s", %.0f, "VOLTage:AC", "OPT"',  hReceiver.UserData.ClientIP, udpPort))
 
                 case 'Close'
-                    writeline(hReceiver, sprintf('TRAC:UDP:TAG:OFF "%s", %.0f, PSCAN;:TRAC:UDP:FLAG:OFF "%s", %.0f, "VOLTage:AC", "OPT";:TRAC:UDP:DEL "%s", %.0f', ...
-                        hReceiver.UserData.ClientIP, udpPort, hReceiver.UserData.ClientIP, udpPort, hReceiver.UserData.ClientIP, udpPort));
+                    writeline(hReceiver, sprintf('TRACE:UDP:TAG:OFF "%s", %.0f, PSCAN',                hReceiver.UserData.ClientIP, udpPort))
+                    writeline(hReceiver, sprintf('TRACE:UDP:FLAG:OFF "%s", %.0f, "VOLTage:AC", "OPT"', hReceiver.UserData.ClientIP, udpPort))
+                    writeline(hReceiver, sprintf('TRACE:UDP:DEL "%s", %.0f',                           hReceiver.UserData.ClientIP, udpPort))
             end
         end
     end
