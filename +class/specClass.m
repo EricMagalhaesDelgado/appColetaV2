@@ -80,7 +80,7 @@ classdef specClass < matlab.mixin.Copyable                                  % ab
                 obj(idx).Status = 'Na fila';
 
                 if ~isempty(warnMsg)
-                    obj(idx).LOG(end+1) = struct('type', 'warning', 'time', obj(idx).Observation.Created, 'msg', warnMsg);
+                    obj(idx).LOG(end+1) = struct('type', 'warning', 'time', obj(idx).Observation.Created, 'msg', strjoin(warnMsg, '\n\n'));
                 end
                 obj(idx).LOG(end+1) = struct('type', 'task', 'time', char(datetime('now')), 'msg', 'Incluída na fila a tarefa.');
 
