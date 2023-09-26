@@ -109,5 +109,5 @@ function Draw(app, ii, jj)
         case 3
             set(app.axes1.Children, 'Visible', 'off')
     end
-    drawnow
+    % drawnow
 end

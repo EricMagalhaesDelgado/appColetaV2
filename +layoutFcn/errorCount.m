@@ -7,5 +7,5 @@ function errorCount(app, idx)
         set(app.errorCount_txt, 'Text', '0', 'Visible', 'off')
         app.errorCount_img.Visible = 'off';
     end
-    drawnow
+    % drawnow
 end
