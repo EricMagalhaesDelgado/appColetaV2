@@ -1,8 +1,7 @@
 function Draw(app, ii, jj)
 
-    idx1 = app.specObj(ii).Band(jj).Waterfall.idx;
-    idx2 = [idx1+1:app.specObj(ii).Band(jj).Waterfall.Depth, 1:idx1];
-    newArray = app.specObj(ii).Band(jj).Waterfall.Matrix(idx1,:);
+    idx = app.specObj(ii).Band(jj).Waterfall.idx;
+    newArray = app.specObj(ii).Band(jj).Waterfall.Matrix(idx,:);
 
     if isempty(app.line_ClrWrite)
         % Plot Layout
@@ -77,7 +76,7 @@ function Draw(app, ii, jj)
         end
 
         % Waterfall
-        app.surface_WFall = image(app.axes2, xArray, 1:app.specObj(ii).Band(jj).Waterfall.Depth, app.specObj(ii).Band(jj).Waterfall.Matrix(idx2,:), CDataMapping='scaled', Tag='Waterfall');
+        app.surface_WFall = image(app.axes2, xArray, 1:app.specObj(ii).Band(jj).Waterfall.Depth, circshift(app.specObj(ii).Band(jj).Waterfall.Matrix, -idx), CDataMapping='scaled', Tag='Waterfall');
         plotFcn.DataTipModel(app.surface_WFall, LevelUnit)
 
     else
@@ -100,7 +99,7 @@ function Draw(app, ii, jj)
             app.line_ClrWrite.YData = KK .* app.specObj(ii).Band(jj).Mask.BrokenArray;
         end
         
-        app.surface_WFall.CData = app.specObj(ii).Band(jj).Waterfall.Matrix(idx2,:);
+        app.surface_WFall.CData = circshift(app.specObj(ii).Band(jj).Waterfall.Matrix, -idx);
     end
 
     switch app.plotLayout
