@@ -311,7 +311,7 @@ classdef RFlookBinLib
                     fwrite(fileID_new, tempData);
                     fclose(fileID_new);
     
-                    system(sprintf('rm "%s"', fileFullPath));
+                    system(sprintf('del "%s"', fileFullPath));
             end
         end
 
