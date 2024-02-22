@@ -87,11 +87,10 @@ classdef EB500Lib < handle
                     specDatagram(idx0) = [];
                 end
 
-                switch taskType
-                    case 'Drive-test EB500" (Level+Azimuth)'
-                        kData = 3;
-                    otherwise
-                        kData = 1;
+                if contains(taskType, 'Drive-test (Level+Azimuth)')
+                    kData = 3;
+                else
+                    kData = 1;
                 end
 
                 nDatagrams  = 0;
@@ -136,11 +135,10 @@ classdef EB500Lib < handle
             Timeout = class.Constants.Timeout;
             udpPort = hStreaming.LocalPort;
 
-            switch taskInfo.Type
-                case 'Drive-test (Level+Azimuth)'
-                    kData = 3;
-                otherwise
-                    kData = 1;
+            if contains(taskInfo.Type, 'Drive-test (Level+Azimuth)')
+                kData = 3;
+            else
+                kData = 1;
             end
 
             newArray     = zeros(1, taskInfo.DataPoints, kData, 'single');
@@ -191,19 +189,18 @@ classdef EB500Lib < handle
                         MagicNumber = typecast(specDatagram(jj).Data( 4:-1: 1), 'uint32');
                         DataSize    = typecast(specDatagram(jj).Data(16:-1:13), 'uint32');
 
-                        switch taskInfo.Type
-                            case 'Drive-test (Level+Azimuth)'
-                                FreqCenter = double(typecast(specDatagram(ii).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(ii).Data(36:-1:33), 'uint32')) * 2^32;
-                                FreqSpan   = double(typecast(specDatagram(ii).Data(40:-1:37), 'uint32'));
-                                                                
-                                FreqStart  = FreqCenter - FreqSpan/2;
-                                FreqStop   = FreqCenter + FreqSpan/2;
-                                DataPoints = typecast(specDatagram(ii).Data(22:-1:21), 'uint16');
+                        if contains(taskInfo.Type, 'Drive-test (Level+Azimuth)')
+                            FreqCenter = double(typecast(specDatagram(ii).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(ii).Data(36:-1:33), 'uint32')) * 2^32;
+                            FreqSpan   = double(typecast(specDatagram(ii).Data(40:-1:37), 'uint32'));
+                                                            
+                            FreqStart  = FreqCenter - FreqSpan/2;
+                            FreqStop   = FreqCenter + FreqSpan/2;
+                            DataPoints = typecast(specDatagram(ii).Data(22:-1:21), 'uint16');
 
-                            otherwise
-                                FreqStart  = double(typecast(specDatagram(jj).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(jj).Data(44:-1:41), 'uint32')) * 2^32;
-                                FreqStop   = double(typecast(specDatagram(jj).Data(36:-1:33), 'uint32')) + double(typecast(specDatagram(jj).Data(48:-1:45), 'uint32')) * 2^32;
-                                DataPoints = (FreqStop - FreqStart)/double(typecast(specDatagram(jj).Data(40:-1:37), 'uint32')) + 1;
+                        else
+                            FreqStart  = double(typecast(specDatagram(jj).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(jj).Data(44:-1:41), 'uint32')) * 2^32;
+                            FreqStop   = double(typecast(specDatagram(jj).Data(36:-1:33), 'uint32')) + double(typecast(specDatagram(jj).Data(48:-1:45), 'uint32')) * 2^32;
+                            DataPoints = (FreqStop - FreqStart)/double(typecast(specDatagram(jj).Data(40:-1:37), 'uint32')) + 1;
                         end
         
                         if (MagicNumber == 963072)                           && ...
@@ -337,30 +334,29 @@ classdef EB500Lib < handle
 
         %-----------------------------------------------------------------%
         function DatagramRead_OnOff(taskType, operationType, udpPort, hReceiver)
-            switch taskType
-                case 'Drive-test EB500" (Level+Azimuth)'
-                    switch operationType
-                        case 'Open'
-                            writeline(hReceiver, sprintf('TRACE:UDP:TAG:ON "%s", %.0f, DFPan',                                     hReceiver.UserData.ClientIP, udpPort))
-                            writeline(hReceiver, sprintf('TRACE:UDP:FLAG:ON "%s", %.0f, "DFLevel", "AZImuth", "DFQuality", "OPT"', hReceiver.UserData.ClientIP, udpPort))
-        
-                        case 'Close'
-                            writeline(hReceiver, sprintf('TRACE:UDP:TAG:OFF "%s", %.0f, DFPan',                                     hReceiver.UserData.ClientIP, udpPort))
-                            writeline(hReceiver, sprintf('TRACE:UDP:FLAG:OFF "%s", %.0f, "DFLevel", "AZImuth", "DFQuality", "OPT"', hReceiver.UserData.ClientIP, udpPort))                            
-                            writeline(hReceiver, sprintf('TRACE:UDP:DEL "%s", %.0f',                                                hReceiver.UserData.ClientIP, udpPort))
-                    end
+            if contains(taskType, 'Drive-test (Level+Azimuth)')
+                switch operationType
+                    case 'Open'
+                        writeline(hReceiver, sprintf('TRACE:UDP:TAG:ON "%s", %.0f, DFPan',                                     hReceiver.UserData.ClientIP, udpPort))
+                        writeline(hReceiver, sprintf('TRACE:UDP:FLAG:ON "%s", %.0f, "DFLevel", "AZImuth", "DFQuality", "OPT"', hReceiver.UserData.ClientIP, udpPort))
+    
+                    case 'Close'
+                        writeline(hReceiver, sprintf('TRACE:UDP:TAG:OFF "%s", %.0f, DFPan',                                     hReceiver.UserData.ClientIP, udpPort))
+                        writeline(hReceiver, sprintf('TRACE:UDP:FLAG:OFF "%s", %.0f, "DFLevel", "AZImuth", "DFQuality", "OPT"', hReceiver.UserData.ClientIP, udpPort))                            
+                        writeline(hReceiver, sprintf('TRACE:UDP:DEL "%s", %.0f',                                                hReceiver.UserData.ClientIP, udpPort))
+                end
 
-                otherwise
-                    switch operationType
-                        case 'Open'
-                            writeline(hReceiver, sprintf('TRACE:UDP:TAG:ON "%s", %.0f, PSCAN',                 hReceiver.UserData.ClientIP, udpPort))
-                            writeline(hReceiver, sprintf('TRACE:UDP:FLAG:ON "%s", %.0f, "VOLTage:AC", "OPT"',  hReceiver.UserData.ClientIP, udpPort))
-        
-                        case 'Close'
-                            writeline(hReceiver, sprintf('TRACE:UDP:TAG:OFF "%s", %.0f, PSCAN',                hReceiver.UserData.ClientIP, udpPort))
-                            writeline(hReceiver, sprintf('TRACE:UDP:FLAG:OFF "%s", %.0f, "VOLTage:AC", "OPT"', hReceiver.UserData.ClientIP, udpPort))
-                            writeline(hReceiver, sprintf('TRACE:UDP:DEL "%s", %.0f',                           hReceiver.UserData.ClientIP, udpPort))
-                    end
+            else
+                switch operationType
+                    case 'Open'
+                        writeline(hReceiver, sprintf('TRACE:UDP:TAG:ON "%s", %.0f, PSCAN',                 hReceiver.UserData.ClientIP, udpPort))
+                        writeline(hReceiver, sprintf('TRACE:UDP:FLAG:ON "%s", %.0f, "VOLTage:AC", "OPT"',  hReceiver.UserData.ClientIP, udpPort))
+    
+                    case 'Close'
+                        writeline(hReceiver, sprintf('TRACE:UDP:TAG:OFF "%s", %.0f, PSCAN',                hReceiver.UserData.ClientIP, udpPort))
+                        writeline(hReceiver, sprintf('TRACE:UDP:FLAG:OFF "%s", %.0f, "VOLTage:AC", "OPT"', hReceiver.UserData.ClientIP, udpPort))
+                        writeline(hReceiver, sprintf('TRACE:UDP:DEL "%s", %.0f',                           hReceiver.UserData.ClientIP, udpPort))
+                end
             end
         end
     end
