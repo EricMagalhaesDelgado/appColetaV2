@@ -230,7 +230,7 @@
     ],
     "connectFlag": 3,
     "connectPort": 5555,
-    "StartUp": "*RST;*CLS;:SYST:COMM:LAN:PING 0;:TRAC:UDP:DELete ALL;:ROUTe:AUTO 0;:OUTPut:AUXMode AUTO;:MEASure:APPL DF;:FREQ:MODE CW;:FUNCtion:CONCurrent OFF;:MEAS:MODE PER;:SYSTem:GPS:DATA:AUTO 1;:INITiate:IMMediate",
+    "StartUp": "*RST;*CLS;:SYST:COMM:LAN:PING 0;:TRAC:UDP:DELete ALL;:ROUTe:AUTO 0;:OUTPut:AUXMode AUTO;:MEASure:APPL DF;:FREQ:MODE CW;:FUNCtion:CONCurrent OFF;:MEAS:MODE PER;:SYSTem:GPS:DATA:AUTO 1",
     "scpiReset": "*RST",
     "scpiGeneral": "CALC:IFPan:AVERage:TYPE %Trace%;:FREQ %FreqCenter%;:FREQ:SPAN %FreqSpan%;:CALC:IFPan:STEP %StepWidth%;:CALC:IFPan:SELectivity %Selectivity%;:INPut:ATTenuation:MODE %SensitivityMode%;:INPut:ATTenuation:AUTO %AttenuationMode%;:MEAS:DF:MODE %DF_SquelchMode%;:MEAS:DF:THR %DF_SquelchValue%;:MEAS:DF:TIME %DF_MeasTime%",
     "scpiVBW_Options": "",
