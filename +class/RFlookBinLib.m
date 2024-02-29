@@ -1,8 +1,8 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: August 22, 2023
-    % Version: 1.00
+    % Date...: February 29, 2024
+    % Version: 1.01
 
 	methods(Static = true)
         %-----------------------------------------------------------------%
@@ -14,7 +14,7 @@ classdef RFlookBinLib
             AlocatedSamples = 0;
 
             switch specObj.Band(idx).File.Fileversion
-                case 'RFlookBin v.1/1'
+                case 'RFlookBin v.1'
                     fileName = fullfile(userPath, sprintf('~%s_%.0f.bin', baseName, fileCount));
                     fileID   = fopen(fileName, 'w');
 
@@ -26,7 +26,7 @@ classdef RFlookBinLib
 
                     fileMemMap = class.RFlookBinLib.v1_MemoryMap(fileName, specObj, idx, AlocatedSamples, Offset1, Offset2);
         
-                case 'RFlookBin v.2/1'
+                case 'RFlookBin v.2'
                     fileName = fullfile(userPath, sprintf('%s_%.0f.bin', baseName, fileCount));
                     fileID   = fopen(fileName, 'w');
                     
@@ -43,7 +43,7 @@ classdef RFlookBinLib
         %-----------------------------------------------------------------%
         function specObj = CloseFile(specObj, idx)
             switch specObj.Band(idx).File.Fileversion
-                case 'RFlookBin v.1/1'
+                case 'RFlookBin v.1'
                     AlocatedSamples = specObj.Band(idx).File.CurrentFile.AlocatedSamples;
                     WritedSamples   = specObj.Band(idx).File.CurrentFile.MemMap{1}.Data.Value;
 
@@ -53,7 +53,7 @@ classdef RFlookBinLib
                         class.RFlookBinLib.v1_PostProcessing(specObj, idx, 'ObservationTime');
                     end
         
-                case 'RFlookBin v.2/1'
+                case 'RFlookBin v.2'
                     fileID = specObj.Band(idx).File.CurrentFile.Handle;
                     fclose(fileID);
             end
@@ -69,7 +69,7 @@ classdef RFlookBinLib
             end
 
             switch specObj.Band(idx).File.Fileversion
-                case 'RFlookBin v.1/1'
+                case 'RFlookBin v.1'
                     AlocatedSamples = specObj.Band(idx).File.CurrentFile.AlocatedSamples;
                     WritedSamples   = specObj.Band(idx).File.CurrentFile.MemMap{1}.Data.Value;
         
@@ -80,7 +80,7 @@ classdef RFlookBinLib
                             specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx);
                     end
         
-                case 'RFlookBin v.2/1'
+                case 'RFlookBin v.2'
                     fileID = specObj.Band(idx).File.CurrentFile.Handle;
 
                     if ftell(fileID) > class.Constants.fileMaxSize
@@ -101,10 +101,10 @@ classdef RFlookBinLib
 
             gpsData = specObj.lastGPS;
             switch specObj.Band(idx).File.Fileversion
-                case 'RFlookBin v.1/1'
+                case 'RFlookBin v.1'
                     class.RFlookBinLib.v1_MemoryEdit(specObj, idx, rawArray, attFactor, gpsData, TimeStamp)
 
-                case 'RFlookBin v.2/1'
+                case 'RFlookBin v.2'
                     class.RFlookBinLib.v2_WriteBody(specObj,  idx, rawArray, attFactor, gpsData, TimeStamp)
             end
         end
@@ -113,7 +113,7 @@ classdef RFlookBinLib
 
     methods (Static = true, Access = private)
         %-----------------------------------------------------------------%
-        % ## RFlookBin v.1/1 ##
+        % ## RFlookBin v.1 ##
         %-----------------------------------------------------------------%
         function AlocatedSamples = v1_WriteHeader(fileID, specObj, idx)
             Script          = specObj.Task.Script;
@@ -317,7 +317,7 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        % ## RFlookBin v.2/1 ##      
+        % ## RFlookBin v.2/1 e RFlookBin v.2/2 ##
         %-----------------------------------------------------------------%
         function v2_WriteHeader(fileID, specObj, idx)
             Script        = specObj.Task.Script;
@@ -330,60 +330,71 @@ classdef RFlookBinLib
             else                           
                 instrVBW  = '';
             end
+        
+            meta2File     = struct('Receiver',         Node,                       ...
+                                   'AntennaInfo',      specObj.Band(idx).Antenna,  ...
+                                   'gpsType',          Script.GPS.Type,            ...
+                                   'Task',             Script.Name,                ...
+                                   'ID',               MetaData.ID,                ...
+                                   'Description',      MetaData.Description,       ...
+                                   'FreqStart',        MetaData.FreqStart,         ...
+                                   'FreqStop',         MetaData.FreqStop,          ...
+                                   'DataPoints',       MetaData.instrDataPoints,   ...
+                                   'Resolution',       MetaData.instrResolution,   ...
+                                   'VBW',              instrVBW,                   ...
+                                   'Preamp',           MetaData.instrPreamp,       ...
+                                   'AttMode',          MetaData.instrAttMode,      ...
+                                   'AttFactor',        MetaData.instrAttFactor,    ...
+                                   'Unit',             MetaData.instrLevelUnit,    ...
+                                   'TraceMode',        MetaData.TraceMode,         ...
+                                   'TraceIntegration', MetaData.IntegrationFactor, ...
+                                   'Detector',         MetaData.instrDetector,     ...
+                                   'RevisitTime',      MetaData.RevisitTime,       ...
+                                   'DF_SquelchMode',   MetaData.DF_SquelchMode,    ...
+                                   'DF_SquelchValue',  MetaData.DF_SquelchValue,   ...
+                                   'DF_MeasTime',      MetaData.DF_MeasTime);
 
-            AttMode_ID    = class.RFlookBinLib.str2id('Attenuation', MetaData.instrAttMode);
-            gpsMode_ID    = class.RFlookBinLib.str2id('GPS',         Script.GPS.Type);
-        
-            fwrite(fileID, 'RFlookBin v.2/1', 'char*1');
-            fwrite(fileID, BitsPerSample);
-            fwrite(fileID, AttMode_ID);
-            fwrite(fileID, gpsMode_ID);
-        
-            MetaStruct = struct('Receiver',         Node,                        ...
-                                'AntennaInfo',      specObj.Band(idx).Antenna,   ...
-                                'gpsType',          Script.GPS.Type,             ...
-                                'Task',             Script.Name,                 ...
-                                'ID',               MetaData.ID,                 ...
-                                'Description',      MetaData.Description,        ...
-                                'FreqStart',        MetaData.FreqStart,          ...
-                                'FreqStop',         MetaData.FreqStop,           ...
-                                'DataPoints',       MetaData.instrDataPoints,    ...
-                                'Resolution',       MetaData.instrResolution,    ...
-                                'VBW',              instrVBW,                    ...
-                                'Preamp',           MetaData.instrPreamp,        ...
-                                'AttMode',          MetaData.instrAttMode,       ...
-                                'AttFactor',        MetaData.instrAttFactor,     ...
-                                'Unit',             MetaData.instrLevelUnit,     ...
-                                'TraceMode',        MetaData.TraceMode,          ...
-                                'TraceIntegration', MetaData.IntegrationFactor,  ...
-                                'Detector',         MetaData.instrDetector,      ...
-                                'RevisitTime',      MetaData.RevisitTime);
-            
-            if isempty(instrVBW)
-                MetaStruct = rmfield(MetaStruct, 'VBW');
+            metaFields = fields(meta2File);
+            for ii = 1:numel(metaFields)
+                if isempty(meta2File.(metaFields{ii}))
+                    meta2File = rmfield(meta2File, metaFields{ii});
+                end
             end
-            
+
+            AttMode_ID = class.RFlookBinLib.str2id('Attenuation', MetaData.instrAttMode);
             if AttMode_ID
-                MetaStruct = rmfield(MetaStruct, 'AttFactor');
+                meta2File = rmfield(meta2File, 'AttFactor');
             end
         
+            gpsMode_ID = class.RFlookBinLib.str2id('GPS',         Script.GPS.Type);
             if gpsMode_ID
-                MetaStruct.gpsRevisitTime = Script.GPS.RevisitTime;
+                meta2File.gpsRevisitTime = Script.GPS.RevisitTime;
             else
-                MetaStruct.Latitude  = Script.GPS.Latitude;
-                MetaStruct.Longitude = Script.GPS.Longitude;
+                meta2File.Latitude  = Script.GPS.Latitude;
+                meta2File.Longitude = Script.GPS.Longitude;
             end
 
             if ~isempty(specObj.Band(idx).Mask)
-                MetaStruct.Mask = jsonencode(struct('Status',    MetaData.MaskTrigger.Status,      ...
-                                                    'FindPeaks', specObj.Band(idx).Mask.FindPeaks, ...
-                                                    'Table',     specObj.Band(idx).Mask.Table));
+                meta2File.Mask = jsonencode(struct('Status',    MetaData.MaskTrigger.Status,      ...
+                                                   'FindPeaks', specObj.Band(idx).Mask.FindPeaks, ...
+                                                   'Table',     specObj.Band(idx).Mask.Table));
             end
 
-            MetaStruct = unicode2native(jsonencode(MetaStruct), 'UTF-8');
+            % Serializando... struct2json
+            meta2File = unicode2native(jsonencode(meta2File), 'UTF-8');
         
-            fwrite(fileID, numel(MetaStruct), 'uint32');
-            fwrite(fileID, MetaStruct);
+            if ~contains(specObj.Task.Type, 'Drive-test (Level+Azimuth)')
+                formatName = 'RFlookBin v.2/1';
+            else
+                formatName = 'RFlookBin v.2/2';
+            end
+
+            fwrite(fileID, formatName, 'char*1');
+            fwrite(fileID, BitsPerSample);
+            fwrite(fileID, AttMode_ID);
+            fwrite(fileID, gpsMode_ID);
+            fwrite(fileID, numel(meta2File), 'uint32');
+            fwrite(fileID, meta2File);
         end
 
 
@@ -408,7 +419,18 @@ classdef RFlookBinLib
                 fwrite(fileID, attFactor, 'int8');
             end
 
-            [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray, BitsPerSample);
+            [processedArray, RefLevel] = class.RFlookBinLib.raw2processedArray(rawArray(:,:,1), BitsPerSample);
+
+            [~,~,DD] = size(rawArray);
+            if DD == 3
+                dataClass         = class(processedArray);
+                
+                processedArray    = {processedArray};                                                                % LEVEL
+                processedArray{2} = typecast(class.RFlookBinLib.raw2processedArray(rawArray(:,:,2), 16), dataClass); % AZIMUTH (0-360)
+                processedArray{3} = typecast(class.RFlookBinLib.raw2processedArray(rawArray(:,:,3), 16), dataClass); % AZIMUTH QUALITY SCORE (0-100)
+
+                processedArray    = horzcat(processedArray{:});
+            end            
             
             if BitsPerSample == 8
                 fwrite(fileID, RefLevel, 'int16');

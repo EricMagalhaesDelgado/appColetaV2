@@ -1343,5 +1343,123 @@
         "Enable": 1
       }
     ]
+  },
+  {
+    "Name": "EM500_LevelAzimuthTask_HOM_1",
+    "BitsPerSample": 8,
+    "Observation": {
+      "Type": "Duration",
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "10 min"
+    },
+    "GPS": {
+      "Type": "auto",
+      "Latitude": [],
+      "Longitude": [],
+      "RevisitTime": 10
+    },
+    "Band": {
+      "ID": 1,
+      "Description": "Faixa 1 de 3",
+      "ObservationSamples": -1,
+      "FreqStart": 8.8E+7,
+      "FreqStop": 1.08E+8,
+      "StepWidth": 6250,
+      "Resolution": 30000,
+      "VBW": "RBW/10",
+      "RFMode": "Low Distortion",
+      "TraceMode": "ClearWrite",
+      "Detector": "Sample",
+      "LevelUnit": "dBm",
+      "RevisitTime": 0.1,
+      "IntegrationFactor": 1,
+      "MaskTrigger": {
+        "Status": 2,
+        "FindPeaks": []
+      },
+      "Enable": 1
+    }
+  },
+  {
+    "Name": "EM500_LevelAzimuthTask_HOM_2",
+    "BitsPerSample": 8,
+    "Observation": {
+      "Type": "Duration",
+      "BeginTime": "not applicable",
+      "EndTime": "not applicable",
+      "Duration": "10 min"
+    },
+    "GPS": {
+      "Type": "auto",
+      "Latitude": [],
+      "Longitude": [],
+      "RevisitTime": 10
+    },
+    "Band": [
+      {
+        "ID": 1,
+        "Description": "Faixa 1 de 3",
+        "ObservationSamples": -1,
+        "FreqStart": 8.8E+7,
+        "FreqStop": 1.08E+8,
+        "StepWidth": 10000,
+        "Resolution": 30000,
+        "VBW": "RBW/10",
+        "RFMode": "Low Distortion",
+        "TraceMode": "ClearWrite",
+        "Detector": "Sample",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.1,
+        "IntegrationFactor": 1,
+        "MaskTrigger": {
+          "Status": 2,
+          "FindPeaks": []
+        },
+        "Enable": 1
+      },
+      {
+        "ID": 2,
+        "Description": "Faixa 2 de 3",
+        "ObservationSamples": -1,
+        "FreqStart": 1.27E+8,
+        "FreqStop": 1.37E+8,
+        "StepWidth": 12500,
+        "Resolution": 30000,
+        "VBW": "RBW",
+        "RFMode": "Normal",
+        "TraceMode": "ClearWrite",
+        "Detector": "Average/RMS",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.1,
+        "IntegrationFactor": 1,
+        "MaskTrigger": {
+          "Status": 2,
+          "FindPeaks": []
+        },
+        "Enable": 1
+      },
+      {
+        "ID": 3,
+        "Description": "Faixa 3 de 3",
+        "ObservationSamples": -1,
+        "FreqStart": 4.5E+8,
+        "FreqStop": 4.55E+8,
+        "StepWidth": 25000,
+        "Resolution": 100000,
+        "VBW": "RBW/10",
+        "RFMode": "High Sensitivity",
+        "TraceMode": "ClearWrite",
+        "Detector": "Positive Peak",
+        "LevelUnit": "dBm",
+        "RevisitTime": 0.1,
+        "IntegrationFactor": 1,
+        "MaskTrigger": {
+          "Status": 0,
+          "FindPeaks": []
+        },
+        "Enable": 1
+      }
+    ]
   }
 ]
