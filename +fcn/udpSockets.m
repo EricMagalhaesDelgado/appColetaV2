@@ -16,6 +16,7 @@ function [udpPortArray, idx] = udpSockets(udpPortArray, Port)
         % operacional, talvez).
 
         try
+            fcn.tcpSockets_PortRelease(Port)
             udpPortArray(idx) = {udpport('datagram', 'IPV4', 'LocalPort', Port, 'ByteOrder', 'big-endian', 'Timeout', class.Constants.udpTimeout)};
         catch
             idx = [];
