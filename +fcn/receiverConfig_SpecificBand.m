@@ -1,4 +1,4 @@
-function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
+function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
     
     newTask   = obj(idx).Task;
     instrInfo = obj(idx).Task.Receiver.Config;
@@ -66,35 +66,45 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         end                
         
         % FreqStart/FreqStop
-        if strcmp(newTask.Antenna.Switch, 'EMSat')
-            antennaLNBName = rawBand(ii).instrAntenna;
-            antennaName    = extractBefore(rawBand(ii).instrAntenna, ' ');
-            antIndex       = find(strcmp(EMSatObj.LNB.Name, antennaLNBName), 1);
-
-            freqBand       = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
-            FreqStart      = min(freqBand);
-            FreqStop       = max(freqBand);
-            
-            FlipArray      = EMSatObj.LNB.Inverted(antIndex);
-            SwitchPort     = EMSatObj.LNB.SwitchPort(antIndex);
-            LNBChannel     = EMSatObj.LNB.LNBChannel(antIndex);
-
-            idx1 = find(strcmp({EMSatObj.Antenna.Name}, extractBefore(rawBand(ii).instrAntenna, ' ')), 1);
-            idx2 = -1;
-            for kk = 1:numel(EMSatObj.Antenna(idx1).LNB)
-                if ismember(antennaLNBName, EMSatObj.Antenna(idx1).LNB(kk).Name)
-                    idx2 = kk;
-                    break
+        switch newTask.Antenna.Switch.Name
+            case 'EMSat'
+                antennaLNBName = rawBand(ii).instrAntenna;
+                antennaName    = extractBefore(rawBand(ii).instrAntenna, ' ');
+                antIndex       = find(strcmp(EMSatObj.LNB.Name, antennaLNBName), 1);
+    
+                freqBand       = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
+                FreqStart      = min(freqBand);
+                FreqStop       = max(freqBand);
+                
+                FlipArray      = EMSatObj.LNB.Inverted(antIndex);
+                SwitchPort     = EMSatObj.LNB.SwitchPort(antIndex);
+                LNBChannel     = EMSatObj.LNB.LNBChannel(antIndex);
+    
+                idx1 = find(strcmp({EMSatObj.Antenna.Name}, extractBefore(rawBand(ii).instrAntenna, ' ')), 1);
+                idx2 = -1;
+                for kk = 1:numel(EMSatObj.Antenna(idx1).LNB)
+                    if ismember(antennaLNBName, EMSatObj.Antenna(idx1).LNB(kk).Name)
+                        idx2 = kk;
+                        break
+                    end
                 end
-            end
-            LNBIndex    = [idx1, idx2];
+                LNBIndex       = [idx1, idx2];
 
-        else
-            FreqStart   = rawBand(ii).FreqStart;
-            FreqStop    = rawBand(ii).FreqStop;
-            antennaName = newTask.Antenna.MetaData.Name;
+            case 'ERMx'
+                FreqStart      = rawBand(ii).FreqStart;
+                FreqStop       = rawBand(ii).FreqStop;
 
-            FlipArray   = [];
+                antennaName    = rawBand(ii).instrAntenna;
+                antIndex       = find(strcmp({ERMxObj.Antenna.Name}, antennaName), 1);
+                SwitchPort     = ERMxObj.Antenna(antIndex).SwitchPort;
+                FlipArray      = [];
+
+            otherwise
+                FreqStart      = rawBand(ii).FreqStart;
+                FreqStop       = rawBand(ii).FreqStop;
+                
+                antennaName    = newTask.Antenna.MetaData.Name;    
+                FlipArray      = [];
         end
 
         % DataPoints, StepWidth, Resolution, Selectivity
@@ -222,10 +232,14 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         taskBand(ii).FlipArray    = FlipArray;
         taskBand(ii).Antenna      = fcn.antennaParser(newTask.Antenna.MetaData, antennaName);
 
-        if exist('SwitchPort', 'var')
-            taskBand(ii).Antenna.SwitchPort = SwitchPort;
-            taskBand(ii).Antenna.LNBChannel = LNBChannel;
-            taskBand(ii).Antenna.LNBIndex   = LNBIndex;
+        switch newTask.Antenna.Switch.Name
+            case 'EMSat'
+                taskBand(ii).Antenna.SwitchPort = SwitchPort;
+                taskBand(ii).Antenna.LNBChannel = LNBChannel;
+                taskBand(ii).Antenna.LNBIndex   = LNBIndex;
+
+            case 'ERMx'
+                taskBand(ii).Antenna.SwitchPort = SwitchPort;
         end
     end
 

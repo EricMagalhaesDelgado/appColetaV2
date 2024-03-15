@@ -8,7 +8,7 @@
       <file>${PROJECT_ROOT}\appColetaV2_CompilerProject_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\appColetaV2_CompilerProject_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.50</param.version>
+    <param.version>1.52</param.version>
     <param.authnamewatermark>Eric Magalhães Delgado</param.authnamewatermark>
     <param.email>eric@anatel.gov.br</param.email>
     <param.company>ANATEL</param.company>
@@ -19,7 +19,8 @@
     <param.installpath.string>\ANATEL\appColetaV2\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
-    <param.install.notes>Compilado em 31/01/2024 13:02</param.install.notes>
+    <param.install.notes>Compilado em 03/03/2024 22:10
+(VERSÃO DE TESTE)</param.install.notes>
     <param.target.install.notes />
     <param.intermediate>${PROJECT_ROOT}\appColetaV2_CompilerProject\for_testing</param.intermediate>
     <param.files.only>${PROJECT_ROOT}\appColetaV2_CompilerProject\for_redistribution_files_only</param.files.only>
