@@ -14,15 +14,20 @@ function Draw(app, ii, jj)
         xArray    = linspace(FreqStart, FreqStop, app.specObj(ii).Band(jj).DataPoints);
 
         % General settings
-        [upYLim, strUnit] = class.Constants.yAxisUpLimit(app.specObj(ii).Task.Script.Band(jj).instrLevelUnit);
-        downYLim = min(newArray) - mod(min(newArray), 10);
-        if diff([downYLim, upYLim]) < class.Constants.yMinLimRange
+        [~, strUnit] = class.Constants.yAxisUpLimit(app.specObj(ii).Task.Script.Band(jj).instrLevelUnit);
+
+        [downYLim, upYLim] = bounds(newArray);
+        downYLim  = downYLim - mod(downYLim, 10);
+        upYLim    = upYLim + 10 - mod(upYLim, 10);        
+        diffArray = upYLim - downYLim;
+
+        if diffArray < class.Constants.yMinLimRange
             upYLim = downYLim + class.Constants.yMinLimRange;
+
+        elseif diffArray > class.Constants.yMaxLimRange
+            downYLim = upYLim - class.Constants.yMaxLimRange;
         end
 
-        if diff([downYLim, upYLim]) > class.Constants.yMaxLimRange
-            downYLim = downYLim + diff([downYLim, upYLim]) - class.Constants.yMaxLimRange;
-        end
         colormap(app.axes2, app.General.Waterfall.Colormap);
         set(app.axes2, XLim=[FreqStart, FreqStop], YLim=[1, app.specObj(ii).Band(jj).Waterfall.Depth], View=[0, 90], CLim=[downYLim, upYLim]);
         ylabel(app.axes2, 'Amostras');

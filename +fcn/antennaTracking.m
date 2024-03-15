@@ -49,7 +49,7 @@ function targetPos = antennaTracking(app, antennaMetaData, d)
                                        msg, antennaPos.Azimuth, antennaPos.Elevation, antennaPos.Polarization,    ...
                                        targetPos.Azimuth, targetPos.Elevation, targetPos.Polarization);
         
-                        selection = uiconfirm(app.UIFigure, msg, 'appColeta', 'Interpreter', 'html', 'Options', {'Sim', 'Não'}, 'DefaultOption', 1, 'CancelOption', 1, 'Icon', 'question');                
+                        selection = uiconfirm(app.UIFigure, msg, '', 'Interpreter', 'html', 'Options', {'Sim', 'Não'}, 'DefaultOption', 1, 'CancelOption', 1, 'Icon', 'question');                
                         if selection == "Não"
                             continue
                         end
@@ -65,7 +65,7 @@ function targetPos = antennaTracking(app, antennaMetaData, d)
                                    '\n\nDeseja reconfigurar esse apontamento para automático ("Target" ou "LookAngles")?</font>'], ...
                                    antennaName);
     
-                    selection = uiconfirm(app.UIFigure, msg, 'appColeta', 'Interpreter', 'html', 'Options', {'Sim', 'Não'}, 'DefaultOption', 2, 'CancelOption', 2, 'Icon', 'question');                
+                    selection = uiconfirm(app.UIFigure, msg, '', 'Interpreter', 'html', 'Options', {'Sim', 'Não'}, 'DefaultOption', 2, 'CancelOption', 2, 'Icon', 'question');                
                     if selection == "Sim"
                         error('Operação cancelada para reconfiguração do tipo de apontamento do conjunto antena/LNB "%s".', antennaName)
                     end

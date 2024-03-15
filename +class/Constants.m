@@ -19,7 +19,7 @@ classdef (Abstract) Constants
         userPaths       = {fullfile(getenv('USERPROFILE'), 'Documents'); fullfile(getenv('USERPROFILE'), 'Downloads')}
         Interactions    = {'datacursor', 'zoomin', 'restoreview'}
 
-        yMinLimRange    = 80                                                % Minimum y-Axis limit range
+        yMinLimRange    = 50                                                % Minimum y-Axis limit range
         yMaxLimRange    = 100                                               % Maximum y-Axis limit range
 
         switchTimes     = 3                                                 % Maximum attempts to switch the antenna

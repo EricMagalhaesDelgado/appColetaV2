@@ -256,19 +256,19 @@ classdef EMSatLib < handle
             setTerminator = num2cell(visibleASCII(OutputPort+5:OutputPort+13));
             getTerminator = num2cell(visibleASCII(OutputPort+48:OutputPort+56));
 
-            idxTerminator = mod(InputPort+OutputPort+5, 9);
+            idxTerminator = mod(InputPort-1, 9);
 
             % Caso porta de saída seja igual a 12:
             % - setTerminator = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
             % - getTerminator = {'[', '\', ']', '^', '_', '`', 'a', 'b', 'c'};
             %
             % Exemplos:
-            % - input 001, output 012: "{*zs,012,001}0" e
-            % - input 002, output 012: "{*zs,012,002}1" e
-            % - input 003, output 012: "{*zs,012,003}2" e
+            % - input 001, output 012: "{*zs,012,001}0" e "{zBs?012,001}["
+            % - input 002, output 012: "{*zs,012,002}1" e "{zBs?012,002}\"
+            % - input 003, output 012: "{*zs,012,003}2" e "{zBs?012,003}]"
             % - (...)
-            % - input 031, output 012: "{*zs,012,031}x" e 
-            % - input 032, output 012: "{*zs,012,032}x" e
+            % - input 031, output 012: "{*zs,012,031}3" e "{zBs?012,031}^"
+            % - input 032, output 012: "{*zs,012,032}4" e "{zBs?012,032}_"
 
             % Caso porta de saída seja igual a 14:
             % - setTerminator = {'2', '3', '4', '5', '6', '7', '8', '9', ':'};
@@ -288,9 +288,10 @@ classdef EMSatLib < handle
             setCommand = sprintf('{*zs,%s,%s}%s', formattedOutputPort, formattedInputPort, setTerminator{idxTerminator+1});
             getCommand = sprintf('{zBs?%s,%s}%s', formattedOutputPort, formattedInputPort, getTerminator{idxTerminator+1});
 
-            % Notas:
-            % - Em 04/07/2023, a matriz não comutou para as portas de saída 19, 28 e 29, quando a porta de saída era 12.
-            % - Em 14/03/2024, a matriz não comutou para as portas de saída     28 e 29, quando a porta de saída era 14.
+            % Nota:
+            % - Em 15/03/2024, a matriz não comutou para as portas de entrada
+            %   19, 28 e 29. O teste foi realizado, comutando essas entradas 
+            %   para as saídas 12 (FSW) e 14 (FSVR).
         end
 
 
