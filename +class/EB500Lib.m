@@ -268,14 +268,14 @@ classdef EB500Lib < handle
                         FreqCenter  = double(typecast(specDatagram(ii).Data(32:-1:29), 'uint32')) + double(typecast(specDatagram(ii).Data(36:-1:33), 'uint32')) * 2^32;
                         FreqSpan    = double(typecast(specDatagram(ii).Data(40:-1:37), 'uint32'));
 
-                        gps.Status  = double(typecast(specDatagram(ii).Data(94:-1: 93), 'int16'));
-                        if gps.Status
-                            gps.Latitude = double(typecast(specDatagram(ii).Data(100:-1:99), 'int16')) + double(typecast(specDatagram(ii).Data(104:-1:101), 'single'))/60;
-                            if strcmp(char(typecast(specDatagram(ii).Data( 98:-1:97),  'int16')), 'S'); gps.Latitude = -gps.Latitude;
+                        gpsData.Status  = double(typecast(specDatagram(ii).Data(94:-1: 93), 'int16'));
+                        if gpsData.Status
+                            gpsData.Latitude = double(typecast(specDatagram(ii).Data(100:-1:99), 'int16')) + double(typecast(specDatagram(ii).Data(104:-1:101), 'single'))/60;
+                            if strcmp(char(typecast(specDatagram(ii).Data( 98:-1:97),  'int16')), 'S'); gpsData.Latitude = -gpsData.Latitude;
                             end
                             
-                            gps.Longitude = double(typecast(specDatagram(ii).Data(108:-1:107), 'int16')) + double(typecast(specDatagram(ii).Data(112:-1:109), 'single'))/60;
-                            if strcmp(char(typecast(specDatagram(ii).Data(106:-1:105),  'int16')), 'W'); gps.Longitude = -gps.Longitude;
+                            gpsData.Longitude = double(typecast(specDatagram(ii).Data(108:-1:107), 'int16')) + double(typecast(specDatagram(ii).Data(112:-1:109), 'single'))/60;
+                            if strcmp(char(typecast(specDatagram(ii).Data(106:-1:105),  'int16')), 'W'); gpsData.Longitude = -gpsData.Longitude;
                             end
                         end
 
