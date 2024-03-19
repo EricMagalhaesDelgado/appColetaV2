@@ -242,14 +242,18 @@ classdef ReceiverLib < handle
             else;                                         Timeout = class.Constants.Timeout;
             end
         
-            % Localhost_publicIP
-            if isfield(Parameters, 'Localhost_publicIP'); Localhost_publicIP = Parameters.Localhost_publicIP;
-            else;                                         Localhost_publicIP = '';
-            end
-        
-            % Localhost_localIP
-            if isfield(Parameters, 'Localhost_localIP');  Localhost_localIP = Parameters.Localhost_localIP;
-            else;                                         Localhost_localIP = '';
+            % Localhost_publicIP & % Localhost_localIP
+            Localhost_publicIP = '';
+            Localhost_localIP  = '';
+
+            if isfield(Parameters, 'Localhost_Enable') && Parameters.Localhost_Enable
+                if isfield(Parameters, 'Localhost_publicIP')
+                    Localhost_publicIP = Parameters.Localhost_publicIP;
+                end        
+                
+                if isfield(Parameters, 'Localhost_localIP')
+                    Localhost_localIP = Parameters.Localhost_localIP;
+                end
             end
         end
 
