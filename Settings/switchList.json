@@ -1,18 +1,9 @@
 [
   {
-    "Receiver": "R&S EB500",
-    "Switch": "ETM",
-    "SwitchDefaultStatus": false,
-    "Antennas": [
-      "",
-      "R&S ADD107",
-      "R&S ADD207"
-    ]
-  },
-  {
     "Receiver": "R&S FSW",
     "Switch": "EMSat",
     "SwitchDefaultStatus": true,
+    "SwitchOutputPort": 12,
     "Antennas": [
       "",
       "MCL-1 V",
@@ -42,9 +33,54 @@
     ]
   },
   {
+    "Receiver": "R&S FSVR",
+    "Switch": "EMSat",
+    "SwitchDefaultStatus": false,
+    "SwitchOutputPort": 14,
+    "Antennas": [
+      "",
+      "MCL-1 V",
+      "MCL-1 H",
+      "MCL-2 V",
+      "MCL-2 H",
+      "MCL-3 V",
+      "MCL-3 H",
+      "MCC-1 L",
+      "MCC-1 R",
+      "MKU-1 LO_V",
+      "MKU-1 HI_V",
+      "MKU-1 LO_H",
+      "MKU-1 HI_H",
+      "MKU-2 LO_V",
+      "MKU-2 HI_V",
+      "MKU-2 LO_H",
+      "MKU-2 HI_H",
+      "MKA-1 LO_L",
+      "MKA-1 MID_L",
+      "MKA-1 MID_HI_L",
+      "MKA-1 HI_L",
+      "MKA-1 LO_R",
+      "MKA-1 MID_R",
+      "MKA-1 MID_HI_R",
+      "MKA-1 HI_R"
+    ]
+  },
+  {
+    "Receiver": "Tektronix SA2500",
+    "Switch": "ERMx",
+    "SwitchDefaultStatus": false,
+    "SwitchOutputPort": 1,
+    "Antennas": [
+      "",
+      "Low Band",
+      "High Band"
+    ]
+  },
+  {
     "Receiver": "others",
     "Switch": "none",
     "SwitchDefaultStatus": false,
+    "SwitchOutputPort": -1,
     "Antennas": [
       "",
       "CRFS Low Band (10 MHz - 1.2 GHz)",

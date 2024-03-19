@@ -4,7 +4,7 @@ function tcpSockets_PortRelease(Port)
     % criação de um novo socket.
 
     [~, cmdout] = system(sprintf('netstat -ano | findstr "%d"', Port));
-    pidStruct   = regexp(cmdout, '(TCP|UDP)\s+[\w.:[]]+\s+[\w.:[]]+\s+\w+\s+(?<pid>\d+)', 'names');
+    pidList     = unique(regexp(cmdout, '\d+$', 'match', 'lineanchors'));
 
     % A seguir o padrão do Windows de resposta à requisição "netstat -ano".
     % A expressão regular busca identificar apenas os PIDs dos processos
@@ -15,8 +15,8 @@ function tcpSockets_PortRelease(Port)
     % UDP    0.0.0.0:123            *:*                                    16344
     % UDP    0.0.0.0:3702           *:*                                    4160
 
-    if ~isempty(pidStruct)
-        pidList   = unique(cellfun(@(x) str2double(x), {pidStruct.pid}));
+    if ~isempty(pidList)
+        pidList   = cellfun(@(x) str2double(x), pidList);
         pidMatlab = feature('getpid');
 
         % Exclui-se da lista de PIDs relacionados à porta sob análise o PID

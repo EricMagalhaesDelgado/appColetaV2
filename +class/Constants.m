@@ -4,7 +4,7 @@ classdef (Abstract) Constants
         %-----------------------------------------------------------------%
         appName         = 'appColetaV2'
         appRelease      = 'R2023a'
-        appVersion      = '1.51'
+        appVersion      = '1.52'
 
         windowSize      = [1244, 660]
         windowMinSize   = [ 750, 660]
@@ -19,7 +19,7 @@ classdef (Abstract) Constants
         userPaths       = {fullfile(getenv('USERPROFILE'), 'Documents'); fullfile(getenv('USERPROFILE'), 'Downloads')}
         Interactions    = {'datacursor', 'zoomin', 'restoreview'}
 
-        yMinLimRange    = 80                                                % Minimum y-Axis limit range
+        yMinLimRange    = 50                                                % Minimum y-Axis limit range
         yMaxLimRange    = 100                                               % Maximum y-Axis limit range
 
         switchTimes     = 3                                                 % Maximum attempts to switch the antenna
@@ -35,7 +35,7 @@ classdef (Abstract) Constants
 
         tcpServerPeriod = 300                                               % in seconds
 
-        fileVersion     = 'RFlookBin v.2/1'                                 % 'RFlookBin v.1/1' | 'RFlookBin v.2/1'
+        fileVersion     = 'RFlookBin v.2'                                   % 'RFlookBin v.1' | 'RFlookBin v.2'
         fileMaxSize     = 100e+6                                            % 100 MB
 
         checkIP         = 'http://checkip.dyndns.org'
@@ -137,6 +137,19 @@ classdef (Abstract) Constants
                       "Modo de apontamento"];
         
             d = dictionary(names, values);
+        end
+
+
+        %-----------------------------------------------------------------%
+        function freq = FreqStr2NumConversion(freqStr)
+            temp = regexp(freqStr, '(?<value>\d+[.]?\d*)\s*(?<unit>(Hz|kHz|MHz|GHz))', 'names');
+            switch temp.unit
+                case  'Hz'; kk = 1;
+                case 'kHz'; kk = 1e+3;
+                case 'MHz'; kk = 1e+6;
+                case 'GHz'; kk = 1e+9;
+            end
+            freq = kk * str2double(temp.value);
         end
     end
 end

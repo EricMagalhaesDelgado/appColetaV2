@@ -1,4 +1,4 @@
-function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
+function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
     
     newTask   = obj(idx).Task;
     instrInfo = obj(idx).Task.Receiver.Config;
@@ -16,13 +16,15 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
     LevelUnit_Values   = strsplit(instrInfo.LevelUnit_Values{1}, ',');
     scpiVBW_Options    = strsplit(instrInfo.scpiVBW_Options{1},  ',');
 
-    rawFields = {'TraceMode',        'AverageMode',     'AveragCount',     ...
-                 'Detector',         'LevelUnit',       'FreqStart',       ...
-                 'FreqStop',         'DataPoints',      'StepWidth',       ...
-                 'ResolutionMode',   'ResolutionValue', 'Selectivity',     ...
-                 'SensitivityMode',  'Preamp',          'AttenuationMode', ...
-                 'AttenuationValue', 'SampleTimeMode',  'SampleTimeValue', ...
-                 'minFreqRange',     'maxFreqRange',    'VideoBandwidth'};
+    rawFields = {'TraceMode',        'AverageMode',     'AveragCount',     ... %  1 a  3
+                 'Detector',         'LevelUnit',       'FreqStart',       ... %  4 a  6
+                 'FreqStop',         'DataPoints',      'StepWidth',       ... %  7 a  9
+                 'ResolutionMode',   'ResolutionValue', 'Selectivity',     ... % 10 a 12
+                 'SensitivityMode',  'Preamp',          'AttenuationMode', ... % 13 a 15
+                 'AttenuationValue', 'SampleTimeMode',  'SampleTimeValue', ... % 16 a 18
+                 'minFreqRange',     'maxFreqRange',    'VideoBandwidth',  ... % 19 a 21
+                 'FreqCenter',       'FreqSpan',        'DF_SquelchMode',  ... % 22 a 24
+                 'DF_SquelchValue',  'DF_MeasTime'};                           % 25 a 26
     rawFields = rawFields(instrInfo.scpiQuery_IDs{1});
 
     % Teste de configuração para cada uma das bandas - em resumo, configura-se 
@@ -64,35 +66,45 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         end                
         
         % FreqStart/FreqStop
-        if strcmp(newTask.Antenna.Switch, 'EMSat')
-            antennaLNBName = rawBand(ii).instrAntenna;
-            antennaName    = extractBefore(rawBand(ii).instrAntenna, ' ');
-            antIndex       = find(strcmp(EMSatObj.LNB.Name, antennaLNBName), 1);
-
-            freqBand       = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
-            FreqStart      = min(freqBand);
-            FreqStop       = max(freqBand);
-            
-            FlipArray      = EMSatObj.LNB.Inverted(antIndex);
-            SwitchPort     = EMSatObj.LNB.SwitchPort(antIndex);
-            LNBChannel     = EMSatObj.LNB.LNBChannel(antIndex);
-
-            idx1 = find(strcmp({EMSatObj.Antenna.Name}, extractBefore(rawBand(ii).instrAntenna, ' ')), 1);
-            idx2 = -1;
-            for kk = 1:numel(EMSatObj.Antenna(idx1).LNB)
-                if ismember(antennaLNBName, EMSatObj.Antenna(idx1).LNB(kk).Name)
-                    idx2 = kk;
-                    break
+        switch newTask.Antenna.Switch.Name
+            case 'EMSat'
+                antennaLNBName = rawBand(ii).instrAntenna;
+                antennaName    = extractBefore(rawBand(ii).instrAntenna, ' ');
+                antIndex       = find(strcmp(EMSatObj.LNB.Name, antennaLNBName), 1);
+    
+                freqBand       = abs([rawBand(ii).FreqStart, rawBand(ii).FreqStop] - double(EMSatObj.LNB.Offset(antIndex)));
+                FreqStart      = min(freqBand);
+                FreqStop       = max(freqBand);
+                
+                FlipArray      = EMSatObj.LNB.Inverted(antIndex);
+                SwitchPort     = EMSatObj.LNB.SwitchPort(antIndex);
+                LNBChannel     = EMSatObj.LNB.LNBChannel(antIndex);
+    
+                idx1 = find(strcmp({EMSatObj.Antenna.Name}, extractBefore(rawBand(ii).instrAntenna, ' ')), 1);
+                idx2 = -1;
+                for kk = 1:numel(EMSatObj.Antenna(idx1).LNB)
+                    if ismember(antennaLNBName, EMSatObj.Antenna(idx1).LNB(kk).Name)
+                        idx2 = kk;
+                        break
+                    end
                 end
-            end
-            LNBIndex    = [idx1, idx2];
+                LNBIndex       = [idx1, idx2];
 
-        else
-            FreqStart   = rawBand(ii).FreqStart;
-            FreqStop    = rawBand(ii).FreqStop;
-            antennaName = newTask.Antenna.MetaData.Name;
+            case 'ERMx'
+                FreqStart      = rawBand(ii).FreqStart;
+                FreqStop       = rawBand(ii).FreqStop;
 
-            FlipArray   = [];
+                antennaName    = rawBand(ii).instrAntenna;
+                antIndex       = find(strcmp({ERMxObj.Antenna.Name}, antennaName), 1);
+                SwitchPort     = ERMxObj.Antenna(antIndex).SwitchPort;
+                FlipArray      = [];
+
+            otherwise
+                FreqStart      = rawBand(ii).FreqStart;
+                FreqStop       = rawBand(ii).FreqStop;
+                
+                antennaName    = newTask.Antenna.MetaData.Name;    
+                FlipArray      = [];
         end
 
         % DataPoints, StepWidth, Resolution, Selectivity
@@ -102,7 +114,7 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         Selectivity     = rawBand(ii).instrSelectivity;
 
         % VBW
-        scpiVBW_Value = '';
+        scpiVBW_Value   = '';
         if ~isempty(scpiVBW_Options{1})
             switch rawBand(ii).instrVBW
                 case 'auto'; scpiVBW_Value = scpiVBW_Options{1};
@@ -130,25 +142,30 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         end
 
         % SCPI main string
-        replaceCell = {'%Trace%',            TraceMode;                 ... 
-                       '%AverageMode%',      num2str(AverageMode);      ...
-                       '%AverageCount%',     num2str(AverageCount);      ...
-                       '%Detector%',         Detector;                  ...
-                       '%LevelUnit%',        LevelUnit;                 ...
-                       '%FreqStart%',        num2str(FreqStart);        ...
-                       '%FreqStop%',         num2str(FreqStop);         ...
-                       '%DataPoints%',       num2str(DataPoints);       ...
-                       '%StepWidth%',        num2str(StepWidth);        ...
-                       '%ResolutionMode%',   num2str(ResolutionMode);   ...
-                       '%ResolutionValue%',  num2str(ResolutionValue);  ...
-                       '%VBWOption%',        scpiVBW_Value;             ...
-                       '%Selectivity%',      Selectivity;               ...
-                       '%SensitivityMode%',  SensitivityMode;           ...
-                       '%Preamp%',           num2str(Preamp);           ...
-                       '%AttenuationMode%',  num2str(AttenuationMode);  ...
-                       '%AttenuationValue%', num2str(AttenuationValue); ...
-                       '%SampleTimeMode%',   num2str(SampleTimeMode);   ...
-                       '%SampleTimeValue%',  num2str(SampleTimeValue)};
+        replaceCell = {'%Trace%',              TraceMode;                 ... 
+                       '%AverageMode%',        num2str(AverageMode);      ...
+                       '%AverageCount%',       num2str(AverageCount);      ...
+                       '%Detector%',           Detector;                  ...
+                       '%LevelUnit%',          LevelUnit;                 ...
+                       '%FreqStart%',          num2str(FreqStart);        ...
+                       '%FreqStop%',           num2str(FreqStop);         ...
+                       '%DataPoints%',         num2str(DataPoints);       ...
+                       '%StepWidth%',          num2str(StepWidth);        ...
+                       '%ResolutionMode%',     num2str(ResolutionMode);   ...
+                       '%ResolutionValue%',    num2str(ResolutionValue);  ...
+                       '%VBWOption%',          scpiVBW_Value;             ...
+                       '%Selectivity%',        Selectivity;               ...
+                       '%SensitivityMode%',    SensitivityMode;           ...
+                       '%Preamp%',             num2str(Preamp);           ...
+                       '%AttenuationMode%',    num2str(AttenuationMode);  ...
+                       '%AttenuationValue%',   num2str(AttenuationValue); ...
+                       '%SampleTimeMode%',     num2str(SampleTimeMode);   ...
+                       '%SampleTimeValue%',    num2str(SampleTimeValue);  ...
+                       '%FreqCenter%',         num2str((FreqStart + FreqStop)/2);    ...
+                       '%FreqSpan%',           num2str(FreqStop - FreqStart);        ...
+                       '%DF_SquelchMode%',     rawBand(ii).DF_SquelchMode;           ...
+                       '%DF_SquelchValue%',    num2str(rawBand(ii).DF_SquelchValue); ...
+                       '%DF_MeasTime%',        num2str(rawBand(ii).DF_MeasTime)};
         
         scpiSet_Config = replace(instrInfo.scpiGeneral{1}, replaceCell(:,1), replaceCell(:,2));
         scpiSet_Att    = '';
@@ -215,10 +232,14 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj)
         taskBand(ii).FlipArray    = FlipArray;
         taskBand(ii).Antenna      = fcn.antennaParser(newTask.Antenna.MetaData, antennaName);
 
-        if exist('SwitchPort', 'var')
-            taskBand(ii).Antenna.SwitchPort = SwitchPort;
-            taskBand(ii).Antenna.LNBChannel = LNBChannel;
-            taskBand(ii).Antenna.LNBIndex   = LNBIndex;
+        switch newTask.Antenna.Switch.Name
+            case 'EMSat'
+                taskBand(ii).Antenna.SwitchPort = SwitchPort;
+                taskBand(ii).Antenna.LNBChannel = LNBChannel;
+                taskBand(ii).Antenna.LNBIndex   = LNBIndex;
+
+            case 'ERMx'
+                taskBand(ii).Antenna.SwitchPort = SwitchPort;
         end
     end
 

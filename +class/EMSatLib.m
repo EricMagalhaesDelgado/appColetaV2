@@ -1,12 +1,11 @@
 classdef EMSatLib < handle
 
     % Author.: Eric Magalhães Delgado & Vinicius Puga
-    % Date...: September 07, 2023
-    % Version: 1.01
+    % Date...: March 14, 2024
+    % Version: 1.02
 
     properties
         %-----------------------------------------------------------------%
-        SwitchCommand
         Switch
 
         Antenna
@@ -22,20 +21,6 @@ classdef EMSatLib < handle
     methods
         %-----------------------------------------------------------------%
         function obj = EMSatLib(RootFolder)
-            % Antenna switch (Matrix) commands
-            switchCommand = table('Size', [32, 3],                                 ...
-                                  'VariableTypes', {'double', 'string', 'string'}, ...
-                                  'VariableNames', {'Port', 'set', 'get'});
-            sTerminator = {'[', '\', ']', '^', '_', '`', 'a', 'b', 'c'};
-            for ii = 1:height(switchCommand)
-                nPort = num2str(ii);
-                if numel(nPort) == 1; nPort = "0" + nPort;
-                end
-                nTerminator = mod(ii-1, 9);
-
-                switchCommand(ii,:) = {ii, sprintf("{*zs,012,0%s}%.0f", nPort, nTerminator), sprintf("{zBs?012,0%s}%s", nPort, sTerminator{nTerminator+1})};
-            end
-
             % LNB commands
             lnbCommand = {'<0001/LBCHN=1', '>0001/LBCHN=1'; ...
                           '<0001/LBCHN=2', '>0001/LBCHN=2'; ...
@@ -51,11 +36,9 @@ classdef EMSatLib < handle
             tempStruct.LNB.Offset = uint64(tempStruct.LNB.Offset);
 
             % Object
-            obj.SwitchCommand = switchCommand;
-            obj.LNBCommand    = lnbCommand;
-
             obj.Switch        = tempStruct.Switch;
             obj.Antenna       = tempStruct.Antenna;
+            obj.LNBCommand    = lnbCommand;
             obj.LNB           = tempStruct.LNB;
             obj.TargetList    = tempStruct.TargetList;
             obj.GeneratedDate = tempStruct.GeneratedDate;
@@ -116,7 +99,7 @@ classdef EMSatLib < handle
                 end
 
             catch  ME
-                msgError = ME.message;
+                msgError = ME.identifier;
             end
 
             if exist('hACU', 'var'); clear hACU
@@ -157,7 +140,7 @@ classdef EMSatLib < handle
                 end
 
             catch  ME
-                msgError = ME.message;
+                msgError = ME.identifier;
             end
 
             if exist('hACU', 'var'); clear hACU
@@ -192,7 +175,7 @@ classdef EMSatLib < handle
                 end
 
             catch  ME
-                msgError = ME.message;
+                msgError = ME.identifier;
             end
 
             if exist('hACU', 'var'); clear hACU
@@ -201,32 +184,31 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function msgError = MatrixSwitch(obj, SwitchPort, LNBChannel, LNDIndex)
-            % As of July 4, 2023, the L-Band Matrix is not switching to the
-            % ports 19, 28 and 29.
+        function msgError = MatrixSwitch(obj, InputPort, OutputPort, LNBChannel, LNDIndex)
             msgError = '';
             
             % SWITCH
             try
                 hSwitch = tcpclient(obj.Switch.IP, obj.Switch.Port);
+                [setCommand, getCommand] = MatrixControlMessages(obj, InputPort, OutputPort);
 
                 for ii = 1:class.Constants.switchTimes
                     % Essencial a substituição do WRITEREAD pelo conjunto
                     % WRITELINE + PAUSE + READ.
 
-                    writeline(hSwitch, obj.SwitchCommand.set(SwitchPort));
+                    writeline(hSwitch, setCommand);
 
                     pause(class.Constants.switchPause)
-                    if strcmp(obj.SwitchCommand.get(SwitchPort), read(hSwitch, hSwitch.NumBytesAvailable, 'char'))
+                    if strcmp(getCommand, read(hSwitch, hSwitch.NumBytesAvailable, 'char'))
                         break
                     else
                         if ii == class.Constants.switchTimes
-                            error('A matrix não aceitou a programação.')
+                            error('EMSatLib:MatrixSwitch:Matrix', 'Unexpected value')
                         end
                     end
                 end
             catch ME
-                msgError = ME.message;
+                msgError = ME.identifier;
                 return
             end
 
@@ -244,14 +226,79 @@ classdef EMSatLib < handle
                             break
                         else
                             if ii == class.Constants.switchTimes
-                                error('O LNB não aceitou a programação.')
+                                error('EMSatLib:MatrixSwitch:LNB', 'Unexpected value')
                             end
                         end
                     end
                 catch ME
-                    msgError = ME.message;
+                    msgError = ME.identifier;
                 end
             end
+        end
+
+
+        %-----------------------------------------------------------------%
+        function [setCommand, getCommand] = MatrixControlMessages(obj, InputPort, OutputPort)
+            % O comutador, ao receber o comando "{*zs,012,001}0", comuta a matriz
+            % de forma que a porta de entrada seja igual a "001" (caracteres 10 a 
+            % 12 da string) e a de saída igual a "012" (caracteres 6 a 8 da string). 
+            
+            % O último caractere da string é um terminador cujo valor é função dos 
+            % números das portas de entrada e saída, sendo orientado aos caracteres 
+            % visíveis da tabela ASCII (de 32 a 126).
+
+            % Abaixo um algoritmo que possibilita identificar esse terminador 
+            % e que foi validado para os casos em que a porta de saída é 12
+            % (R&S FSW) e 14 (R&S FSVR).           
+
+            visibleASCII  = char(32:126); % ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+
+            setTerminator = num2cell(visibleASCII(OutputPort+5:OutputPort+13));
+            getTerminator = num2cell(visibleASCII(OutputPort+48:OutputPort+56));
+
+            idxTerminator = mod(InputPort-1, 9);
+
+            % Caso porta de saída seja igual a 12:
+            % - setTerminator = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
+            % - getTerminator = {'[', '\', ']', '^', '_', '`', 'a', 'b', 'c'};
+            %
+            % Exemplos:
+            % - input 001, output 012: "{*zs,012,001}0" e "{zBs?012,001}["
+            % - input 002, output 012: "{*zs,012,002}1" e "{zBs?012,002}\"
+            % - input 003, output 012: "{*zs,012,003}2" e "{zBs?012,003}]"
+            % - (...)
+            % - input 031, output 012: "{*zs,012,031}3" e "{zBs?012,031}^"
+            % - input 032, output 012: "{*zs,012,032}4" e "{zBs?012,032}_"
+
+            % Caso porta de saída seja igual a 14:
+            % - setTerminator = {'2', '3', '4', '5', '6', '7', '8', '9', ':'};
+            % - getTerminator = {']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e'};
+            %
+            % Exemplos:
+            % - input 001, output 014: "{*zs,014,001}2" e "{zBs?014,001}]"
+            % - input 002, output 014: "{*zs,014,002}3" e "{zBs?014,002}^"
+            % - input 003, output 014: "{*zs,014,003}4" e "{zBs?014,003}_"
+            % - (...)
+            % - input 031, output 014: "{*zs,014,031}5" e "{zBs?014,031}`"
+            % - input 032, output 014: "{*zs,014,032}6" e "{zBs?014,032}a"
+
+            formattedInputPort  = FormatPort(obj, InputPort);
+            formattedOutputPort = FormatPort(obj, OutputPort);            
+
+            setCommand = sprintf('{*zs,%s,%s}%s', formattedOutputPort, formattedInputPort, setTerminator{idxTerminator+1});
+            getCommand = sprintf('{zBs?%s,%s}%s', formattedOutputPort, formattedInputPort, getTerminator{idxTerminator+1});
+
+            % Nota:
+            % - Em 15/03/2024, a matriz não comutou para as portas de entrada
+            %   19, 28 e 29. O teste foi realizado, comutando essas entradas 
+            %   para as saídas 12 (FSW) e 14 (FSVR).
+        end
+
+
+        %-----------------------------------------------------------------%
+        function formattedPort = FormatPort(obj, Port)
+            formattedPort = num2str(Port);
+            formattedPort = [repmat('0', 1, 3-numel(formattedPort)), formattedPort];
         end
 
 
@@ -285,7 +332,7 @@ classdef EMSatLib < handle
 
                             antennaName = WriteRead(obj, hACU, '/ CONFIGS SITE ANTENNA');
                             if ~contains(antennaName, antList(ii).Name)
-                                error('Não se trata da antena correta...')
+                                error('EMSatLib:TargetListUpdate', 'Unexpected value')
                             end
 
                             % O WRITEREAD não funciona aqui porque a resposta 
@@ -343,7 +390,7 @@ classdef EMSatLib < handle
                     clear hACU
 
                 catch ME
-                    antList(ii).LOG = ME.message;
+                    antList(ii).LOG = ME.identifier;
 
                     if exist('hACU', 'var'); clear hACU
                     end
@@ -417,7 +464,7 @@ classdef EMSatLib < handle
             pause(class.Constants.antACUPause)
             if hACU.NumBytesAvailable
                 clear hACU
-                error('A ACU deve estar sendo controlada pelo Compass, o que impede o apontamento da antena e giro do LNB de forma automática.')
+                error('EMSatLib:SocketCreation', 'The ACU appears to be controlled by the Compass, preventing the antenna from engaging in automatic tracking mode.')
             end
         end
 

@@ -30,7 +30,7 @@ classdef specClass < matlab.mixin.Copyable                                  % ab
 
     methods
         %-----------------------------------------------------------------%
-        function [obj, errorMsg] = AddOrEditTask(obj, infoEdition, newTask, EMSatObj)
+        function [obj, errorMsg] = AddOrEditTask(obj, infoEdition, newTask, EMSatObj, ERMxObj)
             switch infoEdition.type
                 case 'new'
                     idx = numel(obj)+1;
@@ -53,7 +53,7 @@ classdef specClass < matlab.mixin.Copyable                                  % ab
             obj(idx).Observation.EndTime   = datetime(newTask.Script.Observation.EndTime,   'InputFormat', 'dd/MM/yyyy HH:mm:ss');
 
             obj.startup_lastGPS(idx, newTask.Script.GPS);
-            errorMsg = obj.startup_ReceiverTest(idx, EMSatObj);
+            errorMsg = obj.startup_ReceiverTest(idx, EMSatObj, ERMxObj);
         end
     end
 
@@ -71,12 +71,12 @@ classdef specClass < matlab.mixin.Copyable                                  % ab
 
 
         %-----------------------------------------------------------------%
-        function errorMsg = startup_ReceiverTest(obj, idx, EMSatObj)
+        function errorMsg = startup_ReceiverTest(obj, idx, EMSatObj, ERMxObj)
             errorMsg = '';
 
             try
                 fcn.receiverConfig_General(obj, idx);
-                warnMsg = fcn.receiverConfig_SpecificBand(obj, idx, EMSatObj);
+                warnMsg = fcn.receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj);
                 obj(idx).Status = 'Na fila';
 
                 if ~isempty(warnMsg)
