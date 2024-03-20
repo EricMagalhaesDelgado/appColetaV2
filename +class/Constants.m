@@ -26,7 +26,7 @@ classdef (Abstract) Constants
         switchPause     = 0.050                                             % Pause in seconds to ask antenna's name after its switch attempt (must be greater than 40ms)
         antACUPause     = 1                                                 % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
 
-        Timeout         = 10                                                % Maximum time in seconds to extract valid info from receiver
+        Timeout         = 5                                                 % Maximum time in seconds to extract valid info from receiver
         udpTimeout      = 3                                                 % Maximum time in seconds to receive a specific number of datagrams 
         idnTimeout      = 1                                                 % Maximum time in seconds to extract IDN info from receiver
         
@@ -45,7 +45,7 @@ classdef (Abstract) Constants
                                  'Distance',   25, ...
                                  'BW',         10)
 
-        errorTimeTrigger     = 60                                           % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
+        errorTimeTrigger     = 10                                           % Minimum time in seconds to change the status of the task ("In progress" to "Error") in case of a persistent error
         errorCountTrigger    = 10                                           % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the receiver
         errorGPSCountTrigger = 100                                          % ~mod(errorCount, errorCountTrigger) defines instants in which app will try to reconnect to the GPS
         errorPosTolerance    = .2                                           % Acceptable error in antenna position setup (azimuth, elevation and polarization)

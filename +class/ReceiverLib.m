@@ -83,6 +83,7 @@ classdef ReceiverLib < handle
                         if ~hTransport.Connected
                             hTransport.connect
                         end
+
                         IDN = obj.ConnectionStatus(hReceiver);
                         break
 
@@ -92,6 +93,7 @@ classdef ReceiverLib < handle
                                 msgError = ME.message;
                                 obj.Table.Status(idx) = 'Disconnected';
                                 return
+
                             case {'MATLAB:class:InvalidHandle', 'testmeaslib:CustomDisplay:PropertyError'}
                                 delete(obj.Table.Handle{idx})
                                 obj.Table(idx,:) = [];
@@ -114,6 +116,7 @@ classdef ReceiverLib < handle
                         case {'TCPIP Socket', 'TCP/UDP IP Socket'}                    
                             hReceiver = tcpclient(IP, Port);
                             IDN = obj.ConnectionStatus(hReceiver);
+
                         otherwise
                             error('appColetaV2 supports only TCPIP Socket connection type.')
                             % hReceiver = visadev(sprintf('TCPIP::%s::INSTR', IP));
@@ -133,13 +136,16 @@ classdef ReceiverLib < handle
         
                             hReceiver.UserData = struct('IDN', IDN, 'ClientIP', ClientIP, 'nTasks', 0, 'SyncMode', '', 'instrSelected', instrSelected);
                             obj.Table{idx,:}   = {"Receiver", Socket, hReceiver, "Connected"};
+
                         else
                             obj.Table.Status(idx) = "Connected";
-                        end        
+                        end
+
                     else
                         obj.Table.Status(idx) = "Disconnected";
                         error('O instrumento identificado (%s) difere do configurado (%s).', IDN, Tag)
-                    end        
+                    end
+
                 else
                     obj.Table.Status(idx) = "Disconnected";
                     error('Não recebida resposta à requisição "*IDN?".')
@@ -156,31 +162,31 @@ classdef ReceiverLib < handle
 
 
         %-----------------------------------------------------------------%
-        function ReconnectAttempt(obj, instrSelected, nBands, SpecificSCPI)
+        function msgError = ReconnectAttempt(obj, instrSelected, StartUp, SpecificSCPI)
 
-            idx = Connect(obj, instrSelected);
+            [idx, msgError] = Connect(obj, instrSelected);
 
             % Se ocorrer alguma queda de energia e o receptor desligar, ao
             % religar, o receptor voltará às suas configurações de fábrica,
             % o que demandará, portanto, a sua reconfiguração (FreqStart,
             % FreqStop, Resolution etc).
-            % Esse processo é essencial apenas se a tarefa possuir apenas
-            % uma faixa a monitorar. Para tarefas com mais de uma faixa, a
-            % reconfiguração é automática e parte do loop...
 
-            if ~isempty(idx) && (obj.Table.Status(idx) == "Connected")
-                if nBands == 1
-                    try
-                        hReceiver = obj.Table.Handle{idx};
+            if isempty(msgError)
+                try
+                    hReceiver = obj.Table.Handle{idx};
     
-                        writeline(hReceiver, SpecificSCPI.configSET);
-                        pause(.001)
-                        
-                        if ~isempty(SpecificSCPI.attSET)
-                            writeline(hReceiver, SpecificSCPI.attSET);
-                        end
-                    catch
+                    writeline(hReceiver, StartUp);
+                    pause(.001)
+    
+                    writeline(hReceiver, SpecificSCPI.configSET);
+                    pause(.001)
+                    
+                    if ~isempty(SpecificSCPI.attSET)
+                        writeline(hReceiver, SpecificSCPI.attSET);
                     end
+    
+                catch ME
+                    msgError = ME.message;
                 end
             end
         end
