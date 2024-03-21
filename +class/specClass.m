@@ -85,9 +85,10 @@ classdef specClass < matlab.mixin.Copyable                                  % ab
                 obj(idx).LOG(end+1) = struct('type', 'task', 'time', char(datetime('now')), 'msg', 'Incluída na fila a tarefa.');
 
             catch ME
+                fprintf('%s\n', jsonencode(ME))
                 errorMsg = ME.message;
 
-                if isempty(obj.Band)
+                if isempty(obj(idx).Band)
                     obj(idx) = [];
                 else
                     obj(idx).Status = 'Erro';

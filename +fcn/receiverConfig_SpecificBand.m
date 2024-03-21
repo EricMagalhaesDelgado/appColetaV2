@@ -180,18 +180,24 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
         end
         
         % Confirma que foram programados corretamente os valores no sensor...
-        tic
-        t1 = toc;
-        while t1 < class.Constants.Timeout
-            flush(hReceiver)
-            rawAnswer = deblank(writeread(hReceiver, instrInfo.scpiQuery{1}));
-            
-            if ~isempty(rawAnswer); break
-            else;                   pause(1); t1 = toc;
+        flush(hReceiver)
+        writeline(hReceiver, instrInfo.scpiQuery{1});
+
+        statusTic = tic;
+        t = toc(statusTic);
+        while t < class.Constants.Timeout
+            if hReceiver.NumBytesAvailable
+                rawAnswer = readline(hReceiver);
+                if ~isempty(rawAnswer)
+                    rawAnswer = strtrim(rawAnswer);
+                    break
+                end
             end
+            t = toc(statusTic);
         end
 
-        if isempty(rawAnswer); error(msgConstructor(1, 'Empty string', scpiSet_Config, ''))
+        if isempty(rawAnswer)
+            error(msgConstructor(1, 'Empty string', scpiSet_Config, ''))
         end
 
         splitAnswer    = strsplit(rawAnswer, ';');
