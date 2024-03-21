@@ -1,7 +1,7 @@
 classdef RFlookBinLib
 
     % Author.: Eric Magalhães Delgado
-    % Date...: February 29, 2024
+    % Date...: March 21, 2024
     % Version: 1.01
 
 	methods(Static = true)
@@ -63,7 +63,7 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        function specObj = CheckFile(specObj, idx)
+        function specObj = CheckFile(specObj, idx, userPath)
             if isempty(specObj.Band(idx).File.CurrentFile)
                 return
             end
@@ -77,7 +77,7 @@ classdef RFlookBinLib
                         class.RFlookBinLib.v1_PostProcessing(specObj, idx, 'FullFile');
 
                         [specObj.Band(idx).File.Filecount, ...
-                            specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx);
+                            specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx, userPath);
                     end
         
                 case 'RFlookBin v.2'
@@ -87,7 +87,7 @@ classdef RFlookBinLib
                         fclose(fileID);
 
                         [specObj.Band(idx).File.Filecount, ...
-                            specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx);
+                            specObj.Band(idx).File.CurrentFile] = class.RFlookBinLib.OpenFile(specObj, idx, userPath);
                     end
             end
         end

@@ -4,7 +4,7 @@ classdef (Abstract) Constants
         %-----------------------------------------------------------------%
         appName         = 'appColetaV2'
         appRelease      = 'R2023a'
-        appVersion      = '1.53'
+        appVersion      = '1.54'
 
         windowSize      = [1244, 660]
         windowMinSize   = [ 750, 660]
