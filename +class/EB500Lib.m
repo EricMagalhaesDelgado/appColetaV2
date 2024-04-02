@@ -64,6 +64,20 @@ classdef EB500Lib < handle
 
     methods(Static = true)
         %-----------------------------------------------------------------%
+        function OperationMode(hReceiver, ID)
+            switch ID
+                case 2 % PSCAN
+                    writeline(hReceiver, 'stat:ext:data #2143L000006:0:0 3;:stat:ext:data #21525L000006:0:0 1')
+                    pause(.001)
+                case 3 % FFM DF
+                    writeline(hReceiver, 'stat:ext:data #2143L000006:0:0 0')
+                    writeline(hReceiver, 'stat:ext:data #216278L000006:0:0 1;:stat:ext:data #220103L000010:0:0 30721')
+                    pause(.001)
+            end
+        end
+
+
+        %-----------------------------------------------------------------%
         function specObj = DatagramRead_PSCAN_PreTask(EB500Obj, specObj, hReceiver, hStreaming)
             Timeout  = class.Constants.Timeout;
             udpPort  = hStreaming.LocalPort;
@@ -241,6 +255,21 @@ classdef EB500Lib < handle
             Flag_success = false;
             
             specDatagram = [];           
+
+            % O appColeta conseguia executar essa tarefa apenas com o EB500GUI 
+            % aberto. Usado o Wireshark foi possível identificar alguns aspectos 
+            % da comunicação entre o EB500GUI e o instrumento, os quais não
+            % constam no manual à disposição da Agência.
+            %
+            % (a) Chavear para o modo PSCAN, iniciando uma varredura
+            %     writeline(hReceiver, 'stat:ext:data #2143L000006:0:0 3;:stat:ext:data #21525L000006:0:0 1')
+            %
+            % (b) Chavear para o modo FFM, voltando ao estado pretérito:
+            %     writeline(hReceiver, 'stat:ext:data #2143L000006:0:0 0')
+            %
+            % (c) Estando no modo FFM, chavear entre "Receiver" e "DF":
+            %     writeline(i, 'stat:ext:data #216278L000006:0:0 0') % DF >> AF
+            %     writeline(i, 'stat:ext:data #216278L000006:0:0 1') % AF >> DF
 
             flush(hStreaming)
             class.EB500Lib.DatagramRead_OnOff('FFM', 'Open', udpPort, hReceiver)
