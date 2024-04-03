@@ -76,6 +76,22 @@ classdef ERMxLib < handle
             formattedPort = num2str(Port);
             formattedPort = [repmat('0', 1, 3-numel(formattedPort)), formattedPort];
         end
+
+
+        %-----------------------------------------------------------------%
+        function controlMessageTable = ExportControlMessages(obj, FullFileName)
+            controlMessageTable = table('Size', [32, 3],                             ...
+                                        'VariableTypes', {'double', 'cell', 'cell'}, ...
+                                        'VariableNames', {'inputPort', 'set', 'get'});
+            for ii = 1:32
+                [setCommand, getCommand]  = obj.MatrixControlMessages(ii, 1);
+                controlMessageTable(ii,:) = {ii, setCommand, getCommand};
+            end
+            
+            if nargin == 2
+                writetable(controlMessageTable, FullFileName)
+            end
+        end
     end
 end
         
