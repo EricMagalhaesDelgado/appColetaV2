@@ -162,7 +162,7 @@ classdef ReceiverLib < handle
 
 
         %-----------------------------------------------------------------%
-        function msgError = ReconnectAttempt(obj, instrSelected, StartUp, SpecificSCPI)
+        function msgError = ReconnectAttempt(obj, instrSelected, connectFlag, StartUp, SpecificSCPI)
 
             [idx, msgError] = Connect(obj, instrSelected);
 
@@ -174,6 +174,10 @@ classdef ReceiverLib < handle
             if isempty(msgError)
                 try
                     hReceiver = obj.Table.Handle{idx};
+
+                    if ismember(connectFlag, [2, 3])
+                        class.EB500Lib.OperationMode(hReceiver, connectFlag)
+                    end
     
                     writeline(hReceiver, StartUp);
                     pause(.001)

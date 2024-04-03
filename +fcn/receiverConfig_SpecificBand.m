@@ -30,6 +30,10 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
     % Teste de configuração para cada uma das bandas - em resumo, configura-se 
     % os parâmetros (FreqStart, FreqStop, Resolution etc) e, posteriormente, 
     % confirma-se que os parâmetros foram devidamente configurados.
+    if ismember(obj(idx).Task.Receiver.Config.connectFlag, [2, 3])
+        class.EB500Lib.OperationMode(hReceiver, obj(idx).Task.Receiver.Config.connectFlag)
+    end
+
     for ii = 1:numel(rawBand)
         ResolutionMode  = 0;
         SampleTimeMode  = 1;
