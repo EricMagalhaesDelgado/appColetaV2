@@ -33,14 +33,14 @@ function [instrHandle, gpsData, msgError] = ConnectivityTest_GPS(app, instrSelec
             end
     
             if MessageBoxFlag
-                layoutFcn.modalWindow(app.UIFigure, 'ccTools.MessageBox', msg);
+                layout.modalWindow(app.UIFigure, 'warning', msg);
             end
         end
 
     else
         instrHandle = [];
         if MessageBoxFlag
-            layoutFcn.modalWindow(app.UIFigure, 'ccTools.MessageBox', msgError);
+            layout.modalWindow(app.UIFigure, 'error', msgError);
         end
     end
 

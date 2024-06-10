@@ -18,7 +18,6 @@ function treeBuilding(app, Selection)
         end
         
         app.Tree.SelectedNodes = app.Tree.Children(Selection);
-        focus(app.Tree)
     end
     drawnow nocallbacks
 end

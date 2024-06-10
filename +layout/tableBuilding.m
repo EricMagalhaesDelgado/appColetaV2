@@ -24,26 +24,27 @@ function tableBuilding(app, idx)
     end
 
     if height(tempTable)
-        app.Table.Data = tempTable;
+        app.Table.Data      = tempTable;
         app.Table.Selection = max([1, idx]);
+        app.Table.UserData  = app.Table.Selection;
 
         app.task_ButtonEdit.Enable = 1;
         app.task_ButtonPlay.Enable = 1;
         app.task_ButtonDel.Enable  = 1;
         app.task_ButtonLOG.Enable  = 1;
     else
-        app.Table.Data = table;
-        app.Table.Selection = 0;
+        app.Table.Data     = table;
+        app.Table.UserData = [];
 
         app.task_ButtonEdit.Enable = 0;
         app.task_ButtonPlay.Enable = 0;
         app.task_ButtonDel.Enable  = 0;
         app.task_ButtonLOG.Enable  = 0;
     end
-    layoutFcn.errorCount(app, app.Table.Selection)
+    layout.errorCount(app, app.Table.Selection)
     drawnow nocallbacks
 
-    if ~isempty(app.Tree.SelectedNodes); layoutFcn.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
-    else;                                layoutFcn.treeBuilding(app, 1)
+    if ~isempty(app.Tree.SelectedNodes); layout.treeBuilding(app, app.Tree.SelectedNodes.NodeData)
+    else;                                layout.treeBuilding(app, 1)
     end
 end

@@ -1,6 +1,6 @@
 function htmlCode = metadataInfo(taskMetaData)
     
-    htmlCode = '<font style="font-family: Helvetica; font-size: 10px;">';
+    htmlCode = '<font style="font-family: Helvetica; font-size: 11px;">';
     for ii = 1:numel(taskMetaData)
         htmlCode = sprintf('%s<b>%s</b>', htmlCode, taskMetaData(ii).group);
         htmlCode = structParser(taskMetaData(ii).value, htmlCode, 1);

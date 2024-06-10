@@ -453,9 +453,9 @@
     "connectPort": 34835,
     "StartUp": "*CLS;:DISPlay:GENeral:MEASview:SELect SPEC;:FORMat:DATA BIN;:SYSTem:GPS INT",
     "scpiReset": "*RST",
-    "scpiGeneral": "TRACe1:SPECtrum:FUNCtion %Trace%;:TRACe1:SPECtrum:AVERage:COUNt %AverageCount%;:TRACe1:SPECtrum:DETection %Detector%;:UNIT:POWer %LevelUnit%;:SPECtrum:FREQuency:START %FreqStart%;:SPECtrum:FREQuency:STOP %FreqStop%;:SPECtrum:BANDwidth:RESolution %ResolutionValue%;:INPut:GAIN:STATe %Preamp%;:INPut:ATTenuation %AttenuationValue%",
+    "scpiGeneral": "TRACe1:SPECtrum:FUNCtion %Trace%;:TRACe1:SPECtrum:AVERage:COUNt %AverageCount%;:TRACe1:SPECtrum:DETection %Detector%;:UNIT:POWer %LevelUnit%;:SPECtrum:FREQuency:START %FreqStart%;:SPECtrum:FREQuency:STOP %FreqStop%;:SPECtrum:BANDwidth:RESolution %ResolutionValue%;:INPut:GAIN:STATe %Preamp%%AutoLevel%",
     "scpiVBW_Options": "",
-    "scpiAttenuation": [],
+    "scpiAttenuation": "INPut:ATTenuation %AttenuationValue%",
     "scpiQuery": "TRACe1:SPECtrum:FUNCtion?;:TRACe1:SPECtrum:AVERage:COUNt?;:TRACe1:SPECtrum:DETection?;:UNIT:POWer?;:SPECtrum:FREQuency:STARt?;:SPECtrum:FREQuency:STOP?;:SPECtrum:BANDwidth:RESolution:AUTO?;:SPECtrum:BANDwidth:RESolution?;:INPut:GAIN:STATe?;:INPut:ATTenuation?",
     "scpiQuery_IDs": [
       1,
@@ -488,6 +488,6 @@
     "Attenuation_Values": "0 dB,5 dB,10 dB,15 dB,20 dB,25 dB,30 dB,35 dB,40 dB,45 dB,50 dB",
     "ResetPause": 7,
     "BandPause": 0.3,
-    "SyncOptions": "Single Sweep,Continuous Sweep"
+    "SyncOptions": "Continuous Sweep"
   }
 ]

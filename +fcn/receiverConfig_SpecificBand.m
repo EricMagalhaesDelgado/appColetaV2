@@ -136,15 +136,21 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
             otherwise; Preamp = 0;
         end
         
+        AutoLevel = '';
         switch rawBand(ii).instrAttMode
-            case 'Auto'; AttenuationMode = 1;
-            otherwise;   AttenuationMode = 0;
+            case 'Auto'
+                AttenuationMode  = 1;
+                AttenuationValue = 0;
+
+                if strcmp(obj(idx).Task.Receiver.Selection.Name, 'Tektronix SA2500')
+                    AutoLevel = ';:INPut:ALEVel';
+                end
+
+            otherwise
+                AttenuationMode  = 0;
+                AttenuationValue = str2double(extractBefore(rawBand(ii).instrAttFactor, ' dB'));
         end
         
-        if ~AttenuationMode; AttenuationValue = str2double(extractBefore(rawBand(ii).instrAttFactor, ' dB'));
-        else;                AttenuationValue = 0;
-        end
-
         % SCPI main string
         replaceCell = {'%Trace%',              TraceMode;                 ... 
                        '%AverageMode%',        num2str(AverageMode);      ...
@@ -162,6 +168,7 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
                        '%SensitivityMode%',    SensitivityMode;           ...
                        '%Preamp%',             num2str(Preamp);           ...
                        '%AttenuationMode%',    num2str(AttenuationMode);  ...
+                       '%AutoLevel%',          AutoLevel;                 ...
                        '%AttenuationValue%',   num2str(AttenuationValue); ...
                        '%SampleTimeMode%',     num2str(SampleTimeMode);   ...
                        '%SampleTimeValue%',    num2str(SampleTimeValue);  ...
@@ -186,6 +193,8 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
         % Confirma que foram programados corretamente os valores no sensor...
         flush(hReceiver)
         writeline(hReceiver, instrInfo.scpiQuery{1});
+
+        rawAnswer = '';
 
         statusTic = tic;
         t = toc(statusTic);
@@ -215,24 +224,18 @@ function warnMsg = receiverConfig_SpecificBand(obj, idx, EMSatObj, ERMxObj)
         for jj = 1:numel(instrInfo.scpiQuery_IDs{1})
             Trigger = rawFields{jj};
 
+            % Restringido a mensagem de erro às principais variáveis a configurar: 
+            % "FreqStart", "FreqStop", "ResolutionValue" (RBW), "TraceMode", 
+            % "Detector" etc.
             switch instrInfo.scpiQuery_IDs{1}(jj)
-                case  1; if ~strcmp(splitAnswer{jj}, TraceMode);                                  error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  2; if str2double(splitAnswer{jj}) ~= AverageMode;                           error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  3; if str2double(splitAnswer{jj}) ~= AverageCount;               warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
-                case  4; if ~strcmp(splitAnswer{jj}, Detector);                                   error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  5; if ~strcmp(splitAnswer{jj}, LevelUnit);                                  error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  6; if str2double(splitAnswer{jj}) ~= FreqStart;                             error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  7; if str2double(splitAnswer{jj}) ~= FreqStop;                              error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  8; if str2double(splitAnswer{jj}) ~= DataPoints;                            error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case  9; if str2double(splitAnswer{jj}) ~= StepWidth;                             error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case 10; if str2double(splitAnswer{jj}) ~= ResolutionMode;                        error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case 11; if str2double(splitAnswer{jj}) ~= ResolutionValue;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case 12; if ~contains(Selectivity, splitAnswer{jj}, 'IgnoreCase', true);          error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case 13; if splitAnswer{jj}             ~= SensitivityMode;                       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case 14; if str2double(splitAnswer{jj}) ~= Preamp;                     warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
-                case 15; if str2double(splitAnswer{jj}) ~= AttenuationMode;            warnMsg{end+1} = msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer);  end
-                case 16; if ~AttenuationMode & (str2double(splitAnswer{jj}) ~= AttenuationValue); error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
-                case 17; if str2double(splitAnswer{jj}) ~= SampleTimeMode;                        error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  1; if ~strcmp(splitAnswer{jj}, TraceMode);            error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  4; if ~strcmp(splitAnswer{jj}, Detector);             error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  5; if ~strcmp(splitAnswer{jj}, LevelUnit);            error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  6; if str2double(splitAnswer{jj}) ~= FreqStart;       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  7; if str2double(splitAnswer{jj}) ~= FreqStop;        error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  8; if str2double(splitAnswer{jj}) ~= DataPoints;      error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case  9; if str2double(splitAnswer{jj}) ~= StepWidth;       error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
+                case 11; if str2double(splitAnswer{jj}) ~= ResolutionValue; error(msgConstructor(2, Trigger, scpiSet_Config, scpiSet_Answer)); end
             end
         end
 
