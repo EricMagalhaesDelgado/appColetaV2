@@ -13,9 +13,9 @@
     "connectPort": 9001,
     "StartUp": "*CLS;:INSTrument \"SPA\";:FORMat:DATA REAL,32;:BANDwidth:VIDeo:TYPE LIN;:SWEep:MODE FAST;:GPS ON",
     "scpiReset": "SYSTem:PRESET",
-    "scpiGeneral": "AVERage:COUNt %AverageCount%;:AVERage:TYPE %Trace%;:DETector:FUNCtion %Detector%;:UNIT:POWer %LevelUnit%;:FREQuency:STARt %FreqStart%;:FREQuency:STOP %FreqStop%;:BANDwidth:RESolution %ResolutionValue%;:POWer:RF:GAIN:STATe %Preamp%;:POWer:RF:ATTenuation:AUTO %AttenuationMode%;:POWer:RF:ATTenuation %AttenuationValue% ",
+    "scpiGeneral": "AVERage:COUNt %AverageCount%;:AVERage:TYPE %Trace%;:DETector:FUNCtion %Detector%;:UNIT:POWer %LevelUnit%;:FREQuency:STARt %FreqStart%;:FREQuency:STOP %FreqStop%;:BANDwidth:RESolution %ResolutionValue%;:POWer:RF:GAIN:STATe %Preamp%;:POWer:RF:ATTenuation:AUTO %AttenuationMode%",
     "scpiVBW_Options": "",
-    "scpiAttenuation": "",
+    "scpiAttenuation": "POWer:RF:ATTenuation %AttenuationValue%",
     "scpiQuery": "AVERage:TYPE?;:AVERage:COUNt?;:DETector:FUNCtion?;:UNIT:POWer?;:FREQuency:STARt?;:FREQuency:STOP?;:BANDwidth:RESolution:AUTO?;:BANDwidth:RESolution?;:POWer:RF:GAIN:STATe?;:POWer:RF:ATTenuation:AUTO?;:POWer:RF:ATTenuation?;:SWEep:TIME:ACTual?;:BANDwidth:VIDeo?",
     "scpiQuery_IDs": [
       1,
