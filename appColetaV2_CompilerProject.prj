@@ -19,7 +19,7 @@
     <param.installpath.string>\ANATEL\appColetaV2\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
-    <param.install.notes>Compilado em 10/06/2024 20:11</param.install.notes>
+    <param.install.notes>Compilado em 13/06/2024 12:39</param.install.notes>
     <param.target.install.notes />
     <param.intermediate>${PROJECT_ROOT}\appColetaV2_CompilerProject\for_testing</param.intermediate>
     <param.files.only>${PROJECT_ROOT}\appColetaV2_CompilerProject\for_redistribution_files_only</param.files.only>
