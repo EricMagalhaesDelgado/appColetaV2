@@ -99,7 +99,7 @@ classdef EMSatLib < handle
                 end
 
             catch  ME
-                msgError = ME.identifier;
+                msgError = ME.message;
             end
 
             if exist('hACU', 'var'); clear hACU
@@ -140,13 +140,12 @@ classdef EMSatLib < handle
                 end
 
             catch  ME
-                msgError = ME.identifier;
+                msgError = ME.message;
             end
 
             if exist('hACU', 'var'); clear hACU
             end
         end
-
 
 
         %-----------------------------------------------------------------%
@@ -175,7 +174,7 @@ classdef EMSatLib < handle
                 end
 
             catch  ME
-                msgError = ME.identifier;
+                msgError = ME.message;
             end
 
             if exist('hACU', 'var'); clear hACU
@@ -184,55 +183,59 @@ classdef EMSatLib < handle
 
 
         %-----------------------------------------------------------------%
-        function msgError = MatrixSwitch(obj, InputPort, OutputPort, LNBChannel, LNDIndex)
+        function msgError = MatrixSwitch(obj, InputPort, OutputPort, LNBChannel, LNBIndex)
             msgError = '';
             
-            % SWITCH
             try
+                % SWITCH
                 hSwitch = tcpclient(obj.Switch.IP, obj.Switch.Port);
-                [setCommand, getCommand] = MatrixControlMessages(obj, InputPort, OutputPort);
+                [setMatrixCommand, ...
+                 getMatrixCommand] = MatrixControlMessages(obj, InputPort, OutputPort);
 
                 for ii = 1:class.Constants.switchTimes
-                    % Essencial a substituição do WRITEREAD pelo conjunto
-                    % WRITELINE + PAUSE + READ.
-
-                    writeline(hSwitch, setCommand);
-
+                    % A matriz demora cerca de 40ms para comutação entre portas,
+                    % apresentando resposta com a sua atual porta.
+                    writeline(hSwitch, setMatrixCommand);
                     pause(class.Constants.switchPause)
-                    if strcmp(getCommand, read(hSwitch, hSwitch.NumBytesAvailable, 'char'))
+
+                    if hSwitch.NumBytesAvailable && contains(read(hSwitch, hSwitch.NumBytesAvailable, 'char'), getMatrixCommand)
                         break
                     else
                         if ii == class.Constants.switchTimes
-                            error('EMSatLib:MatrixSwitch:Matrix', 'Unexpected value')
+                            error('Unexpected value (EMSatLib:MatrixSwitch:Matrix)')
                         end
                     end
                 end
-            catch ME
-                msgError = ME.identifier;
-                return
-            end
 
-            % LNB
-            if LNBChannel ~= -1
-                IP   = obj.Antenna(LNDIndex(1)).LNB(LNDIndex(2)).IP;
-                Port = obj.Antenna(LNDIndex(1)).LNB(LNDIndex(2)).Port;
-
-                try
+                % LNB
+                if LNBChannel ~= -1
+                    IP   = obj.Antenna(LNBIndex(1)).LNB(LNBIndex(2)).IP;
+                    Port = obj.Antenna(LNBIndex(1)).LNB(LNBIndex(2)).Port;    
                     hLNB = tcpclient(IP, Port);
                     configureTerminator(hLNB, "CR/LF")
+
+                    setLNBCommand = obj.LNBCommand.set{LNBChannel};
+                    getLNBCommand = obj.LNBCommand.get{LNBChannel};
     
                     for ii = 1:class.Constants.switchTimes
-                        if contains(writeread(hLNB, obj.LNBCommand.set{LNBChannel}), obj.LNBCommand.get{LNBChannel})
+                        % O LNB demora entre 200 e 240ms para comutação entre
+                        % portas, apresentando resposta com a sua atual porta.
+                        writeline(hLNB, setLNBCommand);
+                        pause(class.Constants.LNBPause)
+
+                        if hLNB.NumBytesAvailable && contains(read(hLNB, hLNB.NumBytesAvailable, 'char'), getLNBCommand)
                             break
                         else
                             if ii == class.Constants.switchTimes
-                                error('EMSatLib:MatrixSwitch:LNB', 'Unexpected value')
+                                error('Unexpected value (EMSatLib:MatrixSwitch:LNB)')
                             end
                         end
                     end
-                catch ME
-                    msgError = ME.identifier;
                 end
+
+            catch ME
+                msgError = ME.message;
+                return
             end
         end
 
@@ -332,7 +335,7 @@ classdef EMSatLib < handle
 
                             antennaName = WriteRead(obj, hACU, '/ CONFIGS SITE ANTENNA');
                             if ~contains(antennaName, antList(ii).Name)
-                                error('EMSatLib:TargetListUpdate', 'Unexpected value')
+                                error('Unexpected value (EMSatLib:TargetListUpdate)')
                             end
 
                             % O WRITEREAD não funciona aqui porque a resposta 
@@ -390,7 +393,7 @@ classdef EMSatLib < handle
                     clear hACU
 
                 catch ME
-                    antList(ii).LOG = ME.identifier;
+                    antList(ii).LOG = ME.message;
 
                     if exist('hACU', 'var'); clear hACU
                     end
@@ -464,7 +467,7 @@ classdef EMSatLib < handle
             pause(class.Constants.antACUPause)
             if hACU.NumBytesAvailable
                 clear hACU
-                error('EMSatLib:SocketCreation', 'The ACU appears to be controlled by the Compass, preventing the antenna from engaging in automatic tracking mode.')
+                error('The ACU appears to be controlled by the Compass, preventing the antenna from engaging in automatic tracking mode.')
             end
         end
 

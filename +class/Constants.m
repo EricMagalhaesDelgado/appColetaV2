@@ -19,11 +19,12 @@ classdef (Abstract) Constants
         userPaths       = {fullfile(getenv('USERPROFILE'), 'Documents'); fullfile(getenv('USERPROFILE'), 'Downloads')}
         Interactions    = {'datacursor', 'zoomin', 'restoreview'}
 
-        yMinLimRange    = 50                                                % Minimum y-Axis limit range
+        yMinLimRange    = 30                                                % Minimum y-Axis limit range
         yMaxLimRange    = 100                                               % Maximum y-Axis limit range
 
         switchTimes     = 3                                                 % Maximum attempts to switch the antenna
         switchPause     = 0.050                                             % Pause in seconds to ask antenna's name after its switch attempt (must be greater than 40ms)
+        LNBPause        = 0.250
         antACUPause     = 1                                                 % Pause in seconds to wait for ACU messages (ACU could be locked by Compass!)
 
         Timeout         = 5                                                 % Maximum time in seconds to extract valid info from receiver

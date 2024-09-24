@@ -8,18 +8,18 @@ function htmlCode = metadataPanel(app)
 
     [observationType, observationSamples, StepWidth, receiverRevisitTime, gpsRevisitTime, maskTrigger] = metadataPanel_ViewForm(app, ii, jj);
     
-    taskMetaData = struct('group', 'TAREFA',                                                         ...
-                          'value', struct('Type',          Task.Type,                                ...
-                                          'Observation',   observationType,                          ...
-                                          'FileVersion',   class.Constants.fileVersion,              ...
-                                          'BitsPerSample', sprintf('%d bits', Script.BitsPerSample), ...
-                                          'Receiver',      app.specObj(ii).IDN,                      ...
-                                          'gpsType',       Script.GPS.Type));
+    dataStruct = struct('group', 'TAREFA',                                                         ...
+                        'value', struct('Type',          Task.Type,                                ...
+                                        'Observation',   observationType,                          ...
+                                        'FileVersion',   class.Constants.fileVersion,              ...
+                                        'BitsPerSample', sprintf('%d bits', Script.BitsPerSample), ...
+                                        'Receiver',      app.specObj(ii).IDN,                      ...
+                                        'gpsType',       Script.GPS.Type));
     
-    taskMetaData(2).group = 'RECEPTOR';
-    taskMetaData(2).value = struct('StepWidth',  StepWidth,                       ...
-                                   'DataPoints', Script.Band(jj).instrDataPoints, ...
-                                   'Resolution', Script.Band(jj).instrResolution);
+    dataStruct(2).group = 'RECEPTOR';
+    dataStruct(2).value = struct('StepWidth',  StepWidth,                       ...
+                                 'DataPoints', Script.Band(jj).instrDataPoints, ...
+                                 'Resolution', Script.Band(jj).instrResolution);
     
     % VBW
     % instrVBW será igual a {} caso se trate do R&S EB500; em se tratando de
@@ -28,28 +28,28 @@ function htmlCode = metadataPanel(app)
     % de VBWs disponíveis no analisador (atualmente incluído apenas R&S FSL, 
     % FSVR e FSW).
     if ~isempty(Script.Band(jj).instrVBW) && ~strcmp(Script.Band(jj).instrVBW, 'auto')
-        taskMetaData(2).value.VBW = Script.Band(jj).instrVBW;
+        dataStruct(2).value.VBW = Script.Band(jj).instrVBW;
     end
 
-    taskMetaData(2).value.Detector          = Script.Band(jj).instrDetector;
-    taskMetaData(2).value.TraceMode         = Script.Band(jj).TraceMode;
-    taskMetaData(2).value.IntegrationFactor = Script.Band(jj).IntegrationFactor;
-    taskMetaData(2).value.Reset             = Task.Receiver.Reset;
-    taskMetaData(2).value.Sync              = Task.Receiver.Sync;
+    dataStruct(2).value.Detector          = Script.Band(jj).instrDetector;
+    dataStruct(2).value.TraceMode         = Script.Band(jj).TraceMode;
+    dataStruct(2).value.IntegrationFactor = Script.Band(jj).IntegrationFactor;
+    dataStruct(2).value.Reset             = Task.Receiver.Reset;
+    dataStruct(2).value.Sync              = Task.Receiver.Sync;
     
-    taskMetaData(3).group = 'ANTENA';
-    taskMetaData(3).value = app.specObj(ii).Band(jj).Antenna;
+    dataStruct(3).group = 'ANTENA';
+    dataStruct(3).value = app.specObj(ii).Band(jj).Antenna;
 
-    taskMetaData(4).group = 'TEMPO DE REVISITA';
-    taskMetaData(4).value = struct('Receiver', receiverRevisitTime, ...
-                                   'GPS',      gpsRevisitTime);
+    dataStruct(4).group = 'TEMPO DE REVISITA';
+    dataStruct(4).value = struct('Receiver', receiverRevisitTime, ...
+                                 'GPS',      gpsRevisitTime);
 
-    taskMetaData(5).group = 'OUTROS ASPECTOS';
-    taskMetaData(5).value = struct('Description',        Script.Band(jj).Description, ...
-                                   'ObservationSamples', observationSamples,          ...
-                                   'MaskTrigger',        maskTrigger);
+    dataStruct(5).group = 'OUTROS ASPECTOS';
+    dataStruct(5).value = struct('Description',        Script.Band(jj).Description, ...
+                                 'ObservationSamples', observationSamples,          ...
+                                 'MaskTrigger',        maskTrigger);
     
-    htmlCode = fcn.metadataInfo(taskMetaData);
+    htmlCode = textFormatGUI.struct2PrettyPrintList(dataStruct);
 end
 
 

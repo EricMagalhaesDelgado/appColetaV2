@@ -213,7 +213,7 @@
     },
     {
       "Name": "MKA-1 LO_R",
-      "Offset": 16200000000,
+      "Offset": 16700000000,
       "Inverted": 0,
       "SwitchPort": 23,
       "LNBChannel": 1
@@ -241,7 +241,7 @@
     },
     {
       "Name": "MKA-1 LO_L",
-      "Offset": 16200000000,
+      "Offset": 16700000000,
       "Inverted": 0,
       "SwitchPort": 24,
       "LNBChannel": 1

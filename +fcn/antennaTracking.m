@@ -1,4 +1,4 @@
-function targetPos = antennaTracking(app, antennaMetaData, d)
+function targetPos = antennaTracking(app, antennaMetaData, progressDialog)
 
     errorTol  = class.Constants.errorPosTolerance;
     errorFlag = false; 
@@ -36,7 +36,6 @@ function targetPos = antennaTracking(app, antennaMetaData, d)
 
                 if errorFlag
                     if isa(app, 'auxApp.winAddTask')
-                        delete(d)                        
                         msg = sprintf(['<font style="font-size:11;">%s\n\nPosição atual:'            ...
                                        '\n• <span style="color: #808080;">Azimute</span>: %.3fº'     ...
                                        '\n• <span style="color: #808080;">Elevação</span>: %.3fº'    ...
@@ -49,6 +48,7 @@ function targetPos = antennaTracking(app, antennaMetaData, d)
                                        msg, antennaPos.Azimuth, antennaPos.Elevation, antennaPos.Polarization,    ...
                                        targetPos.Azimuth, targetPos.Elevation, targetPos.Polarization);
         
+                        progressDialog.Visible = 'hidden';
                         selection = uiconfirm(app.UIFigure, msg, '', 'Interpreter', 'html', 'Options', {'Sim', 'Não'}, 'DefaultOption', 1, 'CancelOption', 1, 'Icon', 'question');                
                         if selection == "Não"
                             continue
@@ -60,11 +60,11 @@ function targetPos = antennaTracking(app, antennaMetaData, d)
 
             case 'Manual'
                 if isa(app, 'auxApp.winAddTask')
-                    delete(d)
                     msg = sprintf(['<font style="font-size:11;">O apontamento do conjunto antena/LNB "%s" deverá ser realizado manualmente.'                                    ...
                                    '\n\nDeseja reconfigurar esse apontamento para automático ("Target" ou "LookAngles")?</font>'], ...
                                    antennaName);
     
+                    progressDialog.Visible = 'hidden';
                     selection = uiconfirm(app.UIFigure, msg, '', 'Interpreter', 'html', 'Options', {'Sim', 'Não'}, 'DefaultOption', 2, 'CancelOption', 2, 'Icon', 'question');                
                     if selection == "Sim"
                         error('Operação cancelada para reconfiguração do tipo de apontamento do conjunto antena/LNB "%s".', antennaName)
