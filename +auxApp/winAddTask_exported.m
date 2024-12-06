@@ -62,6 +62,8 @@ classdef winAddTask_exported < matlab.apps.AppBase
         Band_TreeLabel             matlab.ui.control.Label
         LeftPanel_Grid             matlab.ui.container.GridLayout
         Tab3_Panel                 matlab.ui.container.GridLayout
+        AntennaSwitch_Name         matlab.ui.control.EditField
+        AntennaSwitch_Mode         matlab.ui.control.CheckBox
         AntennaList_Tree           matlab.ui.container.Tree
         AddAntenna_Image           matlab.ui.control.Image
         Antenna_Panel              matlab.ui.container.Panel
@@ -80,9 +82,6 @@ classdef winAddTask_exported < matlab.apps.AppBase
         Antenna_TrackingModeLabel  matlab.ui.control.Label
         AntennaName                matlab.ui.control.DropDown
         AntennaNameLabel           matlab.ui.control.Label
-        AntennaSwitch_Grid         matlab.ui.container.GridLayout
-        AntennaSwitch_Name         matlab.ui.control.EditField
-        AntennaSwitch_Mode         matlab.ui.control.CheckBox
         Tab3_Grid                  matlab.ui.container.GridLayout
         Tab3_Image                 matlab.ui.control.Image
         Tab3_Title                 matlab.ui.control.Label
@@ -201,72 +200,66 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
         %-----------------------------------------------------------------%
         function startup_Layout(app)
-            % app.CallingApp.General
-            if strcmp(app.CallingApp.General.stationInfo.Type, 'Fixed')  && ...
-                    (app.CallingApp.General.stationInfo.Latitude  ~= -1) && ...
-                    (app.CallingApp.General.stationInfo.Longitude ~= -1)
-                app.Tab2_Panel.ColumnWidth{2} = 22;
-            else
-                app.Tab2_Panel.ColumnWidth{2} = 0;
-            end
-
-
-            % app.receiverObj
+            % PAINEL À ESQUERDA 2: "INSTRUMENTOS"
+            % (a) Lista de receptores.
             idx2 = find(app.receiverObj.List.Enable)';
-
             app.Receiver_List.Items = {};
             for ii = idx2
                 receiverSocket = InstrumentSocket(app, app.receiverObj.List.Parameters{ii});
                 app.Receiver_List.Items(end+1) = {sprintf('ID %d: %s - %s', ii, app.receiverObj.List.Name{ii}, receiverSocket)};
             end
 
-            % No caso de uma tarefa em edição, tenta-se escolher o instrumento 
-            % que está conduzindo a tarefa. Caso o instrumento não mais esteja
-            % operacional, usa-se o primeiro da tabela app.receiverObj.List.
-            taskReceiverInListFlag = false;
-            if strcmp(app.infoEdition.type, 'edit')
-                app.TaskType.Value     = extractBefore(app.CallingApp.specObj(app.infoEdition.idx).Task.Type, ' (PRÉVIA)');
-                General_TaskType(app)
-
-                if strcmp(app.TaskType.Value, 'Rompimento de Máscara Espectral')
-                    set(app.MaskFile_Button, 'Enable', 1, 'Tooltip', {app.CallingApp.specObj(app.infoEdition.idx).Task.MaskFile})
-                end                
-
+            receiverFlag = false;
+            if strcmp(app.infoEdition.type, 'edit')    
                 selectedReceiverSocket = InstrumentSocket(app, app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Selection.Parameters{1});
                 selectedReceiverName   = sprintf('%s - %s', app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Selection.Name{1}, selectedReceiverSocket);
                 selectedReceiverIndex  = find(contains(app.Receiver_List.Items, selectedReceiverName), 1);
 
                 if ~isempty(selectedReceiverIndex)
-                    taskReceiverInListFlag = true;
-                    app.Receiver_List.Value = app.Receiver_List.Items{selectedReceiverIndex};
+                    receiverFlag = true;
                 end
             end
 
-
-            % app.taskList            
-            app.TaskName.Items = {};
-            for ii = 1:numel(app.taskList)
-                app.TaskName.Items{end+1} = app.taskList(ii).Name;
-
-                if ~taskReceiverInListFlag
-                % O campo "EditedFlag" não existe originalmente no arquivo 
-                % "taskList.json", devendo ser criado, mas apenas caso se trate 
-                % de uma nova tarefa, ou da edição de uma tarefa cujo receptor 
-                % não mais encontra-se na lista. 
-
-                    for jj = 1:numel(app.taskList(ii).Band)
-                        app.taskList(ii).Band(jj).EditedFlag = 0;
-                    end
-                end
+            % PAINEL À ESQUERDA 1: "ASPECTOS GERAIS"
+            % (a) Lista de tarefas:
+            % A tarefa padrão é a primeira. Exceto caso se trate da edição
+            % de uma tarefa, cujo nome da tarefa consta na lista app.taskList.
+            app.TaskName.Items = {app.taskList.Name};
+            if strcmp(app.infoEdition.type, 'edit') && ismember(app.CallingApp.specObj(app.infoEdition.idx).Task.Script.Name, app.TaskName.Items)
+                app.TaskName.Value = app.CallingApp.specObj(app.infoEdition.idx).Task.Script.Name;
             end
-            app.TaskName.Value = app.TaskName.Items{1};
-
             General_Task(app)
 
-            % Ajustes finais relacionados ao receptor, caso se trate de tarefa em edição...
-            % O try/catch aqui é importante porque as referências dos valores "Sync", "Antenna"
-            % etc são obtidas de arquivos externos editáveis.
-            if taskReceiverInListFlag
+            % O campo "EditedFlag" não existe originalmente no arquivo 
+            % "taskList.json", devendo ser criado.
+            for ii = 1:numel(app.taskList)
+                for jj = 1:numel(app.taskList(ii).Band)
+                    app.taskList(ii).Band(jj).EditedFlag = 0;
+                end
+            end
+
+            % (b) Tipo de tarefa:
+            if strcmp(app.infoEdition.type, 'edit')
+                app.TaskType.Value = extractBefore(app.CallingApp.specObj(app.infoEdition.idx).Task.Type, ' (PRÉVIA)');
+                if contains(app.CallingApp.specObj(app.infoEdition.idx).Task.Type, '(PRÉVIA)')                    
+                    app.PreviewTaskCheckbox.Value = true;
+                end                
+                General_TaskType(app)
+
+                if strcmp(app.TaskType.Value, 'Rompimento de Máscara Espectral')
+                    set(app.MaskFile_Button, 'Enable', 1, 'Tooltip', {app.CallingApp.specObj(app.infoEdition.idx).Task.MaskFile})
+                end
+            end
+
+            % PAINEIS À ESQUERDA 2 e 3: "INSTRUMENTOS" e "ANTENAS"
+            if receiverFlag
+                app.Receiver_List.Value = app.Receiver_List.Items{selectedReceiverIndex};
+
+                % Ajustes finais relacionados ao receptor, caso se trate de 
+                % tarefa em edição... o try/catch aqui é importante porque as 
+                % referências dos valores "Sync", "Antenna" etc são obtidas de 
+                % arquivos externos editáveis.
+
                 try
                     app.Receiver_RstCommand.Value = app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Reset;
                     app.Receiver_SyncRef.Value    = app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Sync;
@@ -314,6 +307,16 @@ classdef winAddTask_exported < matlab.apps.AppBase
                     end
                 catch
                 end
+            end
+
+            % (b) Visibilidade do botão "Pin", que possibilita importação
+            %     das coordenadas geográficas da estação.
+            if strcmp(app.CallingApp.General.stationInfo.Type, 'Fixed')  && ...
+                    (app.CallingApp.General.stationInfo.Latitude  ~= -1) && ...
+                    (app.CallingApp.General.stationInfo.Longitude ~= -1)
+                app.Tab2_Panel.ColumnWidth{2} = 22;
+            else
+                app.Tab2_Panel.ColumnWidth{2} = 0;
             end
 
             % Cria janela de progresso...
@@ -793,7 +796,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
         %-----------------------------------------------------------------%
         function idx = SelectedTaskIndex(app)
-            idx = find(strcmp(app.TaskName.Items, app.TaskName.Value), 1);
+            [~, idx] = ismember(app.TaskName.Value, app.TaskName.Items);
         end
 
 
@@ -2039,7 +2042,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % Create Tab1_Panel
             app.Tab1_Panel = uigridlayout(app.LeftPanel_Grid);
             app.Tab1_Panel.ColumnWidth = {'1x', 22, 22};
-            app.Tab1_Panel.RowHeight = {17, 22, 22, 22, 22, 17, 22, 17, '1x'};
+            app.Tab1_Panel.RowHeight = {17, 22, 22, 22, 22, 22, 22, 22, '1x'};
             app.Tab1_Panel.ColumnSpacing = 5;
             app.Tab1_Panel.RowSpacing = 5;
             app.Tab1_Panel.Padding = [0 0 0 0];
@@ -2332,7 +2335,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % Create Tab2_Panel
             app.Tab2_Panel = uigridlayout(app.LeftPanel_Grid);
             app.Tab2_Panel.ColumnWidth = {'1x', 22, 22};
-            app.Tab2_Panel.RowHeight = {17, 22, 60, 17, 22, '1x'};
+            app.Tab2_Panel.RowHeight = {17, 22, 60, 22, 22, '1x'};
             app.Tab2_Panel.ColumnSpacing = 5;
             app.Tab2_Panel.RowSpacing = 5;
             app.Tab2_Panel.Padding = [0 0 0 0];
@@ -2554,45 +2557,18 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % Create Tab3_Panel
             app.Tab3_Panel = uigridlayout(app.LeftPanel_Grid);
             app.Tab3_Panel.ColumnWidth = {'1x', 12};
-            app.Tab3_Panel.RowHeight = {44, 17, 22, 172, 10, '1x'};
+            app.Tab3_Panel.RowHeight = {17, 22, 22, 22, 172, 10, '1x'};
             app.Tab3_Panel.RowSpacing = 5;
             app.Tab3_Panel.Padding = [0 0 0 0];
             app.Tab3_Panel.Layout.Row = 6;
             app.Tab3_Panel.Layout.Column = 1;
             app.Tab3_Panel.BackgroundColor = [1 1 1];
 
-            % Create AntennaSwitch_Grid
-            app.AntennaSwitch_Grid = uigridlayout(app.Tab3_Panel);
-            app.AntennaSwitch_Grid.ColumnWidth = {'1x'};
-            app.AntennaSwitch_Grid.RowHeight = {17, 22};
-            app.AntennaSwitch_Grid.ColumnSpacing = 5;
-            app.AntennaSwitch_Grid.RowSpacing = 5;
-            app.AntennaSwitch_Grid.Padding = [0 0 0 0];
-            app.AntennaSwitch_Grid.Layout.Row = 1;
-            app.AntennaSwitch_Grid.Layout.Column = [1 2];
-            app.AntennaSwitch_Grid.BackgroundColor = [1 1 1];
-
-            % Create AntennaSwitch_Mode
-            app.AntennaSwitch_Mode = uicheckbox(app.AntennaSwitch_Grid);
-            app.AntennaSwitch_Mode.ValueChangedFcn = createCallbackFcn(app, @AntennaSwitch_ModeSelection, true);
-            app.AntennaSwitch_Mode.Text = 'Comutador de antenas:';
-            app.AntennaSwitch_Mode.FontSize = 11;
-            app.AntennaSwitch_Mode.Layout.Row = 1;
-            app.AntennaSwitch_Mode.Layout.Column = 1;
-
-            % Create AntennaSwitch_Name
-            app.AntennaSwitch_Name = uieditfield(app.AntennaSwitch_Grid, 'text');
-            app.AntennaSwitch_Name.Editable = 'off';
-            app.AntennaSwitch_Name.FontSize = 11;
-            app.AntennaSwitch_Name.Enable = 'off';
-            app.AntennaSwitch_Name.Layout.Row = 2;
-            app.AntennaSwitch_Name.Layout.Column = 1;
-
             % Create AntennaNameLabel
             app.AntennaNameLabel = uilabel(app.Tab3_Panel);
             app.AntennaNameLabel.VerticalAlignment = 'bottom';
             app.AntennaNameLabel.FontSize = 10;
-            app.AntennaNameLabel.Layout.Row = 2;
+            app.AntennaNameLabel.Layout.Row = 3;
             app.AntennaNameLabel.Layout.Column = 1;
             app.AntennaNameLabel.Text = 'Antena:';
 
@@ -2603,13 +2579,13 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.AntennaName.Tag = 'task_Editable';
             app.AntennaName.FontSize = 11;
             app.AntennaName.BackgroundColor = [1 1 1];
-            app.AntennaName.Layout.Row = 3;
+            app.AntennaName.Layout.Row = 4;
             app.AntennaName.Layout.Column = [1 2];
             app.AntennaName.Value = '';
 
             % Create Antenna_Panel
             app.Antenna_Panel = uipanel(app.Tab3_Panel);
-            app.Antenna_Panel.Layout.Row = 4;
+            app.Antenna_Panel.Layout.Row = 5;
             app.Antenna_Panel.Layout.Column = [1 2];
 
             % Create Antenna_Grid
@@ -2735,7 +2711,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % Create AddAntenna_Image
             app.AddAntenna_Image = uiimage(app.Tab3_Panel);
             app.AddAntenna_Image.ImageClickedFcn = createCallbackFcn(app, @AntennaConfig_Add, true);
-            app.AddAntenna_Image.Layout.Row = 5;
+            app.AddAntenna_Image.Layout.Row = 6;
             app.AddAntenna_Image.Layout.Column = 2;
             app.AddAntenna_Image.HorizontalAlignment = 'right';
             app.AddAntenna_Image.VerticalAlignment = 'bottom';
@@ -2744,13 +2720,29 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % Create AntennaList_Tree
             app.AntennaList_Tree = uitree(app.Tab3_Panel);
             app.AntennaList_Tree.FontSize = 10.5;
-            app.AntennaList_Tree.Layout.Row = 6;
+            app.AntennaList_Tree.Layout.Row = 7;
             app.AntennaList_Tree.Layout.Column = [1 2];
+
+            % Create AntennaSwitch_Mode
+            app.AntennaSwitch_Mode = uicheckbox(app.Tab3_Panel);
+            app.AntennaSwitch_Mode.ValueChangedFcn = createCallbackFcn(app, @AntennaSwitch_ModeSelection, true);
+            app.AntennaSwitch_Mode.Text = 'Comutador de antenas:';
+            app.AntennaSwitch_Mode.FontSize = 11;
+            app.AntennaSwitch_Mode.Layout.Row = 1;
+            app.AntennaSwitch_Mode.Layout.Column = 1;
+
+            % Create AntennaSwitch_Name
+            app.AntennaSwitch_Name = uieditfield(app.Tab3_Panel, 'text');
+            app.AntennaSwitch_Name.Editable = 'off';
+            app.AntennaSwitch_Name.FontSize = 11;
+            app.AntennaSwitch_Name.Enable = 'off';
+            app.AntennaSwitch_Name.Layout.Row = 2;
+            app.AntennaSwitch_Name.Layout.Column = [1 2];
 
             % Create RightPanel_Grid
             app.RightPanel_Grid = uigridlayout(app.GridLayout);
             app.RightPanel_Grid.ColumnWidth = {'1x'};
-            app.RightPanel_Grid.RowHeight = {22, '1x', 22, '1x'};
+            app.RightPanel_Grid.RowHeight = {22, 17, '1x', 22, '1x'};
             app.RightPanel_Grid.ColumnSpacing = 20;
             app.RightPanel_Grid.RowSpacing = 5;
             app.RightPanel_Grid.Padding = [0 5 0 5];
@@ -2763,7 +2755,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_TreeLabel.VerticalAlignment = 'bottom';
             app.Band_TreeLabel.WordWrap = 'on';
             app.Band_TreeLabel.FontSize = 10;
-            app.Band_TreeLabel.Layout.Row = 1;
+            app.Band_TreeLabel.Layout.Row = 2;
             app.Band_TreeLabel.Layout.Column = 1;
             app.Band_TreeLabel.Text = 'Faixa(s) de frequência relacionada(s) à tarefa selecionada:';
 
@@ -2771,7 +2763,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_Tree = uitree(app.RightPanel_Grid);
             app.Band_Tree.SelectionChangedFcn = createCallbackFcn(app, @BandView_TreeSelectionChanged, true);
             app.Band_Tree.FontSize = 10;
-            app.Band_Tree.Layout.Row = 2;
+            app.Band_Tree.Layout.Row = 3;
             app.Band_Tree.Layout.Column = 1;
 
             % Create MetaDataLabel
@@ -2780,13 +2772,13 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.MetaDataLabel.WordWrap = 'on';
             app.MetaDataLabel.FontSize = 10;
             app.MetaDataLabel.FontColor = [0.149 0.149 0.149];
-            app.MetaDataLabel.Layout.Row = 3;
+            app.MetaDataLabel.Layout.Row = 4;
             app.MetaDataLabel.Layout.Column = 1;
             app.MetaDataLabel.Text = 'Parâmetros de configuração da faixa:';
 
             % Create MetaData_Panel
             app.MetaData_Panel = uipanel(app.RightPanel_Grid);
-            app.MetaData_Panel.Layout.Row = 4;
+            app.MetaData_Panel.Layout.Row = 5;
             app.MetaData_Panel.Layout.Column = 1;
 
             % Create MetaData_Grid
@@ -2830,7 +2822,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % Create Band_Grid
             app.Band_Grid = uigridlayout(app.GridLayout);
             app.Band_Grid.ColumnWidth = {120, '1x', 16};
-            app.Band_Grid.RowHeight = {22, 22, 22, 210, 22, 60, 22, '1x'};
+            app.Band_Grid.RowHeight = {22, 17, 22, 22, 210, 22, 60, 22, '1x'};
             app.Band_Grid.RowSpacing = 5;
             app.Band_Grid.Padding = [0 5 5 5];
             app.Band_Grid.Layout.Row = 1;
@@ -2841,7 +2833,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_SamplesLabel = uilabel(app.Band_Grid);
             app.Band_SamplesLabel.VerticalAlignment = 'bottom';
             app.Band_SamplesLabel.FontSize = 10;
-            app.Band_SamplesLabel.Layout.Row = 1;
+            app.Band_SamplesLabel.Layout.Row = 2;
             app.Band_SamplesLabel.Layout.Column = 1;
             app.Band_SamplesLabel.Text = 'Amostras a coletar:';
 
@@ -2852,7 +2844,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_Samples.ValueDisplayFormat = '%.0f';
             app.Band_Samples.ValueChangedFcn = createCallbackFcn(app, @BandView_EditedParameters, true);
             app.Band_Samples.FontSize = 11;
-            app.Band_Samples.Layout.Row = 2;
+            app.Band_Samples.Layout.Row = 3;
             app.Band_Samples.Layout.Column = 1;
             app.Band_Samples.Value = -1;
 
@@ -2860,14 +2852,14 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_ReceiverLabel = uilabel(app.Band_Grid);
             app.Band_ReceiverLabel.VerticalAlignment = 'bottom';
             app.Band_ReceiverLabel.FontSize = 10;
-            app.Band_ReceiverLabel.Layout.Row = 3;
+            app.Band_ReceiverLabel.Layout.Row = 4;
             app.Band_ReceiverLabel.Layout.Column = 1;
             app.Band_ReceiverLabel.Text = 'Receptor:';
 
             % Create Band_ReceiverPanel
             app.Band_ReceiverPanel = uipanel(app.Band_Grid);
             app.Band_ReceiverPanel.AutoResizeChildren = 'off';
-            app.Band_ReceiverPanel.Layout.Row = 4;
+            app.Band_ReceiverPanel.Layout.Row = 5;
             app.Band_ReceiverPanel.Layout.Column = [1 3];
 
             % Create Band_ReceiverGrid
@@ -3096,13 +3088,13 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_DFLabel = uilabel(app.Band_Grid);
             app.Band_DFLabel.VerticalAlignment = 'bottom';
             app.Band_DFLabel.FontSize = 10;
-            app.Band_DFLabel.Layout.Row = 5;
+            app.Band_DFLabel.Layout.Row = 6;
             app.Band_DFLabel.Layout.Column = 1;
             app.Band_DFLabel.Text = 'Direction Finder (DF):';
 
             % Create Band_DFPanel
             app.Band_DFPanel = uipanel(app.Band_Grid);
-            app.Band_DFPanel.Layout.Row = 6;
+            app.Band_DFPanel.Layout.Row = 7;
             app.Band_DFPanel.Layout.Column = [1 3];
 
             % Create Band_DFGrid
@@ -3182,13 +3174,13 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_AntenaLabel = uilabel(app.Band_Grid);
             app.Band_AntenaLabel.VerticalAlignment = 'bottom';
             app.Band_AntenaLabel.FontSize = 10;
-            app.Band_AntenaLabel.Layout.Row = 7;
+            app.Band_AntenaLabel.Layout.Row = 8;
             app.Band_AntenaLabel.Layout.Column = 1;
             app.Band_AntenaLabel.Text = 'Antena:';
 
             % Create Band_AntennaPanel
             app.Band_AntennaPanel = uipanel(app.Band_Grid);
-            app.Band_AntennaPanel.Layout.Row = 8;
+            app.Band_AntennaPanel.Layout.Row = 9;
             app.Band_AntennaPanel.Layout.Column = [1 3];
 
             % Create Band_AntennaGrid
@@ -3251,7 +3243,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_Refresh = uiimage(app.Band_Grid);
             app.Band_Refresh.ImageClickedFcn = createCallbackFcn(app, @BandView_Refresh, true);
             app.Band_Refresh.Tooltip = {'Retorna às configurações iniciais'};
-            app.Band_Refresh.Layout.Row = 3;
+            app.Band_Refresh.Layout.Row = 4;
             app.Band_Refresh.Layout.Column = 3;
             app.Band_Refresh.HorizontalAlignment = 'right';
             app.Band_Refresh.VerticalAlignment = 'bottom';

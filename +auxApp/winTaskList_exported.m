@@ -5,6 +5,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
         UIFigure                   matlab.ui.Figure
         GridLayout                 matlab.ui.container.GridLayout
         toolGrid                   matlab.ui.container.GridLayout
+        jsBackDoor                 matlab.ui.control.HTML
         toolButton_play            matlab.ui.control.Button
         toolButton_export          matlab.ui.control.Button
         toolButton_open            matlab.ui.control.Button
@@ -55,9 +56,6 @@ classdef winTaskList_exported < matlab.apps.AppBase
         MaskTriggerLabel           matlab.ui.control.Label
         Status                     matlab.ui.control.DropDown
         StatusLabel                matlab.ui.control.Label
-        Tab3_Grid                  matlab.ui.container.GridLayout
-        Tab3_Image                 matlab.ui.control.Image
-        Tab3_Title                 matlab.ui.control.Label
         Tab2_PanelGrid             matlab.ui.container.GridLayout
         GPS_Panel                  matlab.ui.container.Panel
         GPS_Grid                   matlab.ui.container.GridLayout
@@ -90,10 +88,10 @@ classdef winTaskList_exported < matlab.apps.AppBase
         BitsPerPointLabel          matlab.ui.control.Label
         Name                       matlab.ui.control.EditField
         NameLabel                  matlab.ui.control.Label
-        Tab2_GridTitle             matlab.ui.container.GridLayout
-        Tab2_Image                 matlab.ui.control.Image
-        Tab2_Title                 matlab.ui.control.Label
         Tab1_Grid                  matlab.ui.container.GridLayout
+        ButtonGroupPanel           matlab.ui.container.ButtonGroup
+        ButtonGroup_Edit           matlab.ui.control.RadioButton
+        ButtonGroup_View           matlab.ui.control.RadioButton
         Image_downArrow            matlab.ui.control.Image
         Image_upArrow              matlab.ui.control.Image
         Image_del                  matlab.ui.control.Image
@@ -101,10 +99,6 @@ classdef winTaskList_exported < matlab.apps.AppBase
         Image_addTask              matlab.ui.control.Image
         Tree                       matlab.ui.container.Tree
         ListadetarefasLabel        matlab.ui.control.Label
-        ButtonGroupPanel           matlab.ui.container.ButtonGroup
-        ButtonGroup_Edit           matlab.ui.control.RadioButton
-        ButtonGroup_View           matlab.ui.control.RadioButton
-        OperaoLabel                matlab.ui.control.Label
         Tab1_GridTitle             matlab.ui.container.GridLayout
         Tab1_Image                 matlab.ui.control.Image
         Tab1_Title                 matlab.ui.control.Label
@@ -119,12 +113,87 @@ classdef winTaskList_exported < matlab.apps.AppBase
         CallingApp
         rootFolder
 
+        timerObj
+
         taskList
         editedList
+    end
+
+
+    methods (Access = private)
+        %-----------------------------------------------------------------%
+        % JSBACKDOOR
+        %-----------------------------------------------------------------%
+        function jsBackDoor_Initialization(app)
+            app.jsBackDoor.HTMLSource = ccTools.fcn.jsBackDoorHTMLSource;
+        end
+
+        %-----------------------------------------------------------------%
+        function jsBackDoor_Customizations(app)
+            % Customizações dos componentes...
+            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
+                                                                                   'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
+                                                                                                       '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
+                                                                                                       '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
+
+            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
+                                                                                   'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+
+            ccTools.compCustomizationV2(app.jsBackDoor, app.ButtonGroupPanel, 'backgroundColor', 'transparent')
+        end
     end
     
 
     methods (Access = private)
+        %-----------------------------------------------------------------%
+        % INICIALIZAÇÃO
+        %-----------------------------------------------------------------%
+        function startup_timerCreation(app)            
+            % A criação desse timer tem como objetivo garantir uma renderização 
+            % mais rápida dos componentes principais da GUI, possibilitando a 
+            % visualização da sua tela inicialpelo usuário. Trata-se de aspecto 
+            % essencial quando o app é compilado como webapp.
+
+            app.timerObj = timer("ExecutionMode", "fixedSpacing", ...
+                                 "StartDelay",    1.5,            ...
+                                 "Period",        .1,             ...
+                                 "TimerFcn",      @(~,~)app.startup_timerFcn);
+            start(app.timerObj)
+        end
+
+        %-----------------------------------------------------------------%
+        function startup_timerFcn(app)
+            if ccTools.fcn.UIFigureRenderStatus(app.UIFigure)
+                stop(app.timerObj)
+                delete(app.timerObj)
+
+                startup_Controller(app)
+            end
+        end
+
+        %-----------------------------------------------------------------%
+        function startup_Controller(app)
+            drawnow
+
+            % Customiza as aspectos estéticos de alguns dos componentes da GUI 
+            % (diretamente em JS).
+            jsBackDoor_Customizations(app)
+
+            % Leitura de "taskList.json" - não é "aproveitada" a versão do 
+            % winAppColetaV2 porque ela não contém os fluxos desabilitados
+            % e, também, porque pode ter ocorridos uma alteração em editor
+            % externo ao app no "taskList.json".
+            [app.taskList, msgError] = class.taskList.file2raw(fullfile(app.rootFolder, 'Settings', 'taskList.json'), 'auxApp.winEditTaskList');
+            if ~isempty(msgError)
+                appUtil.modalWindow(app.UIFigure, "error", msgError);
+            end
+            app.editedList = app.taskList;
+            
+            % Organização da informação do arquivo em árvore...
+            TreeBuilding(app, [])
+            focus(app.Tree)
+        end
+
         %-----------------------------------------------------------------%
         function TreeBuilding(app, SelectedNode)
 
@@ -424,26 +493,15 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.CallingApp = mainapp;
             app.rootFolder = app.CallingApp.rootFolder;
 
+            jsBackDoor_Initialization(app)
+
             if app.isDocked
                 app.GridLayout.Padding(4) = 21;
+                startup_Controller(app)
             else
                 appUtil.winPosition(app.UIFigure)
+                startup_timerCreation(app)
             end
-
-            app.Tab1_Grid.ColumnWidth{2} = 0;
-
-            % Leitura de "taskList.json" - não é "aproveitada" a versão do 
-            % winAppColetaV2 porque ela não contém os fluxos desabilitados
-            % e, também, porque pode ter ocorridos uma alteração em editor
-            % externo ao app no "taskList.json".
-            [app.taskList, msgError] = class.taskList.file2raw(fullfile(app.rootFolder, 'Settings', 'taskList.json'), 'auxApp.winEditTaskList');
-            if ~isempty(msgError)
-                appUtil.modalWindow(app.UIFigure, "error", msgError);
-            end
-            app.editedList = app.taskList;
-
-            TreeBuilding(app, [])
-            focus(app.Tree)
             
         end
 
@@ -1188,8 +1246,8 @@ classdef winTaskList_exported < matlab.apps.AppBase
 
             % Create Tab1_Grid
             app.Tab1_Grid = uigridlayout(app.MainGrid);
-            app.Tab1_Grid.ColumnWidth = {'1x', 16};
-            app.Tab1_Grid.RowHeight = {22, 71, 22, 16, 16, 16, '1x', 16, 16};
+            app.Tab1_Grid.ColumnWidth = {'1x', 0};
+            app.Tab1_Grid.RowHeight = {17, 16, 16, 16, '1x', 16, 16, 16};
             app.Tab1_Grid.ColumnSpacing = 5;
             app.Tab1_Grid.RowSpacing = 5;
             app.Tab1_Grid.Padding = [0 0 0 0];
@@ -1197,43 +1255,11 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Tab1_Grid.Layout.Column = 1;
             app.Tab1_Grid.BackgroundColor = [1 1 1];
 
-            % Create OperaoLabel
-            app.OperaoLabel = uilabel(app.Tab1_Grid);
-            app.OperaoLabel.VerticalAlignment = 'bottom';
-            app.OperaoLabel.FontSize = 10;
-            app.OperaoLabel.Layout.Row = 1;
-            app.OperaoLabel.Layout.Column = 1;
-            app.OperaoLabel.Text = 'Operação:';
-
-            % Create ButtonGroupPanel
-            app.ButtonGroupPanel = uibuttongroup(app.Tab1_Grid);
-            app.ButtonGroupPanel.AutoResizeChildren = 'off';
-            app.ButtonGroupPanel.SelectionChangedFcn = createCallbackFcn(app, @OperationModeValueChanged, true);
-            app.ButtonGroupPanel.BackgroundColor = [1 1 1];
-            app.ButtonGroupPanel.Layout.Row = 2;
-            app.ButtonGroupPanel.Layout.Column = [1 2];
-            app.ButtonGroupPanel.FontSize = 10;
-
-            % Create ButtonGroup_View
-            app.ButtonGroup_View = uiradiobutton(app.ButtonGroupPanel);
-            app.ButtonGroup_View.Text = '<font style="color:#0000ff;">VISUALIZAR</font> lista de tarefas';
-            app.ButtonGroup_View.FontSize = 11;
-            app.ButtonGroup_View.Interpreter = 'html';
-            app.ButtonGroup_View.Position = [12 42 368 22];
-            app.ButtonGroup_View.Value = true;
-
-            % Create ButtonGroup_Edit
-            app.ButtonGroup_Edit = uiradiobutton(app.ButtonGroupPanel);
-            app.ButtonGroup_Edit.Text = '<font style="color:#a2142f;"><b>EDITAR</b></font> lista';
-            app.ButtonGroup_Edit.FontSize = 11;
-            app.ButtonGroup_Edit.Interpreter = 'html';
-            app.ButtonGroup_Edit.Position = [12 15 87 22];
-
             % Create ListadetarefasLabel
             app.ListadetarefasLabel = uilabel(app.Tab1_Grid);
             app.ListadetarefasLabel.VerticalAlignment = 'bottom';
             app.ListadetarefasLabel.FontSize = 10;
-            app.ListadetarefasLabel.Layout.Row = 3;
+            app.ListadetarefasLabel.Layout.Row = 1;
             app.ListadetarefasLabel.Layout.Column = 1;
             app.ListadetarefasLabel.Text = 'Lista de tarefas:';
 
@@ -1241,7 +1267,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Tree = uitree(app.Tab1_Grid);
             app.Tree.SelectionChangedFcn = createCallbackFcn(app, @TreeSelectionChanged, true);
             app.Tree.FontSize = 10;
-            app.Tree.Layout.Row = [4 9];
+            app.Tree.Layout.Row = [2 8];
             app.Tree.Layout.Column = 1;
 
             % Create Image_addTask
@@ -1249,7 +1275,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_addTask.ImageClickedFcn = createCallbackFcn(app, @Image_addTaskPushed, true);
             app.Image_addTask.Enable = 'off';
             app.Image_addTask.Tooltip = {'Adiciona nova tarefa'};
-            app.Image_addTask.Layout.Row = 4;
+            app.Image_addTask.Layout.Row = 2;
             app.Image_addTask.Layout.Column = 2;
             app.Image_addTask.ImageSource = 'addFileWithPlus_32.png';
 
@@ -1258,7 +1284,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_addBand.ImageClickedFcn = createCallbackFcn(app, @Image_addBandValueChanged, true);
             app.Image_addBand.Enable = 'off';
             app.Image_addBand.Tooltip = {'Adiciona fluxo espectral à tarefa selecionada'};
-            app.Image_addBand.Layout.Row = 5;
+            app.Image_addBand.Layout.Row = 3;
             app.Image_addBand.Layout.Column = 2;
             app.Image_addBand.ImageSource = 'EditWithPlus_32.png';
 
@@ -1267,7 +1293,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_del.ImageClickedFcn = createCallbackFcn(app, @Image_delPushed, true);
             app.Image_del.Enable = 'off';
             app.Image_del.Tooltip = {'Exclui tarefa ou fluxo selecionado'};
-            app.Image_del.Layout.Row = 6;
+            app.Image_del.Layout.Row = 4;
             app.Image_del.Layout.Column = 2;
             app.Image_del.ImageSource = 'Delete_32Red.png';
 
@@ -1276,7 +1302,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_upArrow.ImageClickedFcn = createCallbackFcn(app, @UpDownImageClicked, true);
             app.Image_upArrow.Enable = 'off';
             app.Image_upArrow.Tooltip = {'Troca ordem de tarefa ou fluxo selecionado'};
-            app.Image_upArrow.Layout.Row = 8;
+            app.Image_upArrow.Layout.Row = 7;
             app.Image_upArrow.Layout.Column = 2;
             app.Image_upArrow.ImageSource = 'ArrowUp_32.png';
 
@@ -1285,40 +1311,39 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_downArrow.ImageClickedFcn = createCallbackFcn(app, @UpDownImageClicked, true);
             app.Image_downArrow.Enable = 'off';
             app.Image_downArrow.Tooltip = {'Troca ordem de tarefa ou fluxo selecionado'};
-            app.Image_downArrow.Layout.Row = 9;
+            app.Image_downArrow.Layout.Row = 8;
             app.Image_downArrow.Layout.Column = 2;
             app.Image_downArrow.ImageSource = 'ArrowDown_32.png';
 
-            % Create Tab2_GridTitle
-            app.Tab2_GridTitle = uigridlayout(app.MainGrid);
-            app.Tab2_GridTitle.ColumnWidth = {18, '1x'};
-            app.Tab2_GridTitle.RowHeight = {'1x'};
-            app.Tab2_GridTitle.ColumnSpacing = 5;
-            app.Tab2_GridTitle.RowSpacing = 5;
-            app.Tab2_GridTitle.Padding = [2 2 2 2];
-            app.Tab2_GridTitle.Tag = 'COLORLOCKED';
-            app.Tab2_GridTitle.Layout.Row = 1;
-            app.Tab2_GridTitle.Layout.Column = 2;
-            app.Tab2_GridTitle.BackgroundColor = [0.749 0.749 0.749];
+            % Create ButtonGroupPanel
+            app.ButtonGroupPanel = uibuttongroup(app.Tab1_Grid);
+            app.ButtonGroupPanel.AutoResizeChildren = 'off';
+            app.ButtonGroupPanel.SelectionChangedFcn = createCallbackFcn(app, @OperationModeValueChanged, true);
+            app.ButtonGroupPanel.BorderType = 'none';
+            app.ButtonGroupPanel.BackgroundColor = [1 1 1];
+            app.ButtonGroupPanel.Layout.Row = [6 8];
+            app.ButtonGroupPanel.Layout.Column = 1;
+            app.ButtonGroupPanel.FontSize = 10;
 
-            % Create Tab2_Title
-            app.Tab2_Title = uilabel(app.Tab2_GridTitle);
-            app.Tab2_Title.FontSize = 11;
-            app.Tab2_Title.Layout.Row = 1;
-            app.Tab2_Title.Layout.Column = 2;
-            app.Tab2_Title.Text = 'ASPECTOS GERAIS';
+            % Create ButtonGroup_View
+            app.ButtonGroup_View = uiradiobutton(app.ButtonGroupPanel);
+            app.ButtonGroup_View.Text = '<font style="color:#0000ff;">VISUALIZAR</font> lista';
+            app.ButtonGroup_View.FontSize = 11;
+            app.ButtonGroup_View.Interpreter = 'html';
+            app.ButtonGroup_View.Position = [6 23 117 22];
+            app.ButtonGroup_View.Value = true;
 
-            % Create Tab2_Image
-            app.Tab2_Image = uiimage(app.Tab2_GridTitle);
-            app.Tab2_Image.Layout.Row = 1;
-            app.Tab2_Image.Layout.Column = 1;
-            app.Tab2_Image.HorizontalAlignment = 'left';
-            app.Tab2_Image.ImageSource = 'Info_32.png';
+            % Create ButtonGroup_Edit
+            app.ButtonGroup_Edit = uiradiobutton(app.ButtonGroupPanel);
+            app.ButtonGroup_Edit.Text = '<font style="color:#a2142f;"><b>EDITAR</b></font> lista';
+            app.ButtonGroup_Edit.FontSize = 11;
+            app.ButtonGroup_Edit.Interpreter = 'html';
+            app.ButtonGroup_Edit.Position = [6 4 92 22];
 
             % Create Tab2_PanelGrid
             app.Tab2_PanelGrid = uigridlayout(app.MainGrid);
             app.Tab2_PanelGrid.ColumnWidth = {'1x'};
-            app.Tab2_PanelGrid.RowHeight = {22, 22, 17, 22, 22, 90, 17, 22, '1x'};
+            app.Tab2_PanelGrid.RowHeight = {17, 22, 22, 22, 22, 90, 22, 22, '1x'};
             app.Tab2_PanelGrid.ColumnSpacing = 20;
             app.Tab2_PanelGrid.RowSpacing = 5;
             app.Tab2_PanelGrid.Padding = [0 0 0 0];
@@ -1633,36 +1658,10 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.GPS_RevisitTime.Layout.Column = 1;
             app.GPS_RevisitTime.Value = 60;
 
-            % Create Tab3_Grid
-            app.Tab3_Grid = uigridlayout(app.MainGrid);
-            app.Tab3_Grid.ColumnWidth = {18, '1x'};
-            app.Tab3_Grid.RowHeight = {'1x'};
-            app.Tab3_Grid.ColumnSpacing = 5;
-            app.Tab3_Grid.RowSpacing = 5;
-            app.Tab3_Grid.Padding = [2 2 2 2];
-            app.Tab3_Grid.Tag = 'COLORLOCKED';
-            app.Tab3_Grid.Layout.Row = 1;
-            app.Tab3_Grid.Layout.Column = 3;
-            app.Tab3_Grid.BackgroundColor = [0.749 0.749 0.749];
-
-            % Create Tab3_Title
-            app.Tab3_Title = uilabel(app.Tab3_Grid);
-            app.Tab3_Title.FontSize = 11;
-            app.Tab3_Title.Layout.Row = 1;
-            app.Tab3_Title.Layout.Column = 2;
-            app.Tab3_Title.Text = 'CARACTERÍSTICAS DO FLUXO ESPECTRAL SELECIONADO';
-
-            % Create Tab3_Image
-            app.Tab3_Image = uiimage(app.Tab3_Grid);
-            app.Tab3_Image.Layout.Row = 1;
-            app.Tab3_Image.Layout.Column = 1;
-            app.Tab3_Image.HorizontalAlignment = 'left';
-            app.Tab3_Image.ImageSource = 'Detection_18.png';
-
             % Create BandSpecificInfo_Grid
             app.BandSpecificInfo_Grid = uigridlayout(app.MainGrid);
             app.BandSpecificInfo_Grid.ColumnWidth = {'1x', '1x', '1x', '1x'};
-            app.BandSpecificInfo_Grid.RowHeight = {22, 22, 17, 22, 22, 22, 17, 22, 17, 22, 30, 22, '1x'};
+            app.BandSpecificInfo_Grid.RowHeight = {17, 22, 22, 22, 22, 22, 22, 22, 22, 22, 34, 22, '1x'};
             app.BandSpecificInfo_Grid.RowSpacing = 5;
             app.BandSpecificInfo_Grid.Padding = [0 0 0 0];
             app.BandSpecificInfo_Grid.Layout.Row = 2;
@@ -2090,7 +2089,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
 
             % Create toolGrid
             app.toolGrid = uigridlayout(app.GridLayout);
-            app.toolGrid.ColumnWidth = {22, 22, '1x', 110};
+            app.toolGrid.ColumnWidth = {22, 22, '1x', 22, 110};
             app.toolGrid.RowHeight = {'1x'};
             app.toolGrid.ColumnSpacing = 5;
             app.toolGrid.Padding = [5 6 5 6];
@@ -2129,8 +2128,13 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.toolButton_play.FontColor = [1 1 1];
             app.toolButton_play.Visible = 'off';
             app.toolButton_play.Layout.Row = 1;
-            app.toolButton_play.Layout.Column = 4;
+            app.toolButton_play.Layout.Column = 5;
             app.toolButton_play.Text = 'Confirma edição';
+
+            % Create jsBackDoor
+            app.jsBackDoor = uihtml(app.toolGrid);
+            app.jsBackDoor.Layout.Row = 1;
+            app.jsBackDoor.Layout.Column = 4;
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';

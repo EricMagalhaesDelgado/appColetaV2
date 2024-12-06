@@ -7,7 +7,6 @@ classdef winAppColeta_exported < matlab.apps.AppBase
         popupContainerGrid    matlab.ui.container.GridLayout
         SplashScreen          matlab.ui.control.Image
         popupContainer        matlab.ui.container.Panel
-        menu_Panel            matlab.ui.container.Panel
         menu_Grid             matlab.ui.container.GridLayout
         dockModule_Undock     matlab.ui.control.Image
         dockModule_Close      matlab.ui.control.Image
@@ -200,7 +199,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
                     sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
                                                                                            'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
                     
-                    ccTools.compCustomizationV2(app.jsBackDoor, app.popupContainerGrid, 'backgroundColor', 'rgba(255,255,255,0.65')
+                    ccTools.compCustomizationV2(app.jsBackDoor, app.popupContainerGrid, 'backgroundColor', 'rgba(255,255,255,0.65)')
                     sendEventToHTMLSource(app.jsBackDoor, "panelDialog", struct('componentDataTag', struct(app.popupContainer).Controller.ViewModel.Id)) 
 
                 case 1 % TASK:VIEW
@@ -2406,7 +2405,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.task_Status.FontSize = 10;
             app.task_Status.Layout.Row = [1 3];
             app.task_Status.Layout.Column = 5;
-            app.task_Status.Text = 'Place holder...';
+            app.task_Status.Text = '';
 
             % Create task_RevisitTime
             app.task_RevisitTime = uilabel(app.task_toolGrid);
@@ -2415,7 +2414,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.task_RevisitTime.FontSize = 10;
             app.task_RevisitTime.Layout.Row = [1 3];
             app.task_RevisitTime.Layout.Column = 6;
-            app.task_RevisitTime.Text = 'Place holder...';
+            app.task_RevisitTime.Text = '';
 
             % Create task_ButtonPlay
             app.task_ButtonPlay = uibutton(app.task_toolGrid, 'push');
@@ -2505,20 +2504,16 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.Tab5_Config = uitab(app.TabGroup);
             app.Tab5_Config.Title = 'CONFIG';
 
-            % Create menu_Panel
-            app.menu_Panel = uipanel(app.GridLayout);
-            app.menu_Panel.BorderType = 'none';
-            app.menu_Panel.Layout.Row = 1;
-            app.menu_Panel.Layout.Column = 1;
-
             % Create menu_Grid
-            app.menu_Grid = uigridlayout(app.menu_Panel);
+            app.menu_Grid = uigridlayout(app.GridLayout);
             app.menu_Grid.ColumnWidth = {28, 5, 28, 28, 28, 5, 28, 28, '1x', 20, 20, 20, 0, 0};
             app.menu_Grid.RowHeight = {7, '1x', 7};
             app.menu_Grid.ColumnSpacing = 5;
             app.menu_Grid.RowSpacing = 0;
             app.menu_Grid.Padding = [5 5 5 5];
             app.menu_Grid.Tag = 'COLORLOCKED';
+            app.menu_Grid.Layout.Row = 1;
+            app.menu_Grid.Layout.Column = 1;
             app.menu_Grid.BackgroundColor = [0.2 0.2 0.2];
 
             % Create menu_Button1

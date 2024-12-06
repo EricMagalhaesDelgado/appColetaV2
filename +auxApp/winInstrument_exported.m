@@ -13,13 +13,11 @@ classdef winInstrument_exported < matlab.apps.AppBase
         toolButton_open           matlab.ui.control.Button
         MainGrid                  matlab.ui.container.GridLayout
         Tab3_PanelGrid            matlab.ui.container.GridLayout
+        CaractersticasLabel       matlab.ui.control.Label
         instrImage                matlab.ui.control.Image
         instrMetadataPanel        matlab.ui.container.Panel
         instrMetadataGrid         matlab.ui.container.GridLayout
         instrMetadata             matlab.ui.control.HTML
-        Tab3_GridTitle            matlab.ui.container.GridLayout
-        Tab3_Image                matlab.ui.control.Image
-        Tab3_Title                matlab.ui.control.Label
         Tab2_PanelGrid            matlab.ui.container.GridLayout
         ParametersPanel           matlab.ui.container.Panel
         ParametersGrid            matlab.ui.container.GridLayout
@@ -48,10 +46,10 @@ classdef winInstrument_exported < matlab.apps.AppBase
         FamilyLabel               matlab.ui.control.Label
         Status                    matlab.ui.control.DropDown
         StatusLabel               matlab.ui.control.Label
-        Tab2_GridTitle            matlab.ui.container.GridLayout
-        Tab2_Image                matlab.ui.control.Image
-        Tab2_Title                matlab.ui.control.Label
         Tab1_Grid                 matlab.ui.container.GridLayout
+        ButtonGroupPanel          matlab.ui.container.ButtonGroup
+        ButtonGroup_Edit          matlab.ui.control.RadioButton
+        ButtonGroup_View          matlab.ui.control.RadioButton
         Image_downArrow           matlab.ui.control.Image
         Image_upArrow             matlab.ui.control.Image
         Image_del                 matlab.ui.control.Image
@@ -60,10 +58,6 @@ classdef winInstrument_exported < matlab.apps.AppBase
         TreeNode_Receiver         matlab.ui.container.TreeNode
         TreeNode_GPS              matlab.ui.container.TreeNode
         ListadeinstrumentosLabel  matlab.ui.control.Label
-        ButtonGroupPanel          matlab.ui.container.ButtonGroup
-        ButtonGroup_Edit          matlab.ui.control.RadioButton
-        ButtonGroup_View          matlab.ui.control.RadioButton
-        OperaoLabel               matlab.ui.control.Label
         Tab1_GridTitle            matlab.ui.container.GridLayout
         Tab1_Image                matlab.ui.control.Image
         Tab1_Title                matlab.ui.control.Label
@@ -118,6 +112,8 @@ classdef winInstrument_exported < matlab.apps.AppBase
 
             sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
                                                                                    'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+
+            ccTools.compCustomizationV2(app.jsBackDoor, app.ButtonGroupPanel, 'backgroundColor', 'transparent')
         end
     end
 
@@ -144,6 +140,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             if ccTools.fcn.UIFigureRenderStatus(app.UIFigure)
                 stop(app.timerObj)
                 delete(app.timerObj)
+                
                 startup_Controller(app)
             end
         end
@@ -165,12 +162,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.instrumentList = [app.receiverObj.List; app.gpsObj.List];
             app.editedList     = app.instrumentList;
             
-            % Ajustes iniciais no layout do app, tornando invisíveis itens 
-            % que aparecerão apenas no "MODO DE EDIÇÃO". E, por fim,
-            % organização da informação do arquivo em árvore.
-
-            app.Tab1_Grid.ColumnWidth{2} = 0;
-
+            % Organização da informação do arquivo em árvore...
             TreeBuilding(app, [])
             focus(app.Tree)
         end
@@ -1034,7 +1026,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             % Create MainGrid
             app.MainGrid = uigridlayout(app.GridLayout);
             app.MainGrid.ColumnWidth = {325, 325, '1x'};
-            app.MainGrid.RowHeight = {22, '1x'};
+            app.MainGrid.RowHeight = {22, 22, '1x'};
             app.MainGrid.ColumnSpacing = 20;
             app.MainGrid.RowSpacing = 5;
             app.MainGrid.Padding = [5 5 5 5];
@@ -1070,52 +1062,20 @@ classdef winInstrument_exported < matlab.apps.AppBase
 
             % Create Tab1_Grid
             app.Tab1_Grid = uigridlayout(app.MainGrid);
-            app.Tab1_Grid.ColumnWidth = {'1x', 16};
-            app.Tab1_Grid.RowHeight = {22, 71, 22, 16, 16, '1x', 16, 16};
+            app.Tab1_Grid.ColumnWidth = {'1x', 0};
+            app.Tab1_Grid.RowHeight = {17, 16, 16, '1x', 16, 16, 16};
             app.Tab1_Grid.ColumnSpacing = 5;
             app.Tab1_Grid.RowSpacing = 5;
             app.Tab1_Grid.Padding = [0 0 0 0];
-            app.Tab1_Grid.Layout.Row = 2;
+            app.Tab1_Grid.Layout.Row = [2 3];
             app.Tab1_Grid.Layout.Column = 1;
             app.Tab1_Grid.BackgroundColor = [1 1 1];
-
-            % Create OperaoLabel
-            app.OperaoLabel = uilabel(app.Tab1_Grid);
-            app.OperaoLabel.VerticalAlignment = 'bottom';
-            app.OperaoLabel.FontSize = 10;
-            app.OperaoLabel.Layout.Row = 1;
-            app.OperaoLabel.Layout.Column = 1;
-            app.OperaoLabel.Text = 'Operação:';
-
-            % Create ButtonGroupPanel
-            app.ButtonGroupPanel = uibuttongroup(app.Tab1_Grid);
-            app.ButtonGroupPanel.AutoResizeChildren = 'off';
-            app.ButtonGroupPanel.SelectionChangedFcn = createCallbackFcn(app, @ValueChanged_OperationMode, true);
-            app.ButtonGroupPanel.BackgroundColor = [1 1 1];
-            app.ButtonGroupPanel.Layout.Row = 2;
-            app.ButtonGroupPanel.Layout.Column = [1 2];
-            app.ButtonGroupPanel.FontSize = 10;
-
-            % Create ButtonGroup_View
-            app.ButtonGroup_View = uiradiobutton(app.ButtonGroupPanel);
-            app.ButtonGroup_View.Text = '<font style="color:#0000ff;">VISUALIZAR</font> lista de instrumentos';
-            app.ButtonGroup_View.FontSize = 11;
-            app.ButtonGroup_View.Interpreter = 'html';
-            app.ButtonGroup_View.Position = [12 42 368 22];
-            app.ButtonGroup_View.Value = true;
-
-            % Create ButtonGroup_Edit
-            app.ButtonGroup_Edit = uiradiobutton(app.ButtonGroupPanel);
-            app.ButtonGroup_Edit.Text = '<font style="color:#a2142f;"><b>EDITAR</b></font> lista';
-            app.ButtonGroup_Edit.FontSize = 11;
-            app.ButtonGroup_Edit.Interpreter = 'html';
-            app.ButtonGroup_Edit.Position = [12 15 87 22];
 
             % Create ListadeinstrumentosLabel
             app.ListadeinstrumentosLabel = uilabel(app.Tab1_Grid);
             app.ListadeinstrumentosLabel.VerticalAlignment = 'bottom';
             app.ListadeinstrumentosLabel.FontSize = 10;
-            app.ListadeinstrumentosLabel.Layout.Row = 3;
+            app.ListadeinstrumentosLabel.Layout.Row = 1;
             app.ListadeinstrumentosLabel.Layout.Column = 1;
             app.ListadeinstrumentosLabel.Text = 'Lista de instrumentos:';
 
@@ -1123,7 +1083,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.Tree = uitree(app.Tab1_Grid);
             app.Tree.SelectionChangedFcn = createCallbackFcn(app, @TreeSelectionChanged, true);
             app.Tree.FontSize = 10;
-            app.Tree.Layout.Row = [4 8];
+            app.Tree.Layout.Row = [2 7];
             app.Tree.Layout.Column = 1;
 
             % Create TreeNode_Receiver
@@ -1139,7 +1099,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.Image_add.ImageClickedFcn = createCallbackFcn(app, @ImageClicked_add, true);
             app.Image_add.Enable = 'off';
             app.Image_add.Tooltip = {'Adiciona novo instrumento'};
-            app.Image_add.Layout.Row = 4;
+            app.Image_add.Layout.Row = 2;
             app.Image_add.Layout.Column = 2;
             app.Image_add.ImageSource = 'addFileWithPlus_32.png';
 
@@ -1148,7 +1108,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.Image_del.ImageClickedFcn = createCallbackFcn(app, @ImageClicked_del, true);
             app.Image_del.Enable = 'off';
             app.Image_del.Tooltip = {'Exclui instrumento selecionado'};
-            app.Image_del.Layout.Row = 5;
+            app.Image_del.Layout.Row = 3;
             app.Image_del.Layout.Column = 2;
             app.Image_del.ImageSource = 'Delete_32Red.png';
 
@@ -1157,7 +1117,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.Image_upArrow.ImageClickedFcn = createCallbackFcn(app, @ImageClicked_UpDownArrows, true);
             app.Image_upArrow.Enable = 'off';
             app.Image_upArrow.Tooltip = {'Troca ordem do instrumento selecionado'};
-            app.Image_upArrow.Layout.Row = 7;
+            app.Image_upArrow.Layout.Row = 6;
             app.Image_upArrow.Layout.Column = 2;
             app.Image_upArrow.ImageSource = 'ArrowUp_32.png';
 
@@ -1166,43 +1126,42 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.Image_downArrow.ImageClickedFcn = createCallbackFcn(app, @ImageClicked_UpDownArrows, true);
             app.Image_downArrow.Enable = 'off';
             app.Image_downArrow.Tooltip = {'Troca ordem do instrumento selecionado'};
-            app.Image_downArrow.Layout.Row = 8;
+            app.Image_downArrow.Layout.Row = 7;
             app.Image_downArrow.Layout.Column = 2;
             app.Image_downArrow.ImageSource = 'ArrowDown_32.png';
 
-            % Create Tab2_GridTitle
-            app.Tab2_GridTitle = uigridlayout(app.MainGrid);
-            app.Tab2_GridTitle.ColumnWidth = {18, '1x'};
-            app.Tab2_GridTitle.RowHeight = {'1x'};
-            app.Tab2_GridTitle.ColumnSpacing = 5;
-            app.Tab2_GridTitle.RowSpacing = 5;
-            app.Tab2_GridTitle.Padding = [2 2 2 2];
-            app.Tab2_GridTitle.Tag = 'COLORLOCKED';
-            app.Tab2_GridTitle.Layout.Row = 1;
-            app.Tab2_GridTitle.Layout.Column = 2;
-            app.Tab2_GridTitle.BackgroundColor = [0.749 0.749 0.749];
+            % Create ButtonGroupPanel
+            app.ButtonGroupPanel = uibuttongroup(app.Tab1_Grid);
+            app.ButtonGroupPanel.AutoResizeChildren = 'off';
+            app.ButtonGroupPanel.SelectionChangedFcn = createCallbackFcn(app, @ValueChanged_OperationMode, true);
+            app.ButtonGroupPanel.BorderType = 'none';
+            app.ButtonGroupPanel.BackgroundColor = [1 1 1];
+            app.ButtonGroupPanel.Layout.Row = [5 7];
+            app.ButtonGroupPanel.Layout.Column = 1;
+            app.ButtonGroupPanel.FontSize = 10;
 
-            % Create Tab2_Title
-            app.Tab2_Title = uilabel(app.Tab2_GridTitle);
-            app.Tab2_Title.FontSize = 11;
-            app.Tab2_Title.Layout.Row = 1;
-            app.Tab2_Title.Layout.Column = 2;
-            app.Tab2_Title.Text = 'ASPECTOS GERAIS';
+            % Create ButtonGroup_View
+            app.ButtonGroup_View = uiradiobutton(app.ButtonGroupPanel);
+            app.ButtonGroup_View.Text = '<font style="color:#0000ff;">VISUALIZAR</font> lista';
+            app.ButtonGroup_View.FontSize = 11;
+            app.ButtonGroup_View.Interpreter = 'html';
+            app.ButtonGroup_View.Position = [6 23 117 22];
+            app.ButtonGroup_View.Value = true;
 
-            % Create Tab2_Image
-            app.Tab2_Image = uiimage(app.Tab2_GridTitle);
-            app.Tab2_Image.Layout.Row = 1;
-            app.Tab2_Image.Layout.Column = 1;
-            app.Tab2_Image.HorizontalAlignment = 'left';
-            app.Tab2_Image.ImageSource = 'Info_32.png';
+            % Create ButtonGroup_Edit
+            app.ButtonGroup_Edit = uiradiobutton(app.ButtonGroupPanel);
+            app.ButtonGroup_Edit.Text = '<font style="color:#a2142f;"><b>EDITAR</b></font> lista';
+            app.ButtonGroup_Edit.FontSize = 11;
+            app.ButtonGroup_Edit.Interpreter = 'html';
+            app.ButtonGroup_Edit.Position = [6 4 92 22];
 
             % Create Tab2_PanelGrid
             app.Tab2_PanelGrid = uigridlayout(app.MainGrid);
             app.Tab2_PanelGrid.ColumnWidth = {110, '1x'};
-            app.Tab2_PanelGrid.RowHeight = {22, 22, 17, 22, 22, '1x', 22, 22, 150};
+            app.Tab2_PanelGrid.RowHeight = {17, 22, 22, 22, 22, '1x', 22, 22, 150};
             app.Tab2_PanelGrid.RowSpacing = 5;
             app.Tab2_PanelGrid.Padding = [0 0 0 0];
-            app.Tab2_PanelGrid.Layout.Row = 2;
+            app.Tab2_PanelGrid.Layout.Row = [2 3];
             app.Tab2_PanelGrid.Layout.Column = 2;
             app.Tab2_PanelGrid.BackgroundColor = [1 1 1];
 
@@ -1435,40 +1394,14 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.publicIP.Layout.Row = 2;
             app.publicIP.Layout.Column = 2;
 
-            % Create Tab3_GridTitle
-            app.Tab3_GridTitle = uigridlayout(app.MainGrid);
-            app.Tab3_GridTitle.ColumnWidth = {18, '1x'};
-            app.Tab3_GridTitle.RowHeight = {'1x'};
-            app.Tab3_GridTitle.ColumnSpacing = 5;
-            app.Tab3_GridTitle.RowSpacing = 5;
-            app.Tab3_GridTitle.Padding = [2 2 2 2];
-            app.Tab3_GridTitle.Tag = 'COLORLOCKED';
-            app.Tab3_GridTitle.Layout.Row = 1;
-            app.Tab3_GridTitle.Layout.Column = 3;
-            app.Tab3_GridTitle.BackgroundColor = [0.749 0.749 0.749];
-
-            % Create Tab3_Title
-            app.Tab3_Title = uilabel(app.Tab3_GridTitle);
-            app.Tab3_Title.FontSize = 11;
-            app.Tab3_Title.Layout.Row = 1;
-            app.Tab3_Title.Layout.Column = 2;
-            app.Tab3_Title.Text = 'CARACTERÍSTICAS DO INSTRUMENTO SELECIONADO';
-
-            % Create Tab3_Image
-            app.Tab3_Image = uiimage(app.Tab3_GridTitle);
-            app.Tab3_Image.Layout.Row = 1;
-            app.Tab3_Image.Layout.Column = 1;
-            app.Tab3_Image.HorizontalAlignment = 'left';
-            app.Tab3_Image.ImageSource = 'Antenna_32.png';
-
             % Create Tab3_PanelGrid
             app.Tab3_PanelGrid = uigridlayout(app.MainGrid);
             app.Tab3_PanelGrid.ColumnWidth = {'1x', 110, 5};
-            app.Tab3_PanelGrid.RowHeight = {10, 64, '1x'};
+            app.Tab3_PanelGrid.RowHeight = {17, 10, 64, '1x'};
             app.Tab3_PanelGrid.ColumnSpacing = 5;
             app.Tab3_PanelGrid.RowSpacing = 5;
             app.Tab3_PanelGrid.Padding = [0 0 0 0];
-            app.Tab3_PanelGrid.Layout.Row = 2;
+            app.Tab3_PanelGrid.Layout.Row = [2 3];
             app.Tab3_PanelGrid.Layout.Column = 3;
             app.Tab3_PanelGrid.BackgroundColor = [1 1 1];
 
@@ -1476,7 +1409,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             app.instrMetadataPanel = uipanel(app.Tab3_PanelGrid);
             app.instrMetadataPanel.AutoResizeChildren = 'off';
             app.instrMetadataPanel.BackgroundColor = [1 1 1];
-            app.instrMetadataPanel.Layout.Row = [1 3];
+            app.instrMetadataPanel.Layout.Row = [2 4];
             app.instrMetadataPanel.Layout.Column = [1 3];
 
             % Create instrMetadataGrid
@@ -1493,11 +1426,19 @@ classdef winInstrument_exported < matlab.apps.AppBase
 
             % Create instrImage
             app.instrImage = uiimage(app.Tab3_PanelGrid);
-            app.instrImage.Layout.Row = 2;
+            app.instrImage.Layout.Row = 3;
             app.instrImage.Layout.Column = 2;
             app.instrImage.HorizontalAlignment = 'right';
             app.instrImage.VerticalAlignment = 'top';
             app.instrImage.ImageSource = 'Instr_R&S_FSL.png';
+
+            % Create CaractersticasLabel
+            app.CaractersticasLabel = uilabel(app.Tab3_PanelGrid);
+            app.CaractersticasLabel.VerticalAlignment = 'bottom';
+            app.CaractersticasLabel.FontSize = 10;
+            app.CaractersticasLabel.Layout.Row = 1;
+            app.CaractersticasLabel.Layout.Column = 1;
+            app.CaractersticasLabel.Text = 'Características:';
 
             % Create toolGrid
             app.toolGrid = uigridlayout(app.GridLayout);
