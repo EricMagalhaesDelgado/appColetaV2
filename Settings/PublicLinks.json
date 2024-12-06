@@ -1,4 +1,12 @@
 {
   "VersionFile": "https://raw.githubusercontent.com/InovaFiscaliza/.github/main/releases/VersionFile.json",
-  "anateldb": "https://www.anatel.gov.br/dadosabertos/paineis_de_dados/sentinela/AnatelDB.parquet.gzip"
+  "appColeta": {
+      "Sharepoint": "https://anatel365.sharepoint.com/sites/InovaFiscaliza/SitePages/appColeta.aspx"
+  },
+  "RFDataHub": {
+      "Sharepoint": "https://anatel365.sharepoint.com/sites/InovaFiscaliza/SitePages/RFDataHub.aspx",
+      "Table": "https://github.com/InovaFiscaliza/.github/releases/download/rfdatahub/estacoes.parquet.gzip",
+      "Log": "https://github.com/InovaFiscaliza/.github/releases/download/rfdatahub/log.parquet.gzip",
+      "Release": "https://github.com/InovaFiscaliza/.github/releases/download/rfdatahub/Release.json"
+  }
 }

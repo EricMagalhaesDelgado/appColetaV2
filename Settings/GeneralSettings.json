@@ -1,53 +1,93 @@
 {
-  "stationInfo": {
-    "Name": "ERMx-DF-00",
-    "Computer": "",
-    "Type": "Fixed",
-    "Latitude": -1,
-    "Longitude": -1
-  },
-  "userPath": "",
-  "openGL": "hardware",
-  "startupInfo": false,
-  "tcpServer": {
-    "Status": 0,
-    "IP": "",
-    "Port": 8910,
-    "Key": "123456",
-    "ClientList": [
-      "Zabbix",
-      "Jupyter",
-      "Matlab"
-    ]
-  },
-  "Waterfall": {
-    "Colormap": "winter",
-    "Depth": 512
-  },
-  "Colors": [
-    [
-      0.38,
-      0.6,
-      0.73
-    ],
-    [
-      0.47,
-      0.67,
-      0.19
-    ],
-    [
-      1,
-      0.07,
-      0.65
-    ],
-    [
-      1,
-      1,
-      0.07
-    ]
-  ],
-  "Integration": {
-    "Trace": 10,
-    "SampleTime": 10
-  }
+    "version": 0.01,
+    "operationMode": {
+        "Debug": false,
+        "Dock": false,
+        "Simulation": false
+    },
+    "computerName": {
+        "deskopApp": "",
+        "webServer": "WIMATLABPDIN01"
+    },
+    "fileFolder": {
+        "userPath": "",
+        "tempPath": "",
+        "pythonPath": "",
+        "DataHub_GET": "",
+        "DataHub_POST": "",
+        "lastVisited": ""
+    },
+    "Plot": {
+        "MinHold": {
+            "Fcn": "area",
+            "LineStyle": "-",
+            "LineWidth": 0.5,
+            "Color": "#4A90E2",
+            "EdgeColor": "#4A90E2",
+            "FaceColor": "#4A90E2"
+        },
+        "ClearWrite": {
+            "Fcn": "line",
+            "LineStyle": "-",
+            "LineWidth": 0.5,
+            "Color": "#ffff12",
+            "EdgeColor": "#ffff12",
+            "FaceColor": "#ffff12",
+            "Marker": ".",
+            "MarkerIndices": [],
+            "MarkerFaceColor": [0.40,0.73,0.88],
+            "MarkerEdgeColor": [0.40,0.73,0.88],
+            "MarkerSize": 14,
+            "Visible": "on"
+        },
+        "Average": {
+            "Fcn": "line",
+            "LineStyle": "-",
+            "LineWidth": 0.5,
+            "Color": "#00cc66",
+            "EdgeColor": "#00cc66",
+            "FaceColor": "#00cc66"
+        },
+        "MaxHold": {
+            "Fcn": "line",
+            "LineStyle": "-",
+            "LineWidth": 0.5,
+            "Color": "#FF5CAD",
+            "EdgeColor": "#FF5CAD",
+            "FaceColor": "#FF5CAD"
+        },
+        "Waterfall": {
+            "Fcn": "image",
+            "Decimation": "auto",
+            "MeshStyle": "both",
+            "Colormap": "winter",
+            "Colorbar": "off",
+            "LevelLimits": [0, 1],
+            "Depth": 512
+        }
+    },
+    "stationInfo": {
+        "Name": "ERMx-DF-00",
+        "Computer": "",
+        "Type": "Fixed",
+        "Latitude": -1,
+        "Longitude": -1
+    },
+    "openGL": "hardware",
+    "startupInfo": false,
+    "tcpServer": {
+        "Status": 0,
+        "IP": "",
+        "Port": 8910,
+        "Key": "123456",
+        "ClientList": [
+            "Zabbix",
+            "Jupyter",
+            "Matlab"
+        ]
+    },
+    "Integration": {
+        "Trace": 10,
+        "SampleTime": 10
+    }
 }
