@@ -258,12 +258,12 @@ classdef winAppColeta_exported < matlab.apps.AppBase
                 drawnow
 
                 % Força a exclusão do SplashScreen.
-                app.TabGroup.Visible = 1;
                 if isvalid(app.SplashScreen)
                     pause(1)
                     delete(app.SplashScreen)
                     app.popupContainerGrid.Visible = 0;
                 end
+                app.popupContainer.Visible = 1;
             end
         end
 
@@ -503,34 +503,6 @@ classdef winAppColeta_exported < matlab.apps.AppBase
                 otherwise
                     inputArguments = {app};
             end
-        end
-
-        %-----------------------------------------------------------------%
-        function menu_LayoutPopupApp(app, auxAppName, varargin)
-            arguments
-                app
-                auxAppName char {mustBeMember(auxAppName, {'AddTask', 'Tracking'})}
-            end
-
-            arguments (Repeating)
-                varargin 
-            end
-
-            % Inicialmente ajusta as dimensões do container.
-            switch auxAppName
-                case 'AddTask';  screenWidth = 1045; screenHeight = 540;
-                case 'Tracking'; screenWidth =  622; screenHeight = 302;
-            end
-
-            app.popupContainerGrid.ColumnWidth{2} = screenWidth;
-            app.popupContainerGrid.RowHeight{3}   = screenHeight-180;
-
-            % Executa o app auxiliar, mas antes tenta configurar transparência
-            % do BackgroundColor do Grid (caso não tenha sido aplicada anteriormente).
-            ccTools.compCustomizationV2(app.jsBackDoor, app.popupContainerGrid, 'backgroundColor', 'rgba(255,255,255,0.65')
-            inputArguments = [{app}, varargin];
-            eval(sprintf('auxApp.dock%s_exported(app.popupContainer, inputArguments{:})', auxAppName))
-            app.popupContainerGrid.Visible = 1;
         end
 
         %-----------------------------------------------------------------%
@@ -1566,6 +1538,33 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % app auxiliar coincide com o do appAnalise. Força-se, portanto, 
             % a condição abaixo para evitar possível bloqueio da tela.
             app.progressDialog.Visible = 'hidden';
+        end
+
+        %-----------------------------------------------------------------%
+        function appOpenPopUpSecundaryApp(app, auxAppName, varargin)
+            arguments
+                app
+                auxAppName char {mustBeMember(auxAppName, {'Tracking'})}
+            end
+
+            arguments (Repeating)
+                varargin 
+            end
+
+            % Inicialmente ajusta as dimensões do container.
+            switch auxAppName
+                case 'Tracking'; screenWidth =  622; screenHeight = 302;
+            end
+
+            app.popupContainerGrid.ColumnWidth{2} = screenWidth;
+            app.popupContainerGrid.RowHeight{3}   = screenHeight-180;
+
+            % Executa o app auxiliar, mas antes tenta configurar transparência
+            % do BackgroundColor do Grid (caso não tenha sido aplicada anteriormente).
+            ccTools.compCustomizationV2(app.jsBackDoor, app.popupContainerGrid, 'backgroundColor', 'rgba(255,255,255,0.65)')
+            inputArguments = [{app}, varargin];
+            eval(sprintf('auxApp.dock%s_exported(app.popupContainer, inputArguments{:})', auxAppName))
+            app.popupContainerGrid.Visible = 1;
         end
     end
     
