@@ -494,6 +494,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.rootFolder = app.CallingApp.rootFolder;
 
             jsBackDoor_Initialization(app)
+            app.Tab1_Grid.ColumnWidth{end} = 0;
 
             if app.isDocked
                 app.GridLayout.Padding(4) = 21;
@@ -534,7 +535,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
 
 
             % Painel "ESPECIFICIDADES DO FLUXO SELECIONADO"
-            if numel(app.Tree.SelectedNodes.UserData) == 1
+            if isscalar(app.Tree.SelectedNodes.UserData)
                 idx2 = app.Tree.SelectedNodes.UserData;
 
                 % Ajuste dos itens que são listas suspensas (uidropdown)
@@ -740,7 +741,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
                 % Aspectos relacionados à indicação visual de que se trata 
                 % do modo de visualização:
                 set(findobj(app.Tab1_Grid, 'Type', 'uiimage'), 'Enable', 'off')
-                app.Tab1_Grid.ColumnWidth{2} = 0;                
+                app.Tab1_Grid.ColumnWidth{end} = 0;                
                 app.toolButton_play.Visible  = 0;
                 app.toolButton_open.Enable   = 'on';
                 app.toolButton_export.Enable = 'on';
@@ -780,7 +781,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
                 % Aspectos relacionados à indicação visual de que se trata 
                 % do modo de edição:
                 set(app.Tab1_Grid.Children, 'Enable', 'on')
-                app.Tab1_Grid.ColumnWidth{2} = 16;                
+                app.Tab1_Grid.ColumnWidth{end} = 16;                
                 app.toolButton_play.Visible  = 1;
                 app.toolButton_open.Enable   = 'off';
                 app.toolButton_export.Enable = 'off';
@@ -1246,10 +1247,10 @@ classdef winTaskList_exported < matlab.apps.AppBase
 
             % Create Tab1_Grid
             app.Tab1_Grid = uigridlayout(app.MainGrid);
-            app.Tab1_Grid.ColumnWidth = {'1x', 0};
-            app.Tab1_Grid.RowHeight = {17, 16, 16, 16, '1x', 16, 16, 16};
+            app.Tab1_Grid.ColumnWidth = {2, 146, '1x', 16};
+            app.Tab1_Grid.RowHeight = {17, 5, 16, 5, 16, 5, 16, '1x', 16, 16, 5, 16, 2};
             app.Tab1_Grid.ColumnSpacing = 5;
-            app.Tab1_Grid.RowSpacing = 5;
+            app.Tab1_Grid.RowSpacing = 0;
             app.Tab1_Grid.Padding = [0 0 0 0];
             app.Tab1_Grid.Layout.Row = 2;
             app.Tab1_Grid.Layout.Column = 1;
@@ -1260,23 +1261,23 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.ListadetarefasLabel.VerticalAlignment = 'bottom';
             app.ListadetarefasLabel.FontSize = 10;
             app.ListadetarefasLabel.Layout.Row = 1;
-            app.ListadetarefasLabel.Layout.Column = 1;
+            app.ListadetarefasLabel.Layout.Column = [1 3];
             app.ListadetarefasLabel.Text = 'Lista de tarefas:';
 
             % Create Tree
             app.Tree = uitree(app.Tab1_Grid);
             app.Tree.SelectionChangedFcn = createCallbackFcn(app, @TreeSelectionChanged, true);
             app.Tree.FontSize = 10;
-            app.Tree.Layout.Row = [2 8];
-            app.Tree.Layout.Column = 1;
+            app.Tree.Layout.Row = [3 13];
+            app.Tree.Layout.Column = [1 3];
 
             % Create Image_addTask
             app.Image_addTask = uiimage(app.Tab1_Grid);
             app.Image_addTask.ImageClickedFcn = createCallbackFcn(app, @Image_addTaskPushed, true);
             app.Image_addTask.Enable = 'off';
             app.Image_addTask.Tooltip = {'Adiciona nova tarefa'};
-            app.Image_addTask.Layout.Row = 2;
-            app.Image_addTask.Layout.Column = 2;
+            app.Image_addTask.Layout.Row = 3;
+            app.Image_addTask.Layout.Column = 4;
             app.Image_addTask.ImageSource = 'addFileWithPlus_32.png';
 
             % Create Image_addBand
@@ -1284,8 +1285,8 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_addBand.ImageClickedFcn = createCallbackFcn(app, @Image_addBandValueChanged, true);
             app.Image_addBand.Enable = 'off';
             app.Image_addBand.Tooltip = {'Adiciona fluxo espectral à tarefa selecionada'};
-            app.Image_addBand.Layout.Row = 3;
-            app.Image_addBand.Layout.Column = 2;
+            app.Image_addBand.Layout.Row = 5;
+            app.Image_addBand.Layout.Column = 4;
             app.Image_addBand.ImageSource = 'EditWithPlus_32.png';
 
             % Create Image_del
@@ -1293,8 +1294,8 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_del.ImageClickedFcn = createCallbackFcn(app, @Image_delPushed, true);
             app.Image_del.Enable = 'off';
             app.Image_del.Tooltip = {'Exclui tarefa ou fluxo selecionado'};
-            app.Image_del.Layout.Row = 4;
-            app.Image_del.Layout.Column = 2;
+            app.Image_del.Layout.Row = 7;
+            app.Image_del.Layout.Column = 4;
             app.Image_del.ImageSource = 'Delete_32Red.png';
 
             % Create Image_upArrow
@@ -1302,8 +1303,8 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_upArrow.ImageClickedFcn = createCallbackFcn(app, @UpDownImageClicked, true);
             app.Image_upArrow.Enable = 'off';
             app.Image_upArrow.Tooltip = {'Troca ordem de tarefa ou fluxo selecionado'};
-            app.Image_upArrow.Layout.Row = 7;
-            app.Image_upArrow.Layout.Column = 2;
+            app.Image_upArrow.Layout.Row = 10;
+            app.Image_upArrow.Layout.Column = 4;
             app.Image_upArrow.ImageSource = 'ArrowUp_32.png';
 
             % Create Image_downArrow
@@ -1311,8 +1312,8 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.Image_downArrow.ImageClickedFcn = createCallbackFcn(app, @UpDownImageClicked, true);
             app.Image_downArrow.Enable = 'off';
             app.Image_downArrow.Tooltip = {'Troca ordem de tarefa ou fluxo selecionado'};
-            app.Image_downArrow.Layout.Row = 8;
-            app.Image_downArrow.Layout.Column = 2;
+            app.Image_downArrow.Layout.Row = 12;
+            app.Image_downArrow.Layout.Column = 4;
             app.Image_downArrow.ImageSource = 'ArrowDown_32.png';
 
             % Create ButtonGroupPanel
@@ -1321,8 +1322,8 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.ButtonGroupPanel.SelectionChangedFcn = createCallbackFcn(app, @OperationModeValueChanged, true);
             app.ButtonGroupPanel.BorderType = 'none';
             app.ButtonGroupPanel.BackgroundColor = [1 1 1];
-            app.ButtonGroupPanel.Layout.Row = [6 8];
-            app.ButtonGroupPanel.Layout.Column = 1;
+            app.ButtonGroupPanel.Layout.Row = [9 12];
+            app.ButtonGroupPanel.Layout.Column = 2;
             app.ButtonGroupPanel.FontSize = 10;
 
             % Create ButtonGroup_View
@@ -1330,7 +1331,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.ButtonGroup_View.Text = '<font style="color:#0000ff;">VISUALIZAR</font> lista';
             app.ButtonGroup_View.FontSize = 11;
             app.ButtonGroup_View.Interpreter = 'html';
-            app.ButtonGroup_View.Position = [6 23 117 22];
+            app.ButtonGroup_View.Position = [6 25 117 22];
             app.ButtonGroup_View.Value = true;
 
             % Create ButtonGroup_Edit
@@ -1338,7 +1339,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             app.ButtonGroup_Edit.Text = '<font style="color:#a2142f;"><b>EDITAR</b></font> lista';
             app.ButtonGroup_Edit.FontSize = 11;
             app.ButtonGroup_Edit.Interpreter = 'html';
-            app.ButtonGroup_Edit.Position = [6 4 92 22];
+            app.ButtonGroup_Edit.Position = [6 6 92 22];
 
             % Create Tab2_PanelGrid
             app.Tab2_PanelGrid = uigridlayout(app.MainGrid);

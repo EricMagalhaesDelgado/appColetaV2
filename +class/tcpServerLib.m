@@ -10,7 +10,9 @@ classdef tcpServerLib < handle
         Timer
         
         Time
-        LOG
+        LOG  = table('Size', [0, 8],                                                                                    ...
+                     'VariableTypes', {'string', 'string', 'double', 'string', 'string', 'string', 'double', 'string'}, ...
+                     'VariableNames', {'Timestamp', 'ClientAddress', 'ClientPort', 'Message', 'ClientName', 'Request', 'NumBytesWritten', 'Status'});
     end
 
 
@@ -19,11 +21,8 @@ classdef tcpServerLib < handle
         function obj = tcpServerLib(app)
             obj.App  = app;
             obj.Time = datetime('now', 'Format', 'dd/MM/yyyy HH:mm:ss');
-            obj.LOG  = table('Size', [0, 8],                                                                                    ...
-                             'VariableTypes', {'string', 'string', 'double', 'string', 'string', 'string', 'double', 'string'}, ...
-                             'VariableNames', {'Timestamp', 'ClientAddress', 'ClientPort', 'Message', 'ClientName', 'Request', 'NumBytesWritten', 'Status'});
             
-            obj.TimerCreation(app)
+            TimerCreation(obj, app)
         end
 
 

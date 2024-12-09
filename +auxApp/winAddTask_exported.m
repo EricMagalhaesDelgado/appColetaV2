@@ -2875,7 +2875,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Band_StepWidthLabel.VerticalAlignment = 'bottom';
             app.Band_StepWidthLabel.FontSize = 10;
             app.Band_StepWidthLabel.Layout.Row = 1;
-            app.Band_StepWidthLabel.Layout.Column = 1;
+            app.Band_StepWidthLabel.Layout.Column = [1 2];
             app.Band_StepWidthLabel.Text = 'Passo varredura (kHz):';
 
             % Create Band_StepWidth1

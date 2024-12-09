@@ -290,7 +290,6 @@ classdef winAppColeta_exported < matlab.apps.AppBase
                     app.General_I.operationMode.Debug = false;
                 case 'MATLABEnvironment'
                     app.General_I.operationMode.Debug = true;
-                    app.General_I.operationMode.Dock  = true;               % APENAS PARA TESTE! REMOVER DEPOIS.
             end
             
             app.General = app.General_I;            
@@ -1695,14 +1694,12 @@ classdef winAppColeta_exported < matlab.apps.AppBase
 
             switch event.Source
                 case app.dockModule_Undock
-                    initialDockState = app.General.operationMode.Dock;
-                    app.General.operationMode.Dock = false;
+                    appGeneral = app.General;
+                    appGeneral.operationMode.Dock = false;
 
                     inputArguments   = menu_auxAppInputArguments(app, auxAppTag);
                     closeModule(app.tabGroupController, auxAppTag, app.General)
-                    openModule(app.tabGroupController, clickedButton, false, app.General, inputArguments{:})
-
-                    app.General.operationMode.Dock = initialDockState;
+                    openModule(app.tabGroupController, clickedButton, false, appGeneral, inputArguments{:})
 
                 case app.dockModule_Close
                     closeModule(app.tabGroupController, auxAppTag, app.General)
@@ -2152,6 +2149,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create Button_MinHold
             app.Button_MinHold = uibutton(app.PlotTool_Grid, 'state');
             app.Button_MinHold.ValueChangedFcn = createCallbackFcn(app, @task_ButtonPushed_plotTraceMode, true);
+            app.Button_MinHold.Tooltip = {'MinHold'};
             app.Button_MinHold.Icon = fullfile(pathToMLAPP, 'Icons', 'MinHold_32Filled.png');
             app.Button_MinHold.IconAlignment = 'center';
             app.Button_MinHold.Text = '';
@@ -2162,6 +2160,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create Button_Average
             app.Button_Average = uibutton(app.PlotTool_Grid, 'state');
             app.Button_Average.ValueChangedFcn = createCallbackFcn(app, @task_ButtonPushed_plotTraceMode, true);
+            app.Button_Average.Tooltip = {'Média'};
             app.Button_Average.Icon = fullfile(pathToMLAPP, 'Icons', 'Average_32Filled.png');
             app.Button_Average.Text = '';
             app.Button_Average.BackgroundColor = [0.9804 0.9804 0.9804];
@@ -2171,6 +2170,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create Button_MaxHold
             app.Button_MaxHold = uibutton(app.PlotTool_Grid, 'state');
             app.Button_MaxHold.ValueChangedFcn = createCallbackFcn(app, @task_ButtonPushed_plotTraceMode, true);
+            app.Button_MaxHold.Tooltip = {'MaxHold'};
             app.Button_MaxHold.Icon = fullfile(pathToMLAPP, 'Icons', 'MaxHold_32Filled.png');
             app.Button_MaxHold.Text = '';
             app.Button_MaxHold.BackgroundColor = [0.9804 0.9804 0.9804];
@@ -2180,6 +2180,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create Button_peakExcursion
             app.Button_peakExcursion = uibutton(app.PlotTool_Grid, 'state');
             app.Button_peakExcursion.ValueChangedFcn = createCallbackFcn(app, @task_ButtonPushed_plotTraceMode, true);
+            app.Button_peakExcursion.Tooltip = {'Busca de pico'};
             app.Button_peakExcursion.Icon = fullfile(pathToMLAPP, 'Icons', 'Detection_32.png');
             app.Button_peakExcursion.Text = '';
             app.Button_peakExcursion.BackgroundColor = [0.9804 0.9804 0.9804];
@@ -2191,6 +2192,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.Button_Layout.ButtonPushedFcn = createCallbackFcn(app, @task_ButtonPushed_plotLayout, true);
             app.Button_Layout.Icon = fullfile(pathToMLAPP, 'Icons', 'Layers_18.png');
             app.Button_Layout.BackgroundColor = [0.9804 0.9804 0.9804];
+            app.Button_Layout.Tooltip = {'Controla visibilidade dos plots'; '(espectro e waterfall)'};
             app.Button_Layout.Layout.Row = 7;
             app.Button_Layout.Layout.Column = 1;
             app.Button_Layout.Text = '';
@@ -2199,6 +2201,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.Button_MaskPlot = uibutton(app.PlotTool_Grid, 'state');
             app.Button_MaskPlot.ValueChangedFcn = createCallbackFcn(app, @task_ButtonPushed_MaskPlot, true);
             app.Button_MaskPlot.Enable = 'off';
+            app.Button_MaskPlot.Tooltip = {'Máscara espectral'};
             app.Button_MaskPlot.Icon = fullfile(pathToMLAPP, 'Icons', 'Mask_32.png');
             app.Button_MaskPlot.Text = '';
             app.Button_MaskPlot.BackgroundColor = [0.9804 0.9804 0.9804];
@@ -2423,7 +2426,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.task_ButtonPlay.BackgroundColor = [0.9412 0.9412 0.9412];
             app.task_ButtonPlay.FontSize = 11;
             app.task_ButtonPlay.Enable = 'off';
-            app.task_ButtonPlay.Tooltip = {''};
+            app.task_ButtonPlay.Tooltip = {'Inicia ou para a tarefa selecionada'};
             app.task_ButtonPlay.Layout.Row = [1 3];
             app.task_ButtonPlay.Layout.Column = 1;
             app.task_ButtonPlay.Text = '';
@@ -2436,7 +2439,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.task_ButtonDel.BackgroundColor = [0.9412 0.9412 0.9412];
             app.task_ButtonDel.FontSize = 11;
             app.task_ButtonDel.Enable = 'off';
-            app.task_ButtonDel.Tooltip = {''};
+            app.task_ButtonDel.Tooltip = {'Exclui a tarefa selecionada'};
             app.task_ButtonDel.Layout.Row = [1 3];
             app.task_ButtonDel.Layout.Column = 2;
             app.task_ButtonDel.Text = '';
@@ -2457,7 +2460,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.task_ButtonLOG.BackgroundColor = [0.9412 0.9412 0.9412];
             app.task_ButtonLOG.FontSize = 11;
             app.task_ButtonLOG.Enable = 'off';
-            app.task_ButtonLOG.Tooltip = {''};
+            app.task_ButtonLOG.Tooltip = {'LOG'};
             app.task_ButtonLOG.Layout.Row = [1 3];
             app.task_ButtonLOG.Layout.Column = 4;
             app.task_ButtonLOG.Text = '';
@@ -2465,6 +2468,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create task_RightPanel
             app.task_RightPanel = uiimage(app.task_toolGrid);
             app.task_RightPanel.ImageClickedFcn = createCallbackFcn(app, @menu_LayoutPanelVisibility, true);
+            app.task_RightPanel.Tooltip = {'Visibilidade do painel à direita'};
             app.task_RightPanel.Layout.Row = [1 3];
             app.task_RightPanel.Layout.Column = 9;
             app.task_RightPanel.ImageSource = fullfile(pathToMLAPP, 'Icons', 'layoutRight.png');
@@ -2472,6 +2476,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create task_LeftPanel
             app.task_LeftPanel = uiimage(app.task_toolGrid);
             app.task_LeftPanel.ImageClickedFcn = createCallbackFcn(app, @menu_LayoutPanelVisibility, true);
+            app.task_LeftPanel.Tooltip = {'Visibilidade do painel à esquerda'};
             app.task_LeftPanel.Layout.Row = [1 3];
             app.task_LeftPanel.Layout.Column = 8;
             app.task_LeftPanel.ImageSource = fullfile(pathToMLAPP, 'Icons', 'layoutLeft.png');
@@ -2479,6 +2484,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             % Create task_TopPanel
             app.task_TopPanel = uiimage(app.task_toolGrid);
             app.task_TopPanel.ImageClickedFcn = createCallbackFcn(app, @menu_LayoutPanelVisibility, true);
+            app.task_TopPanel.Tooltip = {'Visibilidade da tabela'};
             app.task_TopPanel.Layout.Row = [1 3];
             app.task_TopPanel.Layout.Column = 7;
             app.task_TopPanel.ImageSource = fullfile(pathToMLAPP, 'Icons', 'layoutTop.png');

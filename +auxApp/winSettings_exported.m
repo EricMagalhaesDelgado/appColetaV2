@@ -4,66 +4,43 @@ classdef winSettings_exported < matlab.apps.AppBase
     properties (Access = public)
         UIFigure                       matlab.ui.Figure
         GridLayout                     matlab.ui.container.GridLayout
-        EditionModeLabel               matlab.ui.control.Label
-        toolGrid                       matlab.ui.container.GridLayout
-        toolButton_edit                matlab.ui.control.Button
-        MainPanel                      matlab.ui.container.Panel
-        MainPanelGrid                  matlab.ui.container.GridLayout
-        Tab1_Panel                     matlab.ui.container.Panel
-        general_Grid                   matlab.ui.container.GridLayout
-        Tab2_Panel                     matlab.ui.container.Panel
-        server_Grid                    matlab.ui.container.GridLayout
-        server_Status                  matlab.ui.control.DropDown
-        server_StatusLabel             matlab.ui.control.Label
-        server_Port                    matlab.ui.control.NumericEditField
-        server_PortLabel               matlab.ui.control.Label
-        server_IP                      matlab.ui.control.EditField
-        server_IPLabel                 matlab.ui.control.Label
-        server_ClientList              matlab.ui.control.EditField
-        server_ClientListLabel         matlab.ui.control.Label
-        server_Key                     matlab.ui.control.EditField
-        server_KeyLabel                matlab.ui.control.Label
-        general_gpu                    matlab.ui.control.DropDown
-        general_gpuLabel               matlab.ui.control.Label
-        general_versionLabel           matlab.ui.control.Label
-        general_stationPanel           matlab.ui.container.Panel
-        general_stationGrid            matlab.ui.container.GridLayout
-        general_lastSessionInfoGrid    matlab.ui.container.GridLayout
-        general_lastSessionInfo        matlab.ui.control.CheckBox
-        general_lastSessionInfoLabel   matlab.ui.control.Label
-        general_stationLongitude       matlab.ui.control.NumericEditField
-        general_stationLongitudeLabel  matlab.ui.control.Label
-        general_stationLatitude        matlab.ui.control.NumericEditField
-        general_stationLatitudeLabel   matlab.ui.control.Label
-        general_stationType            matlab.ui.control.DropDown
-        general_stationTypeLabel       matlab.ui.control.Label
-        general_stationName            matlab.ui.control.EditField
-        general_stationNameLabel       matlab.ui.control.Label
-        general_stationLabel           matlab.ui.control.Label
-        general_versionPanel           matlab.ui.container.Panel
-        general_versionGrid            matlab.ui.container.GridLayout
-        AppVersion                     matlab.ui.control.HTML
-        Tab3_Panel                     matlab.ui.container.Panel
+        ToolbarGrid                    matlab.ui.container.GridLayout
+        tool_LeftPanelVisibility       matlab.ui.control.Image
+        DocumentGrid                   matlab.ui.container.GridLayout
+        Folders_Grid                   matlab.ui.container.GridLayout
+        config_FolderMapPanel          matlab.ui.container.Panel
+        config_FolderMapGrid           matlab.ui.container.GridLayout
+        config_Folder_tempPath         matlab.ui.control.EditField
+        config_Folder_tempPathLabel    matlab.ui.control.Label
+        config_Folder_userPathButton   matlab.ui.control.Image
+        config_Folder_userPath         matlab.ui.control.EditField
+        config_Folder_userPathLabel    matlab.ui.control.Label
+        config_FolderMapLabel          matlab.ui.control.Label
         plot_Grid                      matlab.ui.container.GridLayout
         plot_IntegrationPanel          matlab.ui.container.Panel
         plot_IntegrationGrid           matlab.ui.container.GridLayout
-        plot_IntegrationTrace          matlab.ui.control.NumericEditField
-        plot_IntegrationTraceLabel     matlab.ui.control.Label
         plot_IntegrationTime           matlab.ui.control.NumericEditField
         plot_IntegrationTimeLabel      matlab.ui.control.Label
+        plot_IntegrationTrace          matlab.ui.control.NumericEditField
+        plot_IntegrationTraceLabel     matlab.ui.control.Label
         plot_IntegrationLabel          matlab.ui.control.Label
         plot_WaterfallPanel            matlab.ui.container.Panel
         plot_WaterfallGrid             matlab.ui.container.GridLayout
-        plot_WaterfallColormap         matlab.ui.control.DropDown
-        plot_WaterfallColormapLabel    matlab.ui.control.Label
         plot_WaterfallDepth            matlab.ui.control.DropDown
         plot_WaterfallDepthLabel       matlab.ui.control.Label
+        plot_WaterfallColormap         matlab.ui.control.DropDown
+        plot_WaterfallColormapLabel    matlab.ui.control.Label
         plot_WaterfallLabel            matlab.ui.control.Label
+        plot_colorsPanel               matlab.ui.container.Panel
         plot_colorsGrid                matlab.ui.container.GridLayout
-        plot_colorsMaxHold             matlab.ui.control.Button
-        plot_colorsClearWrite          matlab.ui.control.Button
-        plot_colorsAverage             matlab.ui.control.Button
-        plot_colorsMinHold             matlab.ui.control.Button
+        plot_colorsClearWrite          matlab.ui.control.ColorPicker
+        plot_colorsClearWriteLabel     matlab.ui.control.Label
+        plot_colorsMaxHold             matlab.ui.control.ColorPicker
+        plot_colorsMaxHoldLabel        matlab.ui.control.Label
+        plot_colorsAverage             matlab.ui.control.ColorPicker
+        plot_colorsAverageLabel        matlab.ui.control.Label
+        plot_colorsMinHold             matlab.ui.control.ColorPicker
+        plot_colorsMinHoldLabel        matlab.ui.control.Label
         plot_colorsLabel               matlab.ui.control.Label
         plot_TiledSpacing              matlab.ui.control.DropDown
         plot_TiledSpacingLabel         matlab.ui.control.Label
@@ -79,20 +56,59 @@ classdef winSettings_exported < matlab.apps.AppBase
         plot_Pan                       matlab.ui.control.Image
         plot_DatatipVisibility         matlab.ui.control.Image
         plot_Datatip                   matlab.ui.control.Image
-        plot_InteractionsLabel         matlab.ui.control.Label
-        Tab3_Grid                      matlab.ui.container.GridLayout
         plot_refresh                   matlab.ui.control.Image
-        Tab3_Image                     matlab.ui.control.Image
-        Tab3_Title                     matlab.ui.control.Label
-        Tab2_GridTitle                 matlab.ui.container.GridLayout
-        Tab2_Image                     matlab.ui.control.Image
-        Tab2_Title                     matlab.ui.control.Label
+        plot_InteractionsLabel         matlab.ui.control.Label
+        plot_Title                     matlab.ui.control.Label
+        general_Grid                   matlab.ui.container.GridLayout
+        general_GraphicsPanel          matlab.ui.container.Panel
+        general_GraphicsGrid           matlab.ui.container.GridLayout
+        openAuxiliarApp2Debug          matlab.ui.control.CheckBox
+        openAuxiliarAppAsDocked        matlab.ui.control.CheckBox
+        gpuType                        matlab.ui.control.DropDown
+        gpuTypeLabel                   matlab.ui.control.Label
+        general_GraphicsLabel          matlab.ui.control.Label
+        general_versionPanel           matlab.ui.container.Panel
+        server_Grid                    matlab.ui.container.GridLayout
+        server_Port                    matlab.ui.control.NumericEditField
+        server_PortLabel               matlab.ui.control.Label
+        server_IP                      matlab.ui.control.EditField
+        server_IPLabel                 matlab.ui.control.Label
+        server_ClientList              matlab.ui.control.EditField
+        server_ClientListLabel         matlab.ui.control.Label
+        server_Key                     matlab.ui.control.EditField
+        server_KeyLabel                matlab.ui.control.Label
+        server_Status                  matlab.ui.control.DropDown
+        server_StatusLabel             matlab.ui.control.Label
+        general_versionLock            matlab.ui.control.Image
+        general_versionLabel           matlab.ui.control.Label
+        general_FilePanel              matlab.ui.container.Panel
+        general_stationGrid            matlab.ui.container.GridLayout
+        general_lastSessionInfo        matlab.ui.control.CheckBox
+        general_stationLongitude       matlab.ui.control.NumericEditField
+        general_stationLongitudeLabel  matlab.ui.control.Label
+        general_stationLatitude        matlab.ui.control.NumericEditField
+        general_stationLatitudeLabel   matlab.ui.control.Label
+        general_stationType            matlab.ui.control.DropDown
+        general_stationTypeLabel       matlab.ui.control.Label
+        general_stationName            matlab.ui.control.EditField
+        general_stationNameLabel       matlab.ui.control.Label
+        general_FileLock               matlab.ui.control.Image
+        general_FileLabel              matlab.ui.control.Label
+        general_AppVersionPanel        matlab.ui.container.Panel
+        general_AppVersionGrid         matlab.ui.container.GridLayout
+        AppVersion                     matlab.ui.control.HTML
+        general_AppVersionRefresh      matlab.ui.control.Image
+        general_AppVersionLabel        matlab.ui.control.Label
+        LeftPanel_Grid                 matlab.ui.container.GridLayout
+        LeftPanel                      matlab.ui.container.Panel
+        LeftPanelGrid                  matlab.ui.container.GridLayout
+        LeftPanelRadioGroup            matlab.ui.container.ButtonGroup
+        btnFolder                      matlab.ui.control.RadioButton
+        btnPlot                        matlab.ui.control.RadioButton
+        btnGeneral                     matlab.ui.control.RadioButton
         Tab1_GridTitle                 matlab.ui.container.GridLayout
-        Tab1_Image                     matlab.ui.control.Image
-        Tab1_Title                     matlab.ui.control.Label
-        ButtonGroupPanel               matlab.ui.container.ButtonGroup
-        ButtonGroup_Edit               matlab.ui.control.RadioButton
-        ButtonGroup_View               matlab.ui.control.RadioButton
+        menu_ButtonLabel               matlab.ui.control.Label
+        menu_ButtonIcon                matlab.ui.control.Image
     end
 
     
@@ -103,69 +119,76 @@ classdef winSettings_exported < matlab.apps.AppBase
         
         CallingApp
         rootFolder
-
-        General
-        editedGeneral
-        editedFlag = false
     end
     
 
     methods (Access = private)
         %-----------------------------------------------------------------%
-        function Layout(app)
-            % PAINEL "VERSÃO"                
-            AppVersion_updatePanel(app)
+        function AppProperties(app)
+            app.general_FileLock.UserData    = true;
+            app.general_versionLock.UserData = true;
 
-            % PAINEL "CONFIGURAÇÕES GERAIS"
-            app.general_stationName.Value        = app.editedGeneral.stationInfo.Name;
-            app.general_stationType.Items        = {app.editedGeneral.stationInfo.Type};
-            app.general_stationLatitude.Value    = app.editedGeneral.stationInfo.Latitude;
-            app.general_stationLongitude.Value   = app.editedGeneral.stationInfo.Longitude;
-            app.general_lastSessionInfo.Value    = app.editedGeneral.startupInfo;
-
-            switch app.editedGeneral.tcpServer.Status
-                case 0; app.server_Status.Items  = {'OFF'};
-                case 1; app.server_Status.Items  = {'ON'};
+            if isdeployed
+                app.openAuxiliarApp2Debug.Enable = 0;
             end
+        end
 
-            app.server_Key.Value        = app.editedGeneral.tcpServer.Key;
-            app.server_ClientList.Value = strjoin(app.editedGeneral.tcpServer.ClientList, ', ');
-            app.server_IP.Value         = app.editedGeneral.tcpServer.IP;
-            app.server_Port.Value       = app.editedGeneral.tcpServer.Port;
+        %-----------------------------------------------------------------%
+        function Layout(app)
+            general_updateLayout(app)
+
+            plot_updateLayout_Interactions(app)
+            plot_updateLayout_TiledSpacing(app)
+            plot_updateLayout_OthersFields(app)
             
+            config_updatePanel(app)
+        end
+
+        %-----------------------------------------------------------------%
+        function general_updateLayout(app)
+            % PAINEL "ASPECTOS GERAIS"
+            % (a) Versão
+            general_AppVersionRefreshImageClicked(app)
+
+            % (b) Estação
+            app.general_stationName.Value        = app.CallingApp.General.stationInfo.Name;
+            app.general_stationType.Items        = {app.CallingApp.General.stationInfo.Type};
+            app.general_stationLatitude.Value    = app.CallingApp.General.stationInfo.Latitude;
+            app.general_stationLongitude.Value   = app.CallingApp.General.stationInfo.Longitude;
+            app.general_lastSessionInfo.Value    = app.CallingApp.General.startupInfo;
+
+            % (c) WebService
+            switch app.CallingApp.General.tcpServer.Status
+                case 1; app.server_Status.Value  = 'ON';
+                case 0; app.server_Status.Value  = 'OFF';                
+            end
+            app.server_Key.Value                 = app.CallingApp.General.tcpServer.Key;
+            app.server_ClientList.Value          = strjoin(app.CallingApp.General.tcpServer.ClientList, ', ');
+            app.server_IP.Value                  = app.CallingApp.General.tcpServer.IP;
+            app.server_Port.Value                = app.CallingApp.General.tcpServer.Port;
+            
+            % (d) Gráfico: RENDERIZADOR
             graphRender = opengl('data');
             switch graphRender.HardwareSupportLevel
-                case 'basic'; app.general_gpu.Items = {'hardwarebasic'};
-                case 'full';  app.general_gpu.Items = {'hardware'};
-                case 'none';  app.general_gpu.Items = {'software'};
-                otherwise;    app.general_gpu.Items = {graphRender.HardwareSupportLevel}; % "driverissue"
+                case 'basic'; graphRenderSupport = 'hardwarebasic';
+                case 'full';  graphRenderSupport = 'hardware';
+                case 'none';  graphRenderSupport = 'software';
+                otherwise;    graphRenderSupport = graphRender.HardwareSupportLevel; % "driverissue"
             end
 
-            % PAINEL "PLOT"
-            Layout_plotInteractions(app)
-            Layout_plotTiledSpacing(app)
+            if ~ismember(graphRenderSupport, app.gpuType.Items)
+                app.gpuType.Items{end+1} = graphRenderSupport;
+            end
 
-            app.plot_colorsMinHold.BackgroundColor    = app.editedGeneral.Plot.MinHold.Color;
-            app.plot_colorsAverage.BackgroundColor    = app.editedGeneral.Plot.Average.Color;
-            app.plot_colorsMaxHold.BackgroundColor    = app.editedGeneral.Plot.MaxHold.Color;
-            app.plot_colorsClearWrite.BackgroundColor = app.editedGeneral.Plot.ClearWrite.Color;
-            
-            app.plot_WaterfallColormap.Items          = {app.editedGeneral.Plot.Waterfall.Colormap};
-            app.plot_WaterfallDepth.Items             = {num2str(app.editedGeneral.Plot.Waterfall.Depth)};
+            app.gpuType.Value = graphRenderSupport;
 
-            app.plot_IntegrationTrace.Value           = app.editedGeneral.Integration.Trace;
-            app.plot_IntegrationTime.Value            = app.editedGeneral.Integration.SampleTime;
+            % (e) Gráfico: MODO DE OPERAÇÃO
+            app.openAuxiliarAppAsDocked.Value = app.CallingApp.General.operationMode.Dock;
+            app.openAuxiliarApp2Debug.Value   = app.CallingApp.General.operationMode.Debug;
         end
 
         %-----------------------------------------------------------------%
-        function AppVersion_updatePanel(app)
-            % Versão
-            htmlContent = auxApp.config.htmlCode_AppVersion(app.CallingApp.General, app.CallingApp.executionMode);
-            app.AppVersion.HTMLSource = htmlContent;
-        end
-
-        %-----------------------------------------------------------------%
-        function Layout_plotInteractions(app)
+        function plot_updateLayout_Interactions(app)
             set(findobj(app.plot_InteractionsGrid, Tag='InteractionVisibility'), Visible=0)
 
             for ii = 1:numel(app.CallingApp.axes1.Toolbar.Children)
@@ -183,12 +206,42 @@ classdef winSettings_exported < matlab.apps.AppBase
             end
         end
 
-
         %-----------------------------------------------------------------%
-        function Layout_plotTiledSpacing(app)
+        function plot_updateLayout_TiledSpacing(app)
             app.plot_TiledSpacing.Value = app.CallingApp.axes1.Parent.TileSpacing;
         end
 
+        %-----------------------------------------------------------------%
+        function plot_updateLayout_OthersFields(app)
+            app.plot_colorsMinHold.Value     = app.CallingApp.General.Plot.MinHold.Color;
+            app.plot_colorsAverage.Value     = app.CallingApp.General.Plot.Average.Color;
+            app.plot_colorsMaxHold.Value     = app.CallingApp.General.Plot.MaxHold.Color;
+            app.plot_colorsClearWrite.Value  = app.CallingApp.General.Plot.ClearWrite.Color;
+            
+            app.plot_WaterfallColormap.Items = unique([app.plot_WaterfallColormap.Items, {app.CallingApp.General.Plot.Waterfall.Colormap}]);
+            app.plot_WaterfallColormap.Value = app.CallingApp.General.Plot.Waterfall.Colormap;
+
+            app.plot_WaterfallDepth.Items    = unique([app.plot_WaterfallDepth.Items, {num2str(app.CallingApp.General.Plot.Waterfall.Depth)}], 'stable');
+            app.plot_WaterfallDepth.Value    = {num2str(app.CallingApp.General.Plot.Waterfall.Depth)};
+
+            app.plot_IntegrationTrace.Value  = app.CallingApp.General.Integration.Trace;
+            app.plot_IntegrationTime.Value   = app.CallingApp.General.Integration.SampleTime;
+        end
+
+        %-----------------------------------------------------------------%
+        function config_updatePanel(app)
+            % Na versão webapp, a configuração das pastas não é habilitada.
+
+            switch app.CallingApp.executionMode
+                case 'webApp'
+                    app.btnFolder.Enable = 0;
+
+                otherwise    
+                    % userPath & tempPath
+                    app.config_Folder_userPath.Value = app.CallingApp.General.fileFolder.userPath;
+                    app.config_Folder_tempPath.Value = app.CallingApp.General.fileFolder.tempPath;
+            end
+        end
 
         %-----------------------------------------------------------------%
         function status = IPv4Validation(app, ipAddress)
@@ -204,6 +257,11 @@ classdef winSettings_exported < matlab.apps.AppBase
                 end                    
             end
         end
+
+        %-----------------------------------------------------------------%
+        function saveGeneralSettings(app)
+            appUtil.generalSettingsSave(class.Constants.appName, app.rootFolder, app.CallingApp.General_I, app.CallingApp.executionMode)
+        end
     end
     
 
@@ -214,19 +272,17 @@ classdef winSettings_exported < matlab.apps.AppBase
         function startupFcn(app, mainapp)
             
             % A razão de ser deste app é possibilitar visualização/edição 
-            % do arquivo "GeneralSettings.json".
-            
+            % de algumas das informações organizadas em "GeneralSettings.json".            
             app.CallingApp = mainapp;
             app.rootFolder = app.CallingApp.rootFolder;
-            app.General    = app.CallingApp.General;
-            app.editedGeneral = app.General;
 
             if app.isDocked
-                app.GridLayout.Padding(4) = 19;
+                app.GridLayout.Padding(4) = 21;
             else
                 appUtil.winPosition(app.UIFigure)
             end
 
+            AppProperties(app)
             Layout(app)
             
         end
@@ -234,92 +290,49 @@ classdef winSettings_exported < matlab.apps.AppBase
         % Close request function: UIFigure
         function closeFcn(app, event)
             
-            if app.editedFlag
-                appUtil.generalSettingsSave(class.Constants.appName, app.rootFolder, app.CallingApp.General_I, app.CallingApp.executionMode)
-
-                app.CallingApp.General = app.General;
-                eval(sprintf('opengl %s', app.General.openGL))
-            end
-
             appBackDoor(app.CallingApp, app, 'closeFcn', 'CONFIG')
             delete(app)
             
         end
 
-        % Selection changed function: ButtonGroupPanel
-        function ValueChanged_OperationMode(app, event)
-            
-            %-------------------------------------------------------------%
-            % ## MODO DE VISUALIZAÇÃO ##
-            %-------------------------------------------------------------%
-            if app.ButtonGroup_View.Value
-                % Aspectos relacionados à indicação visual de que se trata 
-                % do modo de visualização:
-                app.EditionModeLabel.Visible = 0;
-                app.toolButton_edit.Visible  = 0;
-                app.plot_refresh.Visible     = 0;
+        % Selection changed function: LeftPanelRadioGroup
+        function LeftPanelRadioGroupSelectionChanged(app, event)
 
-                % Desabilita edição do conteúdo dos campos...
-                set(findobj(app.general_stationGrid,  'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='off')
-                set(findobj(app.server_Grid,          'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='off')
-                set(findobj(app.plot_WaterfallGrid,   'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='off')
-                set(findobj(app.plot_IntegrationGrid, 'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='off')
-                
-                app.general_lastSessionInfo.Enable = 0;
-
-                set(app.general_stationType,    'Items', {app.general_stationType.Value})
-                set(app.server_Status,          'Items', {app.server_Status.Value})
-                set(app.general_gpu,            'Items', {app.general_gpu.Value})
-                set(app.plot_WaterfallColormap, 'Items', {app.plot_WaterfallColormap.Value})
-                set(app.plot_WaterfallDepth,    'Items', {app.plot_WaterfallDepth.Value})
-
-                % Essa última validação é essencial para desfazer alterações 
-                % que não foram salvas. Ou seja, o usuário fez alterações
-                % em app.General (que estavam armazenadas na sua cópia -
-                % app.editedGeneral) e não clicou no botão "Confirma edição".
-
-                if ~isequal(app.General, app.editedGeneral)
-                    app.editedGeneral = app.General;
-                    Layout(app)
-                end
-
-            %-------------------------------------------------------------%
-            % ## MODO DE EDIÇÃO ##
-            %-------------------------------------------------------------%
-            else
-                % Aspectos relacionados à indicação visual de que se trata 
-                % do modo de edição:
-                app.EditionModeLabel.Visible = 1;
-                app.toolButton_edit.Visible  = 1;
-                app.plot_refresh.Visible     = 1;
-
-                % Habilita edição do conteúdo dos campos...
-                set(findobj(app.general_stationGrid,  'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='on')
-                set(findobj(app.server_Grid,          'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='on')
-                set(findobj(app.plot_WaterfallGrid,   'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='on')
-                set(findobj(app.plot_IntegrationGrid, 'Type', 'uinumericeditfield', '-or', 'Type', 'uieditfield'), Editable='on')
-                app.general_lastSessionInfo.Enable = 1;
-
-                set(app.general_stationType,    'Items', {'Fixed', 'Mobile'})
-                set(app.server_Status,          'Items', {'ON', 'OFF'})
-                set(app.plot_WaterfallColormap, 'Items', {'gray', 'hot', 'jet', 'summer', 'turbo', 'winter'})
-                set(app.plot_WaterfallDepth,    'Items', {'64', '128', '256', '512'})
-
-                if ismember(app.general_gpu.Value, {'hardwarebasic', 'hardware', 'software'})
-                    set(app.general_gpu,        'Items', {'hardwarebasic', 'hardware', 'software'})
-                else
-                    set(app.general_gpu,        'Items', {'hardwarebasic', 'hardware', 'software', app.general_gpu.Value})
-                end
+            selectedButton = app.LeftPanelRadioGroup.SelectedObject;
+            switch selectedButton
+                case app.btnGeneral; app.DocumentGrid.ColumnWidth(2:4) = {'1x',0,0};
+                case app.btnPlot;    app.DocumentGrid.ColumnWidth(2:4) = {0,'1x',0};
+                case app.btnFolder;  app.DocumentGrid.ColumnWidth(2:4) = {0,0,'1x'};
             end
 
         end
 
-        % Value changed function: general_gpu, general_lastSessionInfo, 
-        % ...and 13 other components
-        function ValueChanged_Parameter(app, event)
+        % Image clicked function: tool_LeftPanelVisibility
+        function tool_LeftPanelVisibilityImageClicked(app, event)
+            
+            if app.DocumentGrid.ColumnWidth{1}
+                app.DocumentGrid.ColumnWidth{1} = 0;
+                app.tool_LeftPanelVisibility.ImageSource = 'ArrowRight_32.png';
+            else
+                app.DocumentGrid.ColumnWidth{1} = 325;
+                app.tool_LeftPanelVisibility.ImageSource = 'ArrowLeft_32.png';
+            end
+
+        end
+
+        % Image clicked function: general_AppVersionRefresh
+        function general_AppVersionRefreshImageClicked(app, event)
+            
+            htmlContent = auxApp.config.htmlCode_AppVersion(app.CallingApp.General, app.CallingApp.executionMode);
+            app.AppVersion.HTMLSource = htmlContent;
+
+        end
+
+        % Value changed function: general_lastSessionInfo, 
+        % ...and 12 other components
+        function general_ParameterChanged(app, event)
             
             switch event.Source
-                %---------------------------------------------------------%
                 case app.general_stationName
                     if isempty(regexp(app.general_stationName.Value, '^EMSat$|^UMS.*|^ERMx-[A-Z]{2}-[0-9][1-9]$', 'once'))
                         msgQuestion   = ['O nome esperado de uma estação é <b>"ERMx-UF-XX"</b>, sendo "UF" a sigla da unidade da '     ...
@@ -333,135 +346,111 @@ classdef winSettings_exported < matlab.apps.AppBase
                             end
                     end
 
-                    app.editedGeneral.stationInfo.Name = app.general_stationName.Value;
+                    app.CallingApp.General.stationInfo.Name      = app.general_stationName.Value;
 
-                %---------------------------------------------------------%
                 case app.general_stationType
-                    app.editedGeneral.stationInfo.Type      = app.general_stationType.Value;
+                    app.CallingApp.General.stationInfo.Type      = app.general_stationType.Value;
 
-                %---------------------------------------------------------%
                 case app.general_stationLatitude
-                    app.editedGeneral.stationInfo.Latitude  = app.general_stationLatitude.Value;
+                    app.CallingApp.General.stationInfo.Latitude  = app.general_stationLatitude.Value;
 
-                %---------------------------------------------------------%
                 case app.general_stationLongitude
-                    app.editedGeneral.stationInfo.Longitude = app.general_stationLongitude.Value;
+                    app.CallingApp.General.stationInfo.Longitude = app.general_stationLongitude.Value;
 
-                %---------------------------------------------------------%
                 case app.general_lastSessionInfo
-                    app.editedGeneral.startupInfo = app.general_lastSessionInfo.Value;                    
+                    app.CallingApp.General.startupInfo           = app.general_lastSessionInfo.Value;                    
 
-                %---------------------------------------------------------%
                 case app.server_Status
                     switch app.server_Status.Value
-                        case 'ON';  app.editedGeneral.tcpServer.Status = 1;
-                        case 'OFF'; app.editedGeneral.tcpServer.Status = 0;
+                        case 'ON';  app.CallingApp.General.tcpServer.Status = 1;
+                        case 'OFF'; app.CallingApp.General.tcpServer.Status = 0;
                     end
 
                 case app.server_Key
                     app.server_Key.Value = replace(app.server_Key.Value, ' ', '');
-                    app.editedGeneral.tcpServer.Key = app.server_Key.Value;
+                    app.CallingApp.General.tcpServer.Key = app.server_Key.Value;
 
                 case app.server_ClientList
                     app.server_ClientList.Value = replace(app.server_ClientList.Value, ' ', '');
                     
                     if isempty(app.server_ClientList.Value)
-                        app.editedGeneral.tcpServer.ClientList = {};
+                        app.CallingApp.General.tcpServer.ClientList = {};
                     else
-                        app.editedGeneral.tcpServer.ClientList = strsplit(app.server_ClientList.Value, ',');
+                        app.CallingApp.General.tcpServer.ClientList = strsplit(app.server_ClientList.Value, ',');
                     end
 
-                    app.server_ClientList.Value = strjoin(app.editedGeneral.tcpServer.ClientList, ', ');
+                    app.server_ClientList.Value = strjoin(app.CallingApp.General.tcpServer.ClientList, ', ');
 
                 case app.server_IP
                     app.server_IP.Value = strtrim(app.server_IP.Value);
 
                     if IPv4Validation(app, app.server_IP.Value) || isempty(app.server_IP.Value)
-                        app.editedGeneral.tcpServer.IP = app.server_IP.Value;
+                        app.CallingApp.General.tcpServer.IP = app.server_IP.Value;
                     else
                         app.server_IP.Value = event.PreviousValue;
                         appUtil.modalWindow(app.UIFigure, 'warning', 'Endereço inválido (IPv4).');
                     end
 
                 case app.server_Port
-                    app.editedGeneral.tcpServer.Port = app.server_Port.Value;
+                    app.CallingApp.General.tcpServer.Port = app.server_Port.Value;
 
-                %---------------------------------------------------------%
-                case app.general_gpu
-                    if ismember(app.general_gpu.Value, {'hardwarebasic', 'hardware', 'software'})
-                        app.editedGeneral.openGL = app.general_gpu.Value;
+                case app.gpuType
+                    if ismember(app.gpuType.Value, {'hardwarebasic', 'hardware', 'software'})
+                        app.CallingApp.General.openGL = app.gpuType.Value;
                     end
 
-                %---------------------------------------------------------%
-                case app.plot_colorsMinHold
-                    app.editedGeneral.Plot.MinHold.Color = rgb2hex(event.Source.BackgroundColor);
+                case app.openAuxiliarAppAsDocked
+                    app.CallingApp.General.operationMode.Dock  = app.openAuxiliarAppAsDocked.Value;
 
-                %---------------------------------------------------------%
-                case app.plot_colorsAverage
-                    app.editedGeneral.Plot.Average.Color = rgb2hex(event.Source.BackgroundColor);
-
-                %---------------------------------------------------------%
-                case app.plot_colorsMaxHold
-                    app.editedGeneral.Plot.MaxHold.Color = rgb2hex(event.Source.BackgroundColor);
-
-                %---------------------------------------------------------%
-                case app.plot_colorsClearWrite
-                    app.editedGeneral.Plot.ClearWrite.Color = rgb2hex(event.Source.BackgroundColor);
-
-                %---------------------------------------------------------%
-                case app.plot_WaterfallColormap
-                    app.editedGeneral.Plot.Waterfall.Colormap = app.plot_WaterfallColormap.Value;
-
-                case app.plot_WaterfallDepth
-                    app.editedGeneral.Plot.Waterfall.Depth = str2double(app.plot_WaterfallDepth.Value);
-                
-                %---------------------------------------------------------%
-                case app.plot_IntegrationTrace
-                    app.editedGeneral.Integration.Trace = app.plot_IntegrationTrace.Value;
-
-                case app.plot_IntegrationTime
-                    app.editedGeneral.Integration.SampleTime = app.plot_IntegrationTime.Value;
+                case app.openAuxiliarApp2Debug
+                    app.CallingApp.General.operationMode.Debug = app.openAuxiliarApp2Debug.Value;
             end
+
+            app.CallingApp.General_I.operationMode = app.CallingApp.General.operationMode;
+            app.CallingApp.General_I.stationInfo   = app.CallingApp.General.stationInfo;
+            app.CallingApp.General_I.openGL        = app.CallingApp.General.openGL;
+            app.CallingApp.General_I.startupInfo   = app.CallingApp.General.startupInfo;
+            app.CallingApp.General_I.tcpServer     = app.CallingApp.General.tcpServer;
+
+            saveGeneralSettings(app)
+            general_updateLayout(app)
             
         end
 
         % Image clicked function: plot_refresh
-        function plotImageClicked_refresh(app, event)
+        function plot_RefreshImageClicked(app, event)
             
             % Axes toolbar
             Interactions = class.Constants.Interactions;
             plotFcn.axesInteractions(app.CallingApp.axes1, Interactions)
             plotFcn.axesInteractions(app.CallingApp.axes2, Interactions)
-            Layout_plotInteractions(app)
 
-            app.CallingApp.axes1.Parent.TileSpacing = 'tight';            
-            Layout_plotTiledSpacing(app)
+            app.CallingApp.axes1.Parent.TileSpacing        = 'tight';
 
             % Others parameters...
-            defaultGeneral = struct('Colors',     [0.38,0.60,0.73;  ...
-                                                   0.39,0.83,0.07;  ...
-                                                   1.00,0.07,0.65;  ...
-                                                   0.93,0.69,0.13], ...
-                                    'Waterfall',   struct('Colormap', 'winter', 'Depth', 512), ...
-                                    'Integration', struct('Trace', 10, 'SampleTime', 10));
+            app.CallingApp.General.Plot.MinHold.Color      = '#4A90E2';
+            app.CallingApp.General.Plot.ClearWrite.Color   = '#ffff12';
+            app.CallingApp.General.Plot.Average.Color      = '#00cc66';
+            app.CallingApp.General.Plot.MaxHold.Color      = '#FF5CAD';
 
-            if ~isequal(app.editedGeneral.Colors,      defaultGeneral.Colors)    || ...
-               ~isequal(app.editedGeneral.Waterfall,   defaultGeneral.Waterfall) || ...
-               ~isequal(app.editedGeneral.Integration, defaultGeneral.Integration)
+            app.CallingApp.General.Plot.Waterfall.Colormap = 'hot';
+            colormap(app.CallingApp.axes2, 'hot')
+            app.CallingApp.General.Plot.Waterfall.Depth    = 64;            
+            app.CallingApp.General.Integration             = struct('Trace', 10, 'SampleTime', 10);
 
-                app.editedGeneral.Colors      = defaultGeneral.Colors;
-                app.editedGeneral.Waterfall   = defaultGeneral.Waterfall;
-                app.editedGeneral.Integration = defaultGeneral.Integration;
+            app.CallingApp.General_I.Plot        = app.CallingApp.General.Plot;
+            app.CallingApp.General_I.Integration = app.CallingApp.General.Integration;
+            saveGeneralSettings(app)
 
-                Layout(app)
-                ValueChanged_OperationMode(app)
-            end
+            plot_updateLayout_Interactions(app)
+            plot_updateLayout_TiledSpacing(app)
+            plot_updateLayout_OthersFields(app)
 
         end
 
         % Image clicked function: plot_Datatip, plot_Pan, 
         % ...and 3 other components
-        function plotImageClicked_Interactions(app, event)
+        function plot_AxesInteractionsChanged(app, event)
             
             % Interações atuais:
             for ii = 1:numel(app.CallingApp.axes1.Toolbar.Children)
@@ -499,56 +488,128 @@ classdef winSettings_exported < matlab.apps.AppBase
                 app.CallingApp.axes2.PickableParts = 'visible';
             end
 
-            Layout_plotInteractions(app)
+            plot_updateLayout_Interactions(app)
 
         end
 
         % Value changed function: plot_TiledSpacing
-        function plotDropDown_TiledSpacing(app, event)
+        function plot_AxesTiledSpacingChanged(app, event)
             
             app.CallingApp.axes1.Parent.TileSpacing = app.plot_TiledSpacing.Value;
             
         end
 
-        % Button pushed function: plot_colorsAverage, 
-        % ...and 3 other components
-        function plotButtonPushed_colors(app, event)
+        % Callback function: plot_colorsAverage, plot_colorsClearWrite, 
+        % ...and 2 other components
+        function plot_ColorParameterChanged(app, event)
             
-            if app.ButtonGroup_Edit.Value
-                initialColor  = event.Source.BackgroundColor;
-                selectedColor = uisetcolor(initialColor);
-                figure(app.UIFigure)
+            initialColor  = event.PreviousValue;
+            selectedColor = event.Value;
+
+            if ~isequal(initialColor, selectedColor)
+                selectedColor = rgb2hex(selectedColor);
     
-                if ~isequal(initialColor, selectedColor)
-                    switch event.Source
-                        case app.plot_colorsMinHold;    app.plot_colorsMinHold.BackgroundColor    = selectedColor;
-                        case app.plot_colorsAverage;    app.plot_colorsAverage.BackgroundColor    = selectedColor;
-                        case app.plot_colorsMaxHold;    app.plot_colorsMaxHold.BackgroundColor    = selectedColor;
-                        case app.plot_colorsClearWrite; app.plot_colorsClearWrite.BackgroundColor = selectedColor;
-                    end
-    
-                    ValueChanged_Parameter(app, event)
+                switch event.Source
+                    case app.plot_colorsMinHold
+                        app.CallingApp.General.Plot.MinHold.Color    = selectedColor;
+                    case app.plot_colorsAverage
+                        app.CallingApp.General.Plot.Average.Color    = selectedColor;
+                    case app.plot_colorsMaxHold
+                        app.CallingApp.General.Plot.MaxHold.Color    = selectedColor;
+                    case app.plot_colorsClearWrite
+                        app.CallingApp.General.Plot.ClearWrite.Color = selectedColor;
                 end
+            end
+
+            app.CallingApp.General_I.Plot = app.CallingApp.General.Plot;
+            saveGeneralSettings(app)
+
+        end
+
+        % Value changed function: plot_IntegrationTime, 
+        % ...and 3 other components
+        function plot_OthersParameterChanged(app, event)
+            
+            switch event.Source
+                case app.plot_WaterfallColormap
+                    colormap(app.CallingApp.axes2, app.plot_WaterfallColormap.Value)
+                    app.CallingApp.General.Plot.Waterfall.Colormap = app.plot_WaterfallColormap.Value;
+
+                case app.plot_WaterfallDepth
+                    app.CallingApp.General.Plot.Waterfall.Depth    = str2double(app.plot_WaterfallDepth.Value);
+                
+                case app.plot_IntegrationTrace
+                    app.CallingApp.General.Integration.Trace       = app.plot_IntegrationTrace.Value;
+
+                case app.plot_IntegrationTime
+                    app.CallingApp.General.Integration.SampleTime  = app.plot_IntegrationTime.Value;
+            end
+
+            app.CallingApp.General_I.Plot        = app.CallingApp.General.Plot;
+            app.CallingApp.General_I.Integration = app.CallingApp.General.Integration;
+            saveGeneralSettings(app)
+
+        end
+
+        % Image clicked function: general_FileLock, general_versionLock
+        function general_PanelLockControl(app, event)
+            
+            switch event.Source
+                case app.general_FileLock
+                    gridContainer = app.general_stationGrid;
+                case app.general_versionLock
+                    gridContainer = app.server_Grid;
+            end
+
+            event.Source.UserData = ~event.Source.UserData;
+            if event.Source.UserData
+                event.Source.ImageSource = 'lockClose_32.png';
+                set(findobj(gridContainer.Children, '-not', 'Type', 'uilabel'), 'Enable', 0)
+            else
+                event.Source.ImageSource = 'lockOpen_32.png';
+                set(findobj(gridContainer.Children, '-not', 'Type', 'uilabel'), 'Enable', 1)
             end
 
         end
 
-        % Button pushed function: toolButton_edit
-        function toolButtonPushed_edit(app, event)
+        % Image clicked function: config_Folder_userPathButton
+        function config_getFolder(app, event)
             
-            % Finalizada a edição, avalia-se se algum parâmetro foi, de fato, 
-            % alterado, colocando essa informação na variável app.editedFlag.
-            % Por fim, volta-se ao "MODO DE VISUALIZAÇÃO", clicando-se
-            % programaticamente no botão de controle e, posteriormente,
-            % acionando o seu callback.
-
-            if ~isequal(app.General, app.editedGeneral)
-                app.General    = app.editedGeneral;
-                app.editedFlag = true;
+            try
+                relatedFolder = eval(sprintf('app.config_Folder_%s.Value', event.Source.Tag));                    
+            catch
+                relatedFolder = app.CallingApp.General.fileFolder.(event.Source.Tag);
             end
             
-            app.ButtonGroup_View.Value = 1;
-            ValueChanged_OperationMode(app)
+            if isfolder(relatedFolder)
+                initialFolder = relatedFolder;
+            elseif isfile(relatedFolder)
+                initialFolder = fileparts(relatedFolder);
+            else
+                initialFolder = app.config_Folder_userPath.Value;
+            end
+            
+            selectedFolder = uigetdir(initialFolder);
+            figure(app.UIFigure)
+
+            % Por enquanto, aplicável ao appColeta apenas o "userPath". Caso o 
+            % app seja evoluído, consumindo base de dados do Sharepoint, por 
+            % exemplo, deve-se copiar esse callback inserido no appAnalise.
+
+            if selectedFolder
+                switch event.Source
+                    case app.config_Folder_userPathButton
+                        app.config_Folder_userPath.Value = selectedFolder;
+                        app.CallingApp.General.fileFolder.userPath = selectedFolder;
+
+                    otherwise
+                        error('Unexpected call')
+                end
+
+                app.CallingApp.General_I.fileFolder = app.CallingApp.General.fileFolder;
+                saveGeneralSettings(app)
+                config_updatePanel(app)
+            end
 
         end
     end
@@ -566,7 +627,7 @@ classdef winSettings_exported < matlab.apps.AppBase
             if isempty(Container)
                 app.UIFigure = uifigure('Visible', 'off');
                 app.UIFigure.AutoResizeChildren = 'off';
-                app.UIFigure.Position = [100 100 940 540];
+                app.UIFigure.Position = [100 100 1146 558];
                 app.UIFigure.Name = 'appAnalise';
                 app.UIFigure.Icon = 'icon_48.png';
                 app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @closeFcn, true);
@@ -585,514 +646,172 @@ classdef winSettings_exported < matlab.apps.AppBase
 
             % Create GridLayout
             app.GridLayout = uigridlayout(app.Container);
-            app.GridLayout.ColumnWidth = {'1x', 110};
-            app.GridLayout.RowHeight = {22, '1x', 22};
-            app.GridLayout.ColumnSpacing = 5;
-            app.GridLayout.RowSpacing = 5;
+            app.GridLayout.ColumnWidth = {'1x'};
+            app.GridLayout.RowHeight = {'1x', 34};
+            app.GridLayout.RowSpacing = 0;
+            app.GridLayout.Padding = [0 0 0 0];
             app.GridLayout.BackgroundColor = [1 1 1];
 
-            % Create ButtonGroupPanel
-            app.ButtonGroupPanel = uibuttongroup(app.GridLayout);
-            app.ButtonGroupPanel.SelectionChangedFcn = createCallbackFcn(app, @ValueChanged_OperationMode, true);
-            app.ButtonGroupPanel.BorderWidth = 0;
-            app.ButtonGroupPanel.BackgroundColor = [1 1 1];
-            app.ButtonGroupPanel.Layout.Row = 1;
-            app.ButtonGroupPanel.Layout.Column = 1;
+            % Create DocumentGrid
+            app.DocumentGrid = uigridlayout(app.GridLayout);
+            app.DocumentGrid.ColumnWidth = {325, '1x', 0, 0};
+            app.DocumentGrid.RowHeight = {'1x'};
+            app.DocumentGrid.RowSpacing = 5;
+            app.DocumentGrid.Padding = [5 5 5 5];
+            app.DocumentGrid.Layout.Row = 1;
+            app.DocumentGrid.Layout.Column = 1;
+            app.DocumentGrid.BackgroundColor = [1 1 1];
 
-            % Create ButtonGroup_View
-            app.ButtonGroup_View = uiradiobutton(app.ButtonGroupPanel);
-            app.ButtonGroup_View.Text = 'Visualizar parâmetros';
-            app.ButtonGroup_View.FontSize = 11;
-            app.ButtonGroup_View.Position = [12 1 128 22];
-            app.ButtonGroup_View.Value = true;
-
-            % Create ButtonGroup_Edit
-            app.ButtonGroup_Edit = uiradiobutton(app.ButtonGroupPanel);
-            app.ButtonGroup_Edit.Text = 'Editar parâmetros';
-            app.ButtonGroup_Edit.FontSize = 11;
-            app.ButtonGroup_Edit.Position = [193 1 109 22];
-
-            % Create MainPanel
-            app.MainPanel = uipanel(app.GridLayout);
-            app.MainPanel.Layout.Row = 2;
-            app.MainPanel.Layout.Column = [1 2];
-
-            % Create MainPanelGrid
-            app.MainPanelGrid = uigridlayout(app.MainPanel);
-            app.MainPanelGrid.ColumnWidth = {286, 286, '1x'};
-            app.MainPanelGrid.RowHeight = {22, '1x'};
-            app.MainPanelGrid.ColumnSpacing = 20;
-            app.MainPanelGrid.RowSpacing = 5;
-            app.MainPanelGrid.BackgroundColor = [1 1 1];
+            % Create LeftPanel_Grid
+            app.LeftPanel_Grid = uigridlayout(app.DocumentGrid);
+            app.LeftPanel_Grid.ColumnWidth = {'1x'};
+            app.LeftPanel_Grid.RowHeight = {22, '1x'};
+            app.LeftPanel_Grid.RowSpacing = 5;
+            app.LeftPanel_Grid.Padding = [0 0 0 0];
+            app.LeftPanel_Grid.Layout.Row = 1;
+            app.LeftPanel_Grid.Layout.Column = 1;
+            app.LeftPanel_Grid.BackgroundColor = [1 1 1];
 
             % Create Tab1_GridTitle
-            app.Tab1_GridTitle = uigridlayout(app.MainPanelGrid);
+            app.Tab1_GridTitle = uigridlayout(app.LeftPanel_Grid);
             app.Tab1_GridTitle.ColumnWidth = {18, '1x'};
             app.Tab1_GridTitle.RowHeight = {'1x'};
             app.Tab1_GridTitle.ColumnSpacing = 5;
-            app.Tab1_GridTitle.RowSpacing = 5;
             app.Tab1_GridTitle.Padding = [2 2 2 2];
-            app.Tab1_GridTitle.Tag = 'COLORLOCKED';
             app.Tab1_GridTitle.Layout.Row = 1;
             app.Tab1_GridTitle.Layout.Column = 1;
             app.Tab1_GridTitle.BackgroundColor = [0.749 0.749 0.749];
 
-            % Create Tab1_Title
-            app.Tab1_Title = uilabel(app.Tab1_GridTitle);
-            app.Tab1_Title.FontSize = 11;
-            app.Tab1_Title.Layout.Row = 1;
-            app.Tab1_Title.Layout.Column = 2;
-            app.Tab1_Title.Text = 'VERSÃO';
+            % Create menu_ButtonIcon
+            app.menu_ButtonIcon = uiimage(app.Tab1_GridTitle);
+            app.menu_ButtonIcon.ScaleMethod = 'none';
+            app.menu_ButtonIcon.Tag = '1';
+            app.menu_ButtonIcon.Layout.Row = 1;
+            app.menu_ButtonIcon.Layout.Column = 1;
+            app.menu_ButtonIcon.HorizontalAlignment = 'left';
+            app.menu_ButtonIcon.ImageSource = 'Settings_18.png';
 
-            % Create Tab1_Image
-            app.Tab1_Image = uiimage(app.Tab1_GridTitle);
-            app.Tab1_Image.Layout.Row = 1;
-            app.Tab1_Image.Layout.Column = 1;
-            app.Tab1_Image.HorizontalAlignment = 'left';
-            app.Tab1_Image.ImageSource = 'LT_settings.png';
+            % Create menu_ButtonLabel
+            app.menu_ButtonLabel = uilabel(app.Tab1_GridTitle);
+            app.menu_ButtonLabel.FontSize = 11;
+            app.menu_ButtonLabel.Layout.Row = 1;
+            app.menu_ButtonLabel.Layout.Column = 2;
+            app.menu_ButtonLabel.Text = 'CONFIGURAÇÕES';
 
-            % Create Tab2_GridTitle
-            app.Tab2_GridTitle = uigridlayout(app.MainPanelGrid);
-            app.Tab2_GridTitle.ColumnWidth = {18, '1x'};
-            app.Tab2_GridTitle.RowHeight = {'1x'};
-            app.Tab2_GridTitle.ColumnSpacing = 5;
-            app.Tab2_GridTitle.RowSpacing = 5;
-            app.Tab2_GridTitle.Padding = [2 2 2 2];
-            app.Tab2_GridTitle.Tag = 'COLORLOCKED';
-            app.Tab2_GridTitle.Layout.Row = 1;
-            app.Tab2_GridTitle.Layout.Column = 2;
-            app.Tab2_GridTitle.BackgroundColor = [0.749 0.749 0.749];
+            % Create LeftPanel
+            app.LeftPanel = uipanel(app.LeftPanel_Grid);
+            app.LeftPanel.AutoResizeChildren = 'off';
+            app.LeftPanel.Layout.Row = 2;
+            app.LeftPanel.Layout.Column = 1;
 
-            % Create Tab2_Title
-            app.Tab2_Title = uilabel(app.Tab2_GridTitle);
-            app.Tab2_Title.FontSize = 11;
-            app.Tab2_Title.Layout.Row = 1;
-            app.Tab2_Title.Layout.Column = 2;
-            app.Tab2_Title.Text = 'CONFIGURAÇÕES GERAIS';
+            % Create LeftPanelGrid
+            app.LeftPanelGrid = uigridlayout(app.LeftPanel);
+            app.LeftPanelGrid.ColumnWidth = {'1x'};
+            app.LeftPanelGrid.RowHeight = {100, '1x'};
+            app.LeftPanelGrid.Padding = [0 0 0 0];
+            app.LeftPanelGrid.BackgroundColor = [1 1 1];
 
-            % Create Tab2_Image
-            app.Tab2_Image = uiimage(app.Tab2_GridTitle);
-            app.Tab2_Image.Layout.Row = 1;
-            app.Tab2_Image.Layout.Column = 1;
-            app.Tab2_Image.HorizontalAlignment = 'left';
-            app.Tab2_Image.ImageSource = 'LT_Dots2.png';
+            % Create LeftPanelRadioGroup
+            app.LeftPanelRadioGroup = uibuttongroup(app.LeftPanelGrid);
+            app.LeftPanelRadioGroup.AutoResizeChildren = 'off';
+            app.LeftPanelRadioGroup.SelectionChangedFcn = createCallbackFcn(app, @LeftPanelRadioGroupSelectionChanged, true);
+            app.LeftPanelRadioGroup.BorderType = 'none';
+            app.LeftPanelRadioGroup.BackgroundColor = [1 1 1];
+            app.LeftPanelRadioGroup.Layout.Row = 1;
+            app.LeftPanelRadioGroup.Layout.Column = 1;
+            app.LeftPanelRadioGroup.FontSize = 11;
 
-            % Create Tab3_Grid
-            app.Tab3_Grid = uigridlayout(app.MainPanelGrid);
-            app.Tab3_Grid.ColumnWidth = {18, '1x', 14};
-            app.Tab3_Grid.RowHeight = {'1x'};
-            app.Tab3_Grid.ColumnSpacing = 5;
-            app.Tab3_Grid.RowSpacing = 5;
-            app.Tab3_Grid.Padding = [2 2 2 2];
-            app.Tab3_Grid.Tag = 'COLORLOCKED';
-            app.Tab3_Grid.Layout.Row = 1;
-            app.Tab3_Grid.Layout.Column = 3;
-            app.Tab3_Grid.BackgroundColor = [0.749 0.749 0.749];
+            % Create btnGeneral
+            app.btnGeneral = uiradiobutton(app.LeftPanelRadioGroup);
+            app.btnGeneral.Text = 'Aspectos gerais';
+            app.btnGeneral.FontSize = 11;
+            app.btnGeneral.Position = [11 69 100 22];
+            app.btnGeneral.Value = true;
 
-            % Create Tab3_Title
-            app.Tab3_Title = uilabel(app.Tab3_Grid);
-            app.Tab3_Title.FontSize = 11;
-            app.Tab3_Title.Layout.Row = 1;
-            app.Tab3_Title.Layout.Column = 2;
-            app.Tab3_Title.Text = 'PLOT';
+            % Create btnPlot
+            app.btnPlot = uiradiobutton(app.LeftPanelRadioGroup);
+            app.btnPlot.Text = 'Customização do plot';
+            app.btnPlot.FontSize = 11;
+            app.btnPlot.Position = [11 47 128 22];
 
-            % Create Tab3_Image
-            app.Tab3_Image = uiimage(app.Tab3_Grid);
-            app.Tab3_Image.Layout.Row = 1;
-            app.Tab3_Image.Layout.Column = 1;
-            app.Tab3_Image.HorizontalAlignment = 'left';
-            app.Tab3_Image.ImageSource = 'LT_Detection.png';
+            % Create btnFolder
+            app.btnFolder = uiradiobutton(app.LeftPanelRadioGroup);
+            app.btnFolder.Text = 'Mapeamento de pastas';
+            app.btnFolder.FontSize = 11;
+            app.btnFolder.Position = [11 25 137 22];
 
-            % Create plot_refresh
-            app.plot_refresh = uiimage(app.Tab3_Grid);
-            app.plot_refresh.ImageClickedFcn = createCallbackFcn(app, @plotImageClicked_refresh, true);
-            app.plot_refresh.Visible = 'off';
-            app.plot_refresh.Layout.Row = 1;
-            app.plot_refresh.Layout.Column = 3;
-            app.plot_refresh.HorizontalAlignment = 'left';
-            app.plot_refresh.VerticalAlignment = 'bottom';
-            app.plot_refresh.ImageSource = 'Refresh_18.png';
+            % Create general_Grid
+            app.general_Grid = uigridlayout(app.DocumentGrid);
+            app.general_Grid.ColumnWidth = {'1x', 16, 254, 16};
+            app.general_Grid.RowHeight = {22, 136, 22, 162, 22, '1x'};
+            app.general_Grid.RowSpacing = 5;
+            app.general_Grid.Padding = [0 0 0 0];
+            app.general_Grid.Layout.Row = 1;
+            app.general_Grid.Layout.Column = 2;
+            app.general_Grid.BackgroundColor = [1 1 1];
 
-            % Create Tab3_Panel
-            app.Tab3_Panel = uipanel(app.MainPanelGrid);
-            app.Tab3_Panel.AutoResizeChildren = 'off';
-            app.Tab3_Panel.Layout.Row = 2;
-            app.Tab3_Panel.Layout.Column = 3;
+            % Create general_AppVersionLabel
+            app.general_AppVersionLabel = uilabel(app.general_Grid);
+            app.general_AppVersionLabel.VerticalAlignment = 'bottom';
+            app.general_AppVersionLabel.FontSize = 10;
+            app.general_AppVersionLabel.Layout.Row = 1;
+            app.general_AppVersionLabel.Layout.Column = 1;
+            app.general_AppVersionLabel.Text = 'ASPECTOS GERAIS';
 
-            % Create plot_Grid
-            app.plot_Grid = uigridlayout(app.Tab3_Panel);
-            app.plot_Grid.RowHeight = {17, 42, 17, 22, 17, 80, 17, 63, 17, '1x'};
-            app.plot_Grid.RowSpacing = 5;
-            app.plot_Grid.Padding = [10 10 10 5];
-            app.plot_Grid.BackgroundColor = [1 1 1];
+            % Create general_AppVersionRefresh
+            app.general_AppVersionRefresh = uiimage(app.general_Grid);
+            app.general_AppVersionRefresh.ImageClickedFcn = createCallbackFcn(app, @general_AppVersionRefreshImageClicked, true);
+            app.general_AppVersionRefresh.Tooltip = {'Verifica atualizações'};
+            app.general_AppVersionRefresh.Layout.Row = 1;
+            app.general_AppVersionRefresh.Layout.Column = 2;
+            app.general_AppVersionRefresh.VerticalAlignment = 'bottom';
+            app.general_AppVersionRefresh.ImageSource = 'Refresh_18.png';
 
-            % Create plot_InteractionsLabel
-            app.plot_InteractionsLabel = uilabel(app.plot_Grid);
-            app.plot_InteractionsLabel.VerticalAlignment = 'bottom';
-            app.plot_InteractionsLabel.FontSize = 10;
-            app.plot_InteractionsLabel.FontWeight = 'bold';
-            app.plot_InteractionsLabel.Layout.Row = 1;
-            app.plot_InteractionsLabel.Layout.Column = 1;
-            app.plot_InteractionsLabel.Text = 'Interações:';
+            % Create general_AppVersionPanel
+            app.general_AppVersionPanel = uipanel(app.general_Grid);
+            app.general_AppVersionPanel.AutoResizeChildren = 'off';
+            app.general_AppVersionPanel.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.general_AppVersionPanel.Layout.Row = [2 6];
+            app.general_AppVersionPanel.Layout.Column = [1 2];
 
-            % Create plot_InteractionsPanel
-            app.plot_InteractionsPanel = uipanel(app.plot_Grid);
-            app.plot_InteractionsPanel.BackgroundColor = [1 1 1];
-            app.plot_InteractionsPanel.Layout.Row = 2;
-            app.plot_InteractionsPanel.Layout.Column = [1 2];
-
-            % Create plot_InteractionsGrid
-            app.plot_InteractionsGrid = uigridlayout(app.plot_InteractionsPanel);
-            app.plot_InteractionsGrid.ColumnWidth = {16, 16, 16, 16, 16, '1x'};
-            app.plot_InteractionsGrid.RowHeight = {'1x', 10};
-            app.plot_InteractionsGrid.RowSpacing = 3;
-            app.plot_InteractionsGrid.Padding = [10 2 10 8];
-            app.plot_InteractionsGrid.BackgroundColor = [1 1 1];
-
-            % Create plot_Datatip
-            app.plot_Datatip = uiimage(app.plot_InteractionsGrid);
-            app.plot_Datatip.ImageClickedFcn = createCallbackFcn(app, @plotImageClicked_Interactions, true);
-            app.plot_Datatip.Tooltip = {'Datatip'};
-            app.plot_Datatip.Layout.Row = 1;
-            app.plot_Datatip.Layout.Column = 1;
-            app.plot_Datatip.ImageSource = 'AxesToolbar_Datatip.png';
-
-            % Create plot_DatatipVisibility
-            app.plot_DatatipVisibility = uiimage(app.plot_InteractionsGrid);
-            app.plot_DatatipVisibility.ScaleMethod = 'fill';
-            app.plot_DatatipVisibility.Tag = 'InteractionVisibility';
-            app.plot_DatatipVisibility.Tooltip = {'Datatip'};
-            app.plot_DatatipVisibility.Layout.Row = 2;
-            app.plot_DatatipVisibility.Layout.Column = 1;
-            app.plot_DatatipVisibility.ImageSource = 'LT_LineH.png';
-
-            % Create plot_Pan
-            app.plot_Pan = uiimage(app.plot_InteractionsGrid);
-            app.plot_Pan.ImageClickedFcn = createCallbackFcn(app, @plotImageClicked_Interactions, true);
-            app.plot_Pan.Tooltip = {'Pan'};
-            app.plot_Pan.Layout.Row = 1;
-            app.plot_Pan.Layout.Column = 2;
-            app.plot_Pan.ImageSource = 'AxesToolbar_Pan.png';
-
-            % Create plot_PanVisibility
-            app.plot_PanVisibility = uiimage(app.plot_InteractionsGrid);
-            app.plot_PanVisibility.ScaleMethod = 'fill';
-            app.plot_PanVisibility.Tag = 'InteractionVisibility';
-            app.plot_PanVisibility.Tooltip = {'Datatip'};
-            app.plot_PanVisibility.Layout.Row = 2;
-            app.plot_PanVisibility.Layout.Column = 2;
-            app.plot_PanVisibility.ImageSource = 'LT_LineH.png';
-
-            % Create plot_ZoomIn
-            app.plot_ZoomIn = uiimage(app.plot_InteractionsGrid);
-            app.plot_ZoomIn.ImageClickedFcn = createCallbackFcn(app, @plotImageClicked_Interactions, true);
-            app.plot_ZoomIn.Tooltip = {'Zoom in'};
-            app.plot_ZoomIn.Layout.Row = 1;
-            app.plot_ZoomIn.Layout.Column = 3;
-            app.plot_ZoomIn.ImageSource = 'AxesToolbar_ZoomIn.png';
-
-            % Create plot_ZoomInVisibility
-            app.plot_ZoomInVisibility = uiimage(app.plot_InteractionsGrid);
-            app.plot_ZoomInVisibility.ScaleMethod = 'fill';
-            app.plot_ZoomInVisibility.Tag = 'InteractionVisibility';
-            app.plot_ZoomInVisibility.Tooltip = {'Datatip'};
-            app.plot_ZoomInVisibility.Layout.Row = 2;
-            app.plot_ZoomInVisibility.Layout.Column = 3;
-            app.plot_ZoomInVisibility.ImageSource = 'LT_LineH.png';
-
-            % Create plot_ZoomOut
-            app.plot_ZoomOut = uiimage(app.plot_InteractionsGrid);
-            app.plot_ZoomOut.ImageClickedFcn = createCallbackFcn(app, @plotImageClicked_Interactions, true);
-            app.plot_ZoomOut.Tooltip = {'Zoom out'};
-            app.plot_ZoomOut.Layout.Row = 1;
-            app.plot_ZoomOut.Layout.Column = 4;
-            app.plot_ZoomOut.ImageSource = 'AxesToolbar_ZoomOut.png';
-
-            % Create plot_ZoomOutVisibility
-            app.plot_ZoomOutVisibility = uiimage(app.plot_InteractionsGrid);
-            app.plot_ZoomOutVisibility.ScaleMethod = 'fill';
-            app.plot_ZoomOutVisibility.Tag = 'InteractionVisibility';
-            app.plot_ZoomOutVisibility.Tooltip = {'Datatip'};
-            app.plot_ZoomOutVisibility.Layout.Row = 2;
-            app.plot_ZoomOutVisibility.Layout.Column = 4;
-            app.plot_ZoomOutVisibility.ImageSource = 'LT_LineH.png';
-
-            % Create plot_RestoreView
-            app.plot_RestoreView = uiimage(app.plot_InteractionsGrid);
-            app.plot_RestoreView.ImageClickedFcn = createCallbackFcn(app, @plotImageClicked_Interactions, true);
-            app.plot_RestoreView.Tooltip = {'Restore view'};
-            app.plot_RestoreView.Layout.Row = 1;
-            app.plot_RestoreView.Layout.Column = 5;
-            app.plot_RestoreView.ImageSource = 'AxesToolbar_RestoreView.png';
-
-            % Create plot_RestoreViewVisibility
-            app.plot_RestoreViewVisibility = uiimage(app.plot_InteractionsGrid);
-            app.plot_RestoreViewVisibility.ScaleMethod = 'fill';
-            app.plot_RestoreViewVisibility.Tag = 'InteractionVisibility';
-            app.plot_RestoreViewVisibility.Tooltip = {'Datatip'};
-            app.plot_RestoreViewVisibility.Layout.Row = 2;
-            app.plot_RestoreViewVisibility.Layout.Column = 5;
-            app.plot_RestoreViewVisibility.ImageSource = 'LT_LineH.png';
-
-            % Create plot_TiledSpacingLabel
-            app.plot_TiledSpacingLabel = uilabel(app.plot_Grid);
-            app.plot_TiledSpacingLabel.VerticalAlignment = 'bottom';
-            app.plot_TiledSpacingLabel.FontSize = 10;
-            app.plot_TiledSpacingLabel.FontWeight = 'bold';
-            app.plot_TiledSpacingLabel.Layout.Row = 3;
-            app.plot_TiledSpacingLabel.Layout.Column = [1 2];
-            app.plot_TiledSpacingLabel.Text = 'Espaçamento entre eixos:';
-
-            % Create plot_TiledSpacing
-            app.plot_TiledSpacing = uidropdown(app.plot_Grid);
-            app.plot_TiledSpacing.Items = {'loose', 'compact', 'tight', 'none'};
-            app.plot_TiledSpacing.ValueChangedFcn = createCallbackFcn(app, @plotDropDown_TiledSpacing, true);
-            app.plot_TiledSpacing.FontSize = 11;
-            app.plot_TiledSpacing.BackgroundColor = [1 1 1];
-            app.plot_TiledSpacing.Layout.Row = 4;
-            app.plot_TiledSpacing.Layout.Column = [1 2];
-            app.plot_TiledSpacing.Value = 'loose';
-
-            % Create plot_colorsLabel
-            app.plot_colorsLabel = uilabel(app.plot_Grid);
-            app.plot_colorsLabel.VerticalAlignment = 'bottom';
-            app.plot_colorsLabel.FontSize = 10;
-            app.plot_colorsLabel.FontWeight = 'bold';
-            app.plot_colorsLabel.Layout.Row = 5;
-            app.plot_colorsLabel.Layout.Column = 1;
-            app.plot_colorsLabel.Text = 'Cores:';
-
-            % Create plot_colorsGrid
-            app.plot_colorsGrid = uigridlayout(app.plot_Grid);
-            app.plot_colorsGrid.ColumnWidth = {'1x'};
-            app.plot_colorsGrid.RowHeight = {20, 20, 20, 20};
-            app.plot_colorsGrid.ColumnSpacing = 0;
-            app.plot_colorsGrid.RowSpacing = 0;
-            app.plot_colorsGrid.Padding = [0 0 0 0];
-            app.plot_colorsGrid.Layout.Row = 6;
-            app.plot_colorsGrid.Layout.Column = [1 2];
-            app.plot_colorsGrid.BackgroundColor = [1 1 1];
-
-            % Create plot_colorsMinHold
-            app.plot_colorsMinHold = uibutton(app.plot_colorsGrid, 'push');
-            app.plot_colorsMinHold.ButtonPushedFcn = createCallbackFcn(app, @plotButtonPushed_colors, true);
-            app.plot_colorsMinHold.HorizontalAlignment = 'right';
-            app.plot_colorsMinHold.VerticalAlignment = 'top';
-            app.plot_colorsMinHold.BackgroundColor = [0.3804 0.6 0.7294];
-            app.plot_colorsMinHold.FontSize = 10;
-            app.plot_colorsMinHold.FontColor = [1 1 1];
-            app.plot_colorsMinHold.Layout.Row = 4;
-            app.plot_colorsMinHold.Layout.Column = 1;
-            app.plot_colorsMinHold.Text = 'MinHold';
-
-            % Create plot_colorsAverage
-            app.plot_colorsAverage = uibutton(app.plot_colorsGrid, 'push');
-            app.plot_colorsAverage.ButtonPushedFcn = createCallbackFcn(app, @plotButtonPushed_colors, true);
-            app.plot_colorsAverage.HorizontalAlignment = 'right';
-            app.plot_colorsAverage.VerticalAlignment = 'top';
-            app.plot_colorsAverage.BackgroundColor = [0.3882 0.8314 0.0706];
-            app.plot_colorsAverage.FontSize = 10;
-            app.plot_colorsAverage.FontColor = [1 1 1];
-            app.plot_colorsAverage.Layout.Row = 3;
-            app.plot_colorsAverage.Layout.Column = 1;
-            app.plot_colorsAverage.Text = 'Tendência central';
-
-            % Create plot_colorsClearWrite
-            app.plot_colorsClearWrite = uibutton(app.plot_colorsGrid, 'push');
-            app.plot_colorsClearWrite.ButtonPushedFcn = createCallbackFcn(app, @plotButtonPushed_colors, true);
-            app.plot_colorsClearWrite.HorizontalAlignment = 'right';
-            app.plot_colorsClearWrite.VerticalAlignment = 'top';
-            app.plot_colorsClearWrite.BackgroundColor = [0.9294 0.6902 0.1294];
-            app.plot_colorsClearWrite.FontSize = 10;
-            app.plot_colorsClearWrite.FontColor = [1 1 1];
-            app.plot_colorsClearWrite.Layout.Row = 2;
-            app.plot_colorsClearWrite.Layout.Column = 1;
-            app.plot_colorsClearWrite.Text = 'ClearWrite';
-
-            % Create plot_colorsMaxHold
-            app.plot_colorsMaxHold = uibutton(app.plot_colorsGrid, 'push');
-            app.plot_colorsMaxHold.ButtonPushedFcn = createCallbackFcn(app, @plotButtonPushed_colors, true);
-            app.plot_colorsMaxHold.HorizontalAlignment = 'right';
-            app.plot_colorsMaxHold.VerticalAlignment = 'top';
-            app.plot_colorsMaxHold.BackgroundColor = [1 0.0706 0.651];
-            app.plot_colorsMaxHold.FontSize = 10;
-            app.plot_colorsMaxHold.FontColor = [1 1 1];
-            app.plot_colorsMaxHold.Layout.Row = 1;
-            app.plot_colorsMaxHold.Layout.Column = 1;
-            app.plot_colorsMaxHold.Text = 'MaxHold';
-
-            % Create plot_WaterfallLabel
-            app.plot_WaterfallLabel = uilabel(app.plot_Grid);
-            app.plot_WaterfallLabel.VerticalAlignment = 'bottom';
-            app.plot_WaterfallLabel.FontSize = 10;
-            app.plot_WaterfallLabel.FontWeight = 'bold';
-            app.plot_WaterfallLabel.Layout.Row = 7;
-            app.plot_WaterfallLabel.Layout.Column = 1;
-            app.plot_WaterfallLabel.Text = 'Waterfall:';
-
-            % Create plot_WaterfallPanel
-            app.plot_WaterfallPanel = uipanel(app.plot_Grid);
-            app.plot_WaterfallPanel.BackgroundColor = [1 1 1];
-            app.plot_WaterfallPanel.Layout.Row = 8;
-            app.plot_WaterfallPanel.Layout.Column = [1 2];
-
-            % Create plot_WaterfallGrid
-            app.plot_WaterfallGrid = uigridlayout(app.plot_WaterfallPanel);
-            app.plot_WaterfallGrid.RowHeight = {17, 22};
-            app.plot_WaterfallGrid.RowSpacing = 5;
-            app.plot_WaterfallGrid.Padding = [10 10 10 5];
-            app.plot_WaterfallGrid.BackgroundColor = [1 1 1];
-
-            % Create plot_WaterfallDepthLabel
-            app.plot_WaterfallDepthLabel = uilabel(app.plot_WaterfallGrid);
-            app.plot_WaterfallDepthLabel.VerticalAlignment = 'bottom';
-            app.plot_WaterfallDepthLabel.FontSize = 10;
-            app.plot_WaterfallDepthLabel.Layout.Row = 1;
-            app.plot_WaterfallDepthLabel.Layout.Column = 2;
-            app.plot_WaterfallDepthLabel.Text = 'Profundidade:';
-
-            % Create plot_WaterfallDepth
-            app.plot_WaterfallDepth = uidropdown(app.plot_WaterfallGrid);
-            app.plot_WaterfallDepth.Items = {'64', '128', '256', '512'};
-            app.plot_WaterfallDepth.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.plot_WaterfallDepth.FontSize = 11;
-            app.plot_WaterfallDepth.BackgroundColor = [1 1 1];
-            app.plot_WaterfallDepth.Layout.Row = 2;
-            app.plot_WaterfallDepth.Layout.Column = 2;
-            app.plot_WaterfallDepth.Value = '128';
-
-            % Create plot_WaterfallColormapLabel
-            app.plot_WaterfallColormapLabel = uilabel(app.plot_WaterfallGrid);
-            app.plot_WaterfallColormapLabel.VerticalAlignment = 'bottom';
-            app.plot_WaterfallColormapLabel.FontSize = 10;
-            app.plot_WaterfallColormapLabel.Layout.Row = 1;
-            app.plot_WaterfallColormapLabel.Layout.Column = 1;
-            app.plot_WaterfallColormapLabel.Text = 'Mapa de cor:';
-
-            % Create plot_WaterfallColormap
-            app.plot_WaterfallColormap = uidropdown(app.plot_WaterfallGrid);
-            app.plot_WaterfallColormap.Items = {'gray', 'hot', 'jet', 'summer', 'turbo', 'winter'};
-            app.plot_WaterfallColormap.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.plot_WaterfallColormap.FontSize = 11;
-            app.plot_WaterfallColormap.BackgroundColor = [1 1 1];
-            app.plot_WaterfallColormap.Layout.Row = 2;
-            app.plot_WaterfallColormap.Layout.Column = 1;
-            app.plot_WaterfallColormap.Value = 'jet';
-
-            % Create plot_IntegrationLabel
-            app.plot_IntegrationLabel = uilabel(app.plot_Grid);
-            app.plot_IntegrationLabel.VerticalAlignment = 'bottom';
-            app.plot_IntegrationLabel.FontSize = 10;
-            app.plot_IntegrationLabel.FontWeight = 'bold';
-            app.plot_IntegrationLabel.Layout.Row = 9;
-            app.plot_IntegrationLabel.Layout.Column = 1;
-            app.plot_IntegrationLabel.Text = 'Integração:';
-
-            % Create plot_IntegrationPanel
-            app.plot_IntegrationPanel = uipanel(app.plot_Grid);
-            app.plot_IntegrationPanel.BackgroundColor = [1 1 1];
-            app.plot_IntegrationPanel.Layout.Row = 10;
-            app.plot_IntegrationPanel.Layout.Column = [1 2];
-
-            % Create plot_IntegrationGrid
-            app.plot_IntegrationGrid = uigridlayout(app.plot_IntegrationPanel);
-            app.plot_IntegrationGrid.RowHeight = {17, 22};
-            app.plot_IntegrationGrid.ColumnSpacing = 20;
-            app.plot_IntegrationGrid.RowSpacing = 5;
-            app.plot_IntegrationGrid.Padding = [10 10 10 5];
-            app.plot_IntegrationGrid.BackgroundColor = [1 1 1];
-
-            % Create plot_IntegrationTimeLabel
-            app.plot_IntegrationTimeLabel = uilabel(app.plot_IntegrationGrid);
-            app.plot_IntegrationTimeLabel.VerticalAlignment = 'bottom';
-            app.plot_IntegrationTimeLabel.FontSize = 10;
-            app.plot_IntegrationTimeLabel.Layout.Row = 1;
-            app.plot_IntegrationTimeLabel.Layout.Column = 2;
-            app.plot_IntegrationTimeLabel.Text = 'Tempo médio escrita:';
-
-            % Create plot_IntegrationTime
-            app.plot_IntegrationTime = uieditfield(app.plot_IntegrationGrid, 'numeric');
-            app.plot_IntegrationTime.Limits = [3 100];
-            app.plot_IntegrationTime.RoundFractionalValues = 'on';
-            app.plot_IntegrationTime.ValueDisplayFormat = '%d';
-            app.plot_IntegrationTime.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.plot_IntegrationTime.Editable = 'off';
-            app.plot_IntegrationTime.FontSize = 11;
-            app.plot_IntegrationTime.Layout.Row = 2;
-            app.plot_IntegrationTime.Layout.Column = 2;
-            app.plot_IntegrationTime.Value = 10;
-
-            % Create plot_IntegrationTraceLabel
-            app.plot_IntegrationTraceLabel = uilabel(app.plot_IntegrationGrid);
-            app.plot_IntegrationTraceLabel.VerticalAlignment = 'bottom';
-            app.plot_IntegrationTraceLabel.FontSize = 10;
-            app.plot_IntegrationTraceLabel.Layout.Row = 1;
-            app.plot_IntegrationTraceLabel.Layout.Column = 1;
-            app.plot_IntegrationTraceLabel.Text = 'Traço médio:';
-
-            % Create plot_IntegrationTrace
-            app.plot_IntegrationTrace = uieditfield(app.plot_IntegrationGrid, 'numeric');
-            app.plot_IntegrationTrace.Limits = [3 100];
-            app.plot_IntegrationTrace.RoundFractionalValues = 'on';
-            app.plot_IntegrationTrace.ValueDisplayFormat = '%d';
-            app.plot_IntegrationTrace.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.plot_IntegrationTrace.Editable = 'off';
-            app.plot_IntegrationTrace.FontSize = 11;
-            app.plot_IntegrationTrace.Layout.Row = 2;
-            app.plot_IntegrationTrace.Layout.Column = 1;
-            app.plot_IntegrationTrace.Value = 10;
-
-            % Create general_versionPanel
-            app.general_versionPanel = uipanel(app.MainPanelGrid);
-            app.general_versionPanel.BackgroundColor = [1 1 1];
-            app.general_versionPanel.Layout.Row = 2;
-            app.general_versionPanel.Layout.Column = 1;
-
-            % Create general_versionGrid
-            app.general_versionGrid = uigridlayout(app.general_versionPanel);
-            app.general_versionGrid.ColumnWidth = {'1x'};
-            app.general_versionGrid.RowHeight = {'1x'};
-            app.general_versionGrid.ColumnSpacing = 0;
-            app.general_versionGrid.RowSpacing = 0;
-            app.general_versionGrid.Padding = [0 0 0 0];
-            app.general_versionGrid.BackgroundColor = [1 1 1];
+            % Create general_AppVersionGrid
+            app.general_AppVersionGrid = uigridlayout(app.general_AppVersionPanel);
+            app.general_AppVersionGrid.ColumnWidth = {'1x'};
+            app.general_AppVersionGrid.RowHeight = {'1x'};
+            app.general_AppVersionGrid.Padding = [0 0 0 0];
+            app.general_AppVersionGrid.BackgroundColor = [1 1 1];
 
             % Create AppVersion
-            app.AppVersion = uihtml(app.general_versionGrid);
+            app.AppVersion = uihtml(app.general_AppVersionGrid);
+            app.AppVersion.HTMLSource = ' ';
             app.AppVersion.Layout.Row = 1;
             app.AppVersion.Layout.Column = 1;
 
-            % Create Tab1_Panel
-            app.Tab1_Panel = uipanel(app.MainPanelGrid);
-            app.Tab1_Panel.Layout.Row = 2;
-            app.Tab1_Panel.Layout.Column = 2;
+            % Create general_FileLabel
+            app.general_FileLabel = uilabel(app.general_Grid);
+            app.general_FileLabel.VerticalAlignment = 'bottom';
+            app.general_FileLabel.FontSize = 10;
+            app.general_FileLabel.Layout.Row = 1;
+            app.general_FileLabel.Layout.Column = 3;
+            app.general_FileLabel.Text = 'ESTAÇÃO';
 
-            % Create general_Grid
-            app.general_Grid = uigridlayout(app.Tab1_Panel);
-            app.general_Grid.ColumnWidth = {'1x'};
-            app.general_Grid.RowHeight = {17, 138, 17, '1x', 17, 22};
-            app.general_Grid.ColumnSpacing = 5;
-            app.general_Grid.RowSpacing = 5;
-            app.general_Grid.Padding = [10 10 10 5];
-            app.general_Grid.BackgroundColor = [1 1 1];
+            % Create general_FileLock
+            app.general_FileLock = uiimage(app.general_Grid);
+            app.general_FileLock.ImageClickedFcn = createCallbackFcn(app, @general_PanelLockControl, true);
+            app.general_FileLock.Layout.Row = 1;
+            app.general_FileLock.Layout.Column = 4;
+            app.general_FileLock.VerticalAlignment = 'bottom';
+            app.general_FileLock.ImageSource = 'lockClose_32.png';
 
-            % Create general_stationLabel
-            app.general_stationLabel = uilabel(app.general_Grid);
-            app.general_stationLabel.VerticalAlignment = 'bottom';
-            app.general_stationLabel.FontSize = 10;
-            app.general_stationLabel.FontWeight = 'bold';
-            app.general_stationLabel.Layout.Row = 1;
-            app.general_stationLabel.Layout.Column = 1;
-            app.general_stationLabel.Text = 'Estação:';
-
-            % Create general_stationPanel
-            app.general_stationPanel = uipanel(app.general_Grid);
-            app.general_stationPanel.Layout.Row = 2;
-            app.general_stationPanel.Layout.Column = 1;
+            % Create general_FilePanel
+            app.general_FilePanel = uipanel(app.general_Grid);
+            app.general_FilePanel.AutoResizeChildren = 'off';
+            app.general_FilePanel.Layout.Row = 2;
+            app.general_FilePanel.Layout.Column = [3 4];
 
             % Create general_stationGrid
-            app.general_stationGrid = uigridlayout(app.general_stationPanel);
-            app.general_stationGrid.RowHeight = {17, 22, '1x', 22, 17};
+            app.general_stationGrid = uigridlayout(app.general_FilePanel);
+            app.general_stationGrid.RowHeight = {17, 22, 22, 22, 17};
             app.general_stationGrid.RowSpacing = 5;
             app.general_stationGrid.Padding = [10 9 10 4];
             app.general_stationGrid.BackgroundColor = [1 1 1];
@@ -1107,9 +826,9 @@ classdef winSettings_exported < matlab.apps.AppBase
 
             % Create general_stationName
             app.general_stationName = uieditfield(app.general_stationGrid, 'text');
-            app.general_stationName.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.general_stationName.Editable = 'off';
+            app.general_stationName.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.general_stationName.FontSize = 11;
+            app.general_stationName.Enable = 'off';
             app.general_stationName.Layout.Row = 2;
             app.general_stationName.Layout.Column = 1;
 
@@ -1117,7 +836,6 @@ classdef winSettings_exported < matlab.apps.AppBase
             app.general_stationTypeLabel = uilabel(app.general_stationGrid);
             app.general_stationTypeLabel.VerticalAlignment = 'bottom';
             app.general_stationTypeLabel.FontSize = 10;
-            app.general_stationTypeLabel.FontWeight = 'bold';
             app.general_stationTypeLabel.Layout.Row = 1;
             app.general_stationTypeLabel.Layout.Column = 2;
             app.general_stationTypeLabel.Text = 'Tipo:';
@@ -1125,7 +843,8 @@ classdef winSettings_exported < matlab.apps.AppBase
             % Create general_stationType
             app.general_stationType = uidropdown(app.general_stationGrid);
             app.general_stationType.Items = {'Fixed', 'Mobile'};
-            app.general_stationType.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
+            app.general_stationType.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
+            app.general_stationType.Enable = 'off';
             app.general_stationType.FontSize = 11;
             app.general_stationType.BackgroundColor = [1 1 1];
             app.general_stationType.Layout.Row = 2;
@@ -1143,10 +862,10 @@ classdef winSettings_exported < matlab.apps.AppBase
             % Create general_stationLatitude
             app.general_stationLatitude = uieditfield(app.general_stationGrid, 'numeric');
             app.general_stationLatitude.ValueDisplayFormat = '%.6f';
-            app.general_stationLatitude.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
+            app.general_stationLatitude.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.general_stationLatitude.Tag = 'task_Editable';
-            app.general_stationLatitude.Editable = 'off';
             app.general_stationLatitude.FontSize = 11;
+            app.general_stationLatitude.Enable = 'off';
             app.general_stationLatitude.Layout.Row = 4;
             app.general_stationLatitude.Layout.Column = 1;
             app.general_stationLatitude.Value = -1;
@@ -1162,81 +881,70 @@ classdef winSettings_exported < matlab.apps.AppBase
             % Create general_stationLongitude
             app.general_stationLongitude = uieditfield(app.general_stationGrid, 'numeric');
             app.general_stationLongitude.ValueDisplayFormat = '%.6f';
-            app.general_stationLongitude.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
+            app.general_stationLongitude.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.general_stationLongitude.Tag = 'task_Editable';
-            app.general_stationLongitude.Editable = 'off';
             app.general_stationLongitude.FontSize = 11;
+            app.general_stationLongitude.Enable = 'off';
             app.general_stationLongitude.Layout.Row = 4;
             app.general_stationLongitude.Layout.Column = 2;
             app.general_stationLongitude.Value = -1;
 
-            % Create general_lastSessionInfoGrid
-            app.general_lastSessionInfoGrid = uigridlayout(app.general_stationGrid);
-            app.general_lastSessionInfoGrid.ColumnWidth = {16, '1x'};
-            app.general_lastSessionInfoGrid.RowHeight = {'1x'};
-            app.general_lastSessionInfoGrid.ColumnSpacing = 2;
-            app.general_lastSessionInfoGrid.RowSpacing = 0;
-            app.general_lastSessionInfoGrid.Padding = [0 0 0 0];
-            app.general_lastSessionInfoGrid.Layout.Row = 5;
-            app.general_lastSessionInfoGrid.Layout.Column = [1 2];
-            app.general_lastSessionInfoGrid.BackgroundColor = [1 1 1];
-
-            % Create general_lastSessionInfoLabel
-            app.general_lastSessionInfoLabel = uilabel(app.general_lastSessionInfoGrid);
-            app.general_lastSessionInfoLabel.FontSize = 10;
-            app.general_lastSessionInfoLabel.Layout.Row = 1;
-            app.general_lastSessionInfoLabel.Layout.Column = 2;
-            app.general_lastSessionInfoLabel.Text = 'Leitura dados armazenados na última sessão.';
-
             % Create general_lastSessionInfo
-            app.general_lastSessionInfo = uicheckbox(app.general_lastSessionInfoGrid);
-            app.general_lastSessionInfo.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
+            app.general_lastSessionInfo = uicheckbox(app.general_stationGrid);
+            app.general_lastSessionInfo.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.general_lastSessionInfo.Enable = 'off';
-            app.general_lastSessionInfo.Text = '';
+            app.general_lastSessionInfo.Text = 'Leitura dados armazenados na última sessão.';
             app.general_lastSessionInfo.FontSize = 10;
-            app.general_lastSessionInfo.Layout.Row = 1;
-            app.general_lastSessionInfo.Layout.Column = 1;
+            app.general_lastSessionInfo.Layout.Row = 5;
+            app.general_lastSessionInfo.Layout.Column = [1 2];
 
             % Create general_versionLabel
             app.general_versionLabel = uilabel(app.general_Grid);
             app.general_versionLabel.VerticalAlignment = 'bottom';
             app.general_versionLabel.FontSize = 10;
-            app.general_versionLabel.FontWeight = 'bold';
             app.general_versionLabel.Layout.Row = 3;
-            app.general_versionLabel.Layout.Column = 1;
-            app.general_versionLabel.Text = 'Servidor TCP:';
+            app.general_versionLabel.Layout.Column = 3;
+            app.general_versionLabel.Text = 'WEBSERVICE';
 
-            % Create general_gpuLabel
-            app.general_gpuLabel = uilabel(app.general_Grid);
-            app.general_gpuLabel.VerticalAlignment = 'bottom';
-            app.general_gpuLabel.FontSize = 10;
-            app.general_gpuLabel.FontWeight = 'bold';
-            app.general_gpuLabel.FontColor = [0.149 0.149 0.149];
-            app.general_gpuLabel.Layout.Row = 5;
-            app.general_gpuLabel.Layout.Column = 1;
-            app.general_gpuLabel.Text = 'Unidade gráfica:';
+            % Create general_versionLock
+            app.general_versionLock = uiimage(app.general_Grid);
+            app.general_versionLock.ImageClickedFcn = createCallbackFcn(app, @general_PanelLockControl, true);
+            app.general_versionLock.Layout.Row = 3;
+            app.general_versionLock.Layout.Column = 4;
+            app.general_versionLock.VerticalAlignment = 'bottom';
+            app.general_versionLock.ImageSource = 'lockClose_32.png';
 
-            % Create general_gpu
-            app.general_gpu = uidropdown(app.general_Grid);
-            app.general_gpu.Items = {};
-            app.general_gpu.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.general_gpu.FontSize = 11;
-            app.general_gpu.BackgroundColor = [1 1 1];
-            app.general_gpu.Layout.Row = 6;
-            app.general_gpu.Layout.Column = 1;
-            app.general_gpu.Value = {};
-
-            % Create Tab2_Panel
-            app.Tab2_Panel = uipanel(app.general_Grid);
-            app.Tab2_Panel.Layout.Row = 4;
-            app.Tab2_Panel.Layout.Column = 1;
+            % Create general_versionPanel
+            app.general_versionPanel = uipanel(app.general_Grid);
+            app.general_versionPanel.AutoResizeChildren = 'off';
+            app.general_versionPanel.Layout.Row = 4;
+            app.general_versionPanel.Layout.Column = [3 4];
 
             % Create server_Grid
-            app.server_Grid = uigridlayout(app.Tab2_Panel);
-            app.server_Grid.RowHeight = {17, 22, '1x', 22, 17, 22};
+            app.server_Grid = uigridlayout(app.general_versionPanel);
+            app.server_Grid.RowHeight = {17, 22, 22, 22, 17, 22};
             app.server_Grid.RowSpacing = 5;
             app.server_Grid.Padding = [10 8 10 4];
             app.server_Grid.BackgroundColor = [1 1 1];
+
+            % Create server_StatusLabel
+            app.server_StatusLabel = uilabel(app.server_Grid);
+            app.server_StatusLabel.VerticalAlignment = 'bottom';
+            app.server_StatusLabel.FontSize = 10;
+            app.server_StatusLabel.Layout.Row = 1;
+            app.server_StatusLabel.Layout.Column = 1;
+            app.server_StatusLabel.Text = 'Estado:';
+
+            % Create server_Status
+            app.server_Status = uidropdown(app.server_Grid);
+            app.server_Status.Items = {'ON', 'OFF'};
+            app.server_Status.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
+            app.server_Status.Enable = 'off';
+            app.server_Status.FontSize = 11;
+            app.server_Status.BackgroundColor = [0.9412 0.9412 0.9412];
+            app.server_Status.Layout.Row = 2;
+            app.server_Status.Layout.Column = 1;
+            app.server_Status.Value = 'ON';
 
             % Create server_KeyLabel
             app.server_KeyLabel = uilabel(app.server_Grid);
@@ -1248,9 +956,9 @@ classdef winSettings_exported < matlab.apps.AppBase
 
             % Create server_Key
             app.server_Key = uieditfield(app.server_Grid, 'text');
-            app.server_Key.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.server_Key.Editable = 'off';
+            app.server_Key.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.server_Key.FontSize = 11;
+            app.server_Key.Enable = 'off';
             app.server_Key.Layout.Row = 2;
             app.server_Key.Layout.Column = 2;
 
@@ -1264,9 +972,9 @@ classdef winSettings_exported < matlab.apps.AppBase
 
             % Create server_ClientList
             app.server_ClientList = uieditfield(app.server_Grid, 'text');
-            app.server_ClientList.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.server_ClientList.Editable = 'off';
+            app.server_ClientList.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.server_ClientList.FontSize = 11;
+            app.server_ClientList.Enable = 'off';
             app.server_ClientList.Layout.Row = 4;
             app.server_ClientList.Layout.Column = [1 2];
 
@@ -1280,9 +988,9 @@ classdef winSettings_exported < matlab.apps.AppBase
 
             % Create server_IP
             app.server_IP = uieditfield(app.server_Grid, 'text');
-            app.server_IP.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.server_IP.Editable = 'off';
+            app.server_IP.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.server_IP.FontSize = 11;
+            app.server_IP.Enable = 'off';
             app.server_IP.Layout.Row = 6;
             app.server_IP.Layout.Column = 1;
 
@@ -1299,65 +1007,510 @@ classdef winSettings_exported < matlab.apps.AppBase
             app.server_Port.Limits = [1 65535];
             app.server_Port.RoundFractionalValues = 'on';
             app.server_Port.ValueDisplayFormat = '%d';
-            app.server_Port.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.server_Port.Editable = 'off';
+            app.server_Port.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
             app.server_Port.FontSize = 11;
+            app.server_Port.Enable = 'off';
             app.server_Port.Layout.Row = 6;
             app.server_Port.Layout.Column = 2;
             app.server_Port.Value = 1;
 
-            % Create server_StatusLabel
-            app.server_StatusLabel = uilabel(app.server_Grid);
-            app.server_StatusLabel.VerticalAlignment = 'bottom';
-            app.server_StatusLabel.FontSize = 10;
-            app.server_StatusLabel.Layout.Row = 1;
-            app.server_StatusLabel.Layout.Column = 1;
-            app.server_StatusLabel.Text = 'Estado:';
+            % Create general_GraphicsLabel
+            app.general_GraphicsLabel = uilabel(app.general_Grid);
+            app.general_GraphicsLabel.VerticalAlignment = 'bottom';
+            app.general_GraphicsLabel.FontSize = 10;
+            app.general_GraphicsLabel.Layout.Row = 5;
+            app.general_GraphicsLabel.Layout.Column = 3;
+            app.general_GraphicsLabel.Text = 'GRÁFICO';
 
-            % Create server_Status
-            app.server_Status = uidropdown(app.server_Grid);
-            app.server_Status.Items = {'ON', 'OFF'};
-            app.server_Status.ValueChangedFcn = createCallbackFcn(app, @ValueChanged_Parameter, true);
-            app.server_Status.FontSize = 11;
-            app.server_Status.BackgroundColor = [0.9412 0.9412 0.9412];
-            app.server_Status.Layout.Row = 2;
-            app.server_Status.Layout.Column = 1;
-            app.server_Status.Value = 'ON';
+            % Create general_GraphicsPanel
+            app.general_GraphicsPanel = uipanel(app.general_Grid);
+            app.general_GraphicsPanel.AutoResizeChildren = 'off';
+            app.general_GraphicsPanel.Layout.Row = 6;
+            app.general_GraphicsPanel.Layout.Column = [3 4];
 
-            % Create toolGrid
-            app.toolGrid = uigridlayout(app.GridLayout);
-            app.toolGrid.ColumnWidth = {0, 22, '1x', '1x', 110};
-            app.toolGrid.RowHeight = {'1x'};
-            app.toolGrid.ColumnSpacing = 5;
-            app.toolGrid.RowSpacing = 0;
-            app.toolGrid.Padding = [0 0 0 0];
-            app.toolGrid.Layout.Row = 3;
-            app.toolGrid.Layout.Column = [1 2];
-            app.toolGrid.BackgroundColor = [1 1 1];
+            % Create general_GraphicsGrid
+            app.general_GraphicsGrid = uigridlayout(app.general_GraphicsPanel);
+            app.general_GraphicsGrid.RowHeight = {17, 22, 38, 17};
+            app.general_GraphicsGrid.RowSpacing = 5;
+            app.general_GraphicsGrid.Padding = [10 10 10 4];
+            app.general_GraphicsGrid.BackgroundColor = [1 1 1];
 
-            % Create toolButton_edit
-            app.toolButton_edit = uibutton(app.toolGrid, 'push');
-            app.toolButton_edit.ButtonPushedFcn = createCallbackFcn(app, @toolButtonPushed_edit, true);
-            app.toolButton_edit.Icon = 'LT_edit.png';
-            app.toolButton_edit.IconAlignment = 'right';
-            app.toolButton_edit.HorizontalAlignment = 'right';
-            app.toolButton_edit.BackgroundColor = [1 1 1];
-            app.toolButton_edit.FontSize = 11;
-            app.toolButton_edit.Visible = 'off';
-            app.toolButton_edit.Layout.Row = 1;
-            app.toolButton_edit.Layout.Column = 5;
-            app.toolButton_edit.Text = 'Confirma edição';
+            % Create gpuTypeLabel
+            app.gpuTypeLabel = uilabel(app.general_GraphicsGrid);
+            app.gpuTypeLabel.VerticalAlignment = 'bottom';
+            app.gpuTypeLabel.FontSize = 10;
+            app.gpuTypeLabel.FontColor = [0.149 0.149 0.149];
+            app.gpuTypeLabel.Layout.Row = 1;
+            app.gpuTypeLabel.Layout.Column = 1;
+            app.gpuTypeLabel.Text = 'Unidade gráfica:';
 
-            % Create EditionModeLabel
-            app.EditionModeLabel = uilabel(app.GridLayout);
-            app.EditionModeLabel.BackgroundColor = [0.6392 0.0784 0.1804];
-            app.EditionModeLabel.HorizontalAlignment = 'center';
-            app.EditionModeLabel.FontSize = 11;
-            app.EditionModeLabel.FontColor = [1 1 1];
-            app.EditionModeLabel.Visible = 'off';
-            app.EditionModeLabel.Layout.Row = 1;
-            app.EditionModeLabel.Layout.Column = 2;
-            app.EditionModeLabel.Text = 'MODO DE EDIÇÃO';
+            % Create gpuType
+            app.gpuType = uidropdown(app.general_GraphicsGrid);
+            app.gpuType.Items = {'hardwarebasic', 'hardware', 'software'};
+            app.gpuType.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
+            app.gpuType.FontSize = 11;
+            app.gpuType.BackgroundColor = [1 1 1];
+            app.gpuType.Layout.Row = 2;
+            app.gpuType.Layout.Column = [1 2];
+            app.gpuType.Value = 'hardwarebasic';
+
+            % Create openAuxiliarAppAsDocked
+            app.openAuxiliarAppAsDocked = uicheckbox(app.general_GraphicsGrid);
+            app.openAuxiliarAppAsDocked.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
+            app.openAuxiliarAppAsDocked.Text = 'Modo DOCK: módulos auxiliares abertos na própria janela do appColeta.';
+            app.openAuxiliarAppAsDocked.WordWrap = 'on';
+            app.openAuxiliarAppAsDocked.FontSize = 11;
+            app.openAuxiliarAppAsDocked.Layout.Row = 3;
+            app.openAuxiliarAppAsDocked.Layout.Column = [1 2];
+
+            % Create openAuxiliarApp2Debug
+            app.openAuxiliarApp2Debug = uicheckbox(app.general_GraphicsGrid);
+            app.openAuxiliarApp2Debug.ValueChangedFcn = createCallbackFcn(app, @general_ParameterChanged, true);
+            app.openAuxiliarApp2Debug.Text = 'Modo DEBUG';
+            app.openAuxiliarApp2Debug.FontSize = 11;
+            app.openAuxiliarApp2Debug.Layout.Row = 4;
+            app.openAuxiliarApp2Debug.Layout.Column = [1 2];
+
+            % Create plot_Grid
+            app.plot_Grid = uigridlayout(app.DocumentGrid);
+            app.plot_Grid.ColumnWidth = {'1x', 16};
+            app.plot_Grid.RowHeight = {22, 17, 38, 17, 22, 17, 62, 17, 63, 17, '1x'};
+            app.plot_Grid.RowSpacing = 5;
+            app.plot_Grid.Padding = [0 0 0 0];
+            app.plot_Grid.Layout.Row = 1;
+            app.plot_Grid.Layout.Column = 3;
+            app.plot_Grid.BackgroundColor = [1 1 1];
+
+            % Create plot_Title
+            app.plot_Title = uilabel(app.plot_Grid);
+            app.plot_Title.VerticalAlignment = 'bottom';
+            app.plot_Title.FontSize = 10;
+            app.plot_Title.Layout.Row = 1;
+            app.plot_Title.Layout.Column = 1;
+            app.plot_Title.Text = 'CUSTOMIZAÇÃO DO PLOT';
+
+            % Create plot_InteractionsLabel
+            app.plot_InteractionsLabel = uilabel(app.plot_Grid);
+            app.plot_InteractionsLabel.VerticalAlignment = 'bottom';
+            app.plot_InteractionsLabel.FontSize = 10;
+            app.plot_InteractionsLabel.Layout.Row = 2;
+            app.plot_InteractionsLabel.Layout.Column = 1;
+            app.plot_InteractionsLabel.Text = 'Interações:';
+
+            % Create plot_refresh
+            app.plot_refresh = uiimage(app.plot_Grid);
+            app.plot_refresh.ImageClickedFcn = createCallbackFcn(app, @plot_RefreshImageClicked, true);
+            app.plot_refresh.Layout.Row = 2;
+            app.plot_refresh.Layout.Column = 2;
+            app.plot_refresh.HorizontalAlignment = 'left';
+            app.plot_refresh.VerticalAlignment = 'bottom';
+            app.plot_refresh.ImageSource = 'Refresh_18.png';
+
+            % Create plot_InteractionsPanel
+            app.plot_InteractionsPanel = uipanel(app.plot_Grid);
+            app.plot_InteractionsPanel.AutoResizeChildren = 'off';
+            app.plot_InteractionsPanel.BackgroundColor = [1 1 1];
+            app.plot_InteractionsPanel.Layout.Row = 3;
+            app.plot_InteractionsPanel.Layout.Column = [1 2];
+
+            % Create plot_InteractionsGrid
+            app.plot_InteractionsGrid = uigridlayout(app.plot_InteractionsPanel);
+            app.plot_InteractionsGrid.ColumnWidth = {16, 16, 16, 16, 16, '1x'};
+            app.plot_InteractionsGrid.RowHeight = {'1x', 3};
+            app.plot_InteractionsGrid.RowSpacing = 0;
+            app.plot_InteractionsGrid.Padding = [5 5 10 2];
+            app.plot_InteractionsGrid.BackgroundColor = [1 1 1];
+
+            % Create plot_Datatip
+            app.plot_Datatip = uiimage(app.plot_InteractionsGrid);
+            app.plot_Datatip.ImageClickedFcn = createCallbackFcn(app, @plot_AxesInteractionsChanged, true);
+            app.plot_Datatip.Tooltip = {'Datatip'};
+            app.plot_Datatip.Layout.Row = 1;
+            app.plot_Datatip.Layout.Column = 1;
+            app.plot_Datatip.ImageSource = 'AxesToolbar_Datatip.png';
+
+            % Create plot_DatatipVisibility
+            app.plot_DatatipVisibility = uiimage(app.plot_InteractionsGrid);
+            app.plot_DatatipVisibility.ScaleMethod = 'fill';
+            app.plot_DatatipVisibility.Tag = 'InteractionVisibility';
+            app.plot_DatatipVisibility.Tooltip = {'Datatip'};
+            app.plot_DatatipVisibility.Layout.Row = 2;
+            app.plot_DatatipVisibility.Layout.Column = 1;
+            app.plot_DatatipVisibility.ImageSource = 'LineH.png';
+
+            % Create plot_Pan
+            app.plot_Pan = uiimage(app.plot_InteractionsGrid);
+            app.plot_Pan.ImageClickedFcn = createCallbackFcn(app, @plot_AxesInteractionsChanged, true);
+            app.plot_Pan.Tooltip = {'Pan'};
+            app.plot_Pan.Layout.Row = 1;
+            app.plot_Pan.Layout.Column = 2;
+            app.plot_Pan.ImageSource = 'AxesToolbar_Pan.png';
+
+            % Create plot_PanVisibility
+            app.plot_PanVisibility = uiimage(app.plot_InteractionsGrid);
+            app.plot_PanVisibility.ScaleMethod = 'fill';
+            app.plot_PanVisibility.Tag = 'InteractionVisibility';
+            app.plot_PanVisibility.Tooltip = {'Datatip'};
+            app.plot_PanVisibility.Layout.Row = 2;
+            app.plot_PanVisibility.Layout.Column = 2;
+            app.plot_PanVisibility.ImageSource = 'LineH.png';
+
+            % Create plot_ZoomIn
+            app.plot_ZoomIn = uiimage(app.plot_InteractionsGrid);
+            app.plot_ZoomIn.ImageClickedFcn = createCallbackFcn(app, @plot_AxesInteractionsChanged, true);
+            app.plot_ZoomIn.Tooltip = {'Zoom in'};
+            app.plot_ZoomIn.Layout.Row = 1;
+            app.plot_ZoomIn.Layout.Column = 3;
+            app.plot_ZoomIn.ImageSource = 'AxesToolbar_ZoomIn.png';
+
+            % Create plot_ZoomInVisibility
+            app.plot_ZoomInVisibility = uiimage(app.plot_InteractionsGrid);
+            app.plot_ZoomInVisibility.ScaleMethod = 'fill';
+            app.plot_ZoomInVisibility.Tag = 'InteractionVisibility';
+            app.plot_ZoomInVisibility.Tooltip = {'Datatip'};
+            app.plot_ZoomInVisibility.Layout.Row = 2;
+            app.plot_ZoomInVisibility.Layout.Column = 3;
+            app.plot_ZoomInVisibility.ImageSource = 'LineH.png';
+
+            % Create plot_ZoomOut
+            app.plot_ZoomOut = uiimage(app.plot_InteractionsGrid);
+            app.plot_ZoomOut.ImageClickedFcn = createCallbackFcn(app, @plot_AxesInteractionsChanged, true);
+            app.plot_ZoomOut.Tooltip = {'Zoom out'};
+            app.plot_ZoomOut.Layout.Row = 1;
+            app.plot_ZoomOut.Layout.Column = 4;
+            app.plot_ZoomOut.ImageSource = 'AxesToolbar_ZoomOut.png';
+
+            % Create plot_ZoomOutVisibility
+            app.plot_ZoomOutVisibility = uiimage(app.plot_InteractionsGrid);
+            app.plot_ZoomOutVisibility.ScaleMethod = 'fill';
+            app.plot_ZoomOutVisibility.Tag = 'InteractionVisibility';
+            app.plot_ZoomOutVisibility.Tooltip = {'Datatip'};
+            app.plot_ZoomOutVisibility.Layout.Row = 2;
+            app.plot_ZoomOutVisibility.Layout.Column = 4;
+            app.plot_ZoomOutVisibility.ImageSource = 'LineH.png';
+
+            % Create plot_RestoreView
+            app.plot_RestoreView = uiimage(app.plot_InteractionsGrid);
+            app.plot_RestoreView.ImageClickedFcn = createCallbackFcn(app, @plot_AxesInteractionsChanged, true);
+            app.plot_RestoreView.Tooltip = {'Restore view'};
+            app.plot_RestoreView.Layout.Row = 1;
+            app.plot_RestoreView.Layout.Column = 5;
+            app.plot_RestoreView.ImageSource = 'AxesToolbar_RestoreView.png';
+
+            % Create plot_RestoreViewVisibility
+            app.plot_RestoreViewVisibility = uiimage(app.plot_InteractionsGrid);
+            app.plot_RestoreViewVisibility.ScaleMethod = 'fill';
+            app.plot_RestoreViewVisibility.Tag = 'InteractionVisibility';
+            app.plot_RestoreViewVisibility.Tooltip = {'Datatip'};
+            app.plot_RestoreViewVisibility.Layout.Row = 2;
+            app.plot_RestoreViewVisibility.Layout.Column = 5;
+            app.plot_RestoreViewVisibility.ImageSource = 'LineH.png';
+
+            % Create plot_TiledSpacingLabel
+            app.plot_TiledSpacingLabel = uilabel(app.plot_Grid);
+            app.plot_TiledSpacingLabel.VerticalAlignment = 'bottom';
+            app.plot_TiledSpacingLabel.FontSize = 10;
+            app.plot_TiledSpacingLabel.Layout.Row = 4;
+            app.plot_TiledSpacingLabel.Layout.Column = [1 2];
+            app.plot_TiledSpacingLabel.Text = 'Espaçamento entre eixos:';
+
+            % Create plot_TiledSpacing
+            app.plot_TiledSpacing = uidropdown(app.plot_Grid);
+            app.plot_TiledSpacing.Items = {'loose', 'compact', 'tight', 'none'};
+            app.plot_TiledSpacing.ValueChangedFcn = createCallbackFcn(app, @plot_AxesTiledSpacingChanged, true);
+            app.plot_TiledSpacing.FontSize = 11;
+            app.plot_TiledSpacing.BackgroundColor = [1 1 1];
+            app.plot_TiledSpacing.Layout.Row = 5;
+            app.plot_TiledSpacing.Layout.Column = [1 2];
+            app.plot_TiledSpacing.Value = 'loose';
+
+            % Create plot_colorsLabel
+            app.plot_colorsLabel = uilabel(app.plot_Grid);
+            app.plot_colorsLabel.VerticalAlignment = 'bottom';
+            app.plot_colorsLabel.FontSize = 10;
+            app.plot_colorsLabel.FontWeight = 'bold';
+            app.plot_colorsLabel.Layout.Row = 6;
+            app.plot_colorsLabel.Layout.Column = 1;
+            app.plot_colorsLabel.Text = 'Cores:';
+
+            % Create plot_colorsPanel
+            app.plot_colorsPanel = uipanel(app.plot_Grid);
+            app.plot_colorsPanel.AutoResizeChildren = 'off';
+            app.plot_colorsPanel.Layout.Row = 7;
+            app.plot_colorsPanel.Layout.Column = [1 2];
+
+            % Create plot_colorsGrid
+            app.plot_colorsGrid = uigridlayout(app.plot_colorsPanel);
+            app.plot_colorsGrid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+            app.plot_colorsGrid.RowHeight = {17, 22};
+            app.plot_colorsGrid.ColumnSpacing = 20;
+            app.plot_colorsGrid.RowSpacing = 5;
+            app.plot_colorsGrid.Padding = [10 10 10 5];
+            app.plot_colorsGrid.BackgroundColor = [1 1 1];
+
+            % Create plot_colorsMinHoldLabel
+            app.plot_colorsMinHoldLabel = uilabel(app.plot_colorsGrid);
+            app.plot_colorsMinHoldLabel.VerticalAlignment = 'bottom';
+            app.plot_colorsMinHoldLabel.FontSize = 10;
+            app.plot_colorsMinHoldLabel.Layout.Row = 1;
+            app.plot_colorsMinHoldLabel.Layout.Column = 1;
+            app.plot_colorsMinHoldLabel.Text = 'MinHold:';
+
+            % Create plot_colorsMinHold
+            app.plot_colorsMinHold = uicolorpicker(app.plot_colorsGrid);
+            app.plot_colorsMinHold.ValueChangedFcn = createCallbackFcn(app, @plot_ColorParameterChanged, true);
+            app.plot_colorsMinHold.Layout.Row = 2;
+            app.plot_colorsMinHold.Layout.Column = 1;
+
+            % Create plot_colorsAverageLabel
+            app.plot_colorsAverageLabel = uilabel(app.plot_colorsGrid);
+            app.plot_colorsAverageLabel.VerticalAlignment = 'bottom';
+            app.plot_colorsAverageLabel.FontSize = 10;
+            app.plot_colorsAverageLabel.Layout.Row = 1;
+            app.plot_colorsAverageLabel.Layout.Column = 2;
+            app.plot_colorsAverageLabel.Text = 'Average:';
+
+            % Create plot_colorsAverage
+            app.plot_colorsAverage = uicolorpicker(app.plot_colorsGrid);
+            app.plot_colorsAverage.ValueChangedFcn = createCallbackFcn(app, @plot_ColorParameterChanged, true);
+            app.plot_colorsAverage.Layout.Row = 2;
+            app.plot_colorsAverage.Layout.Column = 2;
+
+            % Create plot_colorsMaxHoldLabel
+            app.plot_colorsMaxHoldLabel = uilabel(app.plot_colorsGrid);
+            app.plot_colorsMaxHoldLabel.VerticalAlignment = 'bottom';
+            app.plot_colorsMaxHoldLabel.FontSize = 10;
+            app.plot_colorsMaxHoldLabel.Layout.Row = 1;
+            app.plot_colorsMaxHoldLabel.Layout.Column = 3;
+            app.plot_colorsMaxHoldLabel.Text = 'MaxHold:';
+
+            % Create plot_colorsMaxHold
+            app.plot_colorsMaxHold = uicolorpicker(app.plot_colorsGrid);
+            app.plot_colorsMaxHold.ValueChangedFcn = createCallbackFcn(app, @plot_ColorParameterChanged, true);
+            app.plot_colorsMaxHold.Layout.Row = 2;
+            app.plot_colorsMaxHold.Layout.Column = 3;
+
+            % Create plot_colorsClearWriteLabel
+            app.plot_colorsClearWriteLabel = uilabel(app.plot_colorsGrid);
+            app.plot_colorsClearWriteLabel.VerticalAlignment = 'bottom';
+            app.plot_colorsClearWriteLabel.FontSize = 10;
+            app.plot_colorsClearWriteLabel.Layout.Row = 1;
+            app.plot_colorsClearWriteLabel.Layout.Column = 4;
+            app.plot_colorsClearWriteLabel.Text = 'ClearWrite:';
+
+            % Create plot_colorsClearWrite
+            app.plot_colorsClearWrite = uicolorpicker(app.plot_colorsGrid);
+            app.plot_colorsClearWrite.ValueChangedFcn = createCallbackFcn(app, @plot_ColorParameterChanged, true);
+            app.plot_colorsClearWrite.Layout.Row = 2;
+            app.plot_colorsClearWrite.Layout.Column = 4;
+
+            % Create plot_WaterfallLabel
+            app.plot_WaterfallLabel = uilabel(app.plot_Grid);
+            app.plot_WaterfallLabel.VerticalAlignment = 'bottom';
+            app.plot_WaterfallLabel.FontSize = 10;
+            app.plot_WaterfallLabel.Layout.Row = 8;
+            app.plot_WaterfallLabel.Layout.Column = 1;
+            app.plot_WaterfallLabel.Text = 'Waterfall:';
+
+            % Create plot_WaterfallPanel
+            app.plot_WaterfallPanel = uipanel(app.plot_Grid);
+            app.plot_WaterfallPanel.AutoResizeChildren = 'off';
+            app.plot_WaterfallPanel.BackgroundColor = [1 1 1];
+            app.plot_WaterfallPanel.Layout.Row = 9;
+            app.plot_WaterfallPanel.Layout.Column = [1 2];
+
+            % Create plot_WaterfallGrid
+            app.plot_WaterfallGrid = uigridlayout(app.plot_WaterfallPanel);
+            app.plot_WaterfallGrid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+            app.plot_WaterfallGrid.RowHeight = {17, 22};
+            app.plot_WaterfallGrid.ColumnSpacing = 20;
+            app.plot_WaterfallGrid.RowSpacing = 5;
+            app.plot_WaterfallGrid.Padding = [10 10 10 5];
+            app.plot_WaterfallGrid.BackgroundColor = [1 1 1];
+
+            % Create plot_WaterfallColormapLabel
+            app.plot_WaterfallColormapLabel = uilabel(app.plot_WaterfallGrid);
+            app.plot_WaterfallColormapLabel.VerticalAlignment = 'bottom';
+            app.plot_WaterfallColormapLabel.FontSize = 10;
+            app.plot_WaterfallColormapLabel.Layout.Row = 1;
+            app.plot_WaterfallColormapLabel.Layout.Column = 1;
+            app.plot_WaterfallColormapLabel.Text = 'Mapa de cor:';
+
+            % Create plot_WaterfallColormap
+            app.plot_WaterfallColormap = uidropdown(app.plot_WaterfallGrid);
+            app.plot_WaterfallColormap.Items = {'gray', 'hot', 'jet', 'summer', 'turbo', 'winter'};
+            app.plot_WaterfallColormap.ValueChangedFcn = createCallbackFcn(app, @plot_OthersParameterChanged, true);
+            app.plot_WaterfallColormap.FontSize = 11;
+            app.plot_WaterfallColormap.BackgroundColor = [1 1 1];
+            app.plot_WaterfallColormap.Layout.Row = 2;
+            app.plot_WaterfallColormap.Layout.Column = 1;
+            app.plot_WaterfallColormap.Value = 'jet';
+
+            % Create plot_WaterfallDepthLabel
+            app.plot_WaterfallDepthLabel = uilabel(app.plot_WaterfallGrid);
+            app.plot_WaterfallDepthLabel.VerticalAlignment = 'bottom';
+            app.plot_WaterfallDepthLabel.FontSize = 10;
+            app.plot_WaterfallDepthLabel.Layout.Row = 1;
+            app.plot_WaterfallDepthLabel.Layout.Column = 2;
+            app.plot_WaterfallDepthLabel.Text = 'Profundidade:';
+
+            % Create plot_WaterfallDepth
+            app.plot_WaterfallDepth = uidropdown(app.plot_WaterfallGrid);
+            app.plot_WaterfallDepth.Items = {'64', '128', '256', '512'};
+            app.plot_WaterfallDepth.ValueChangedFcn = createCallbackFcn(app, @plot_OthersParameterChanged, true);
+            app.plot_WaterfallDepth.FontSize = 11;
+            app.plot_WaterfallDepth.BackgroundColor = [1 1 1];
+            app.plot_WaterfallDepth.Layout.Row = 2;
+            app.plot_WaterfallDepth.Layout.Column = 2;
+            app.plot_WaterfallDepth.Value = '128';
+
+            % Create plot_IntegrationLabel
+            app.plot_IntegrationLabel = uilabel(app.plot_Grid);
+            app.plot_IntegrationLabel.VerticalAlignment = 'bottom';
+            app.plot_IntegrationLabel.FontSize = 10;
+            app.plot_IntegrationLabel.Layout.Row = 10;
+            app.plot_IntegrationLabel.Layout.Column = 1;
+            app.plot_IntegrationLabel.Text = 'Integração:';
+
+            % Create plot_IntegrationPanel
+            app.plot_IntegrationPanel = uipanel(app.plot_Grid);
+            app.plot_IntegrationPanel.AutoResizeChildren = 'off';
+            app.plot_IntegrationPanel.BackgroundColor = [1 1 1];
+            app.plot_IntegrationPanel.Layout.Row = 11;
+            app.plot_IntegrationPanel.Layout.Column = [1 2];
+
+            % Create plot_IntegrationGrid
+            app.plot_IntegrationGrid = uigridlayout(app.plot_IntegrationPanel);
+            app.plot_IntegrationGrid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+            app.plot_IntegrationGrid.RowHeight = {17, 22};
+            app.plot_IntegrationGrid.ColumnSpacing = 20;
+            app.plot_IntegrationGrid.RowSpacing = 5;
+            app.plot_IntegrationGrid.Padding = [10 10 10 5];
+            app.plot_IntegrationGrid.BackgroundColor = [1 1 1];
+
+            % Create plot_IntegrationTraceLabel
+            app.plot_IntegrationTraceLabel = uilabel(app.plot_IntegrationGrid);
+            app.plot_IntegrationTraceLabel.VerticalAlignment = 'bottom';
+            app.plot_IntegrationTraceLabel.FontSize = 10;
+            app.plot_IntegrationTraceLabel.Layout.Row = 1;
+            app.plot_IntegrationTraceLabel.Layout.Column = 1;
+            app.plot_IntegrationTraceLabel.Text = 'Traço médio:';
+
+            % Create plot_IntegrationTrace
+            app.plot_IntegrationTrace = uieditfield(app.plot_IntegrationGrid, 'numeric');
+            app.plot_IntegrationTrace.Limits = [3 100];
+            app.plot_IntegrationTrace.RoundFractionalValues = 'on';
+            app.plot_IntegrationTrace.ValueDisplayFormat = '%d';
+            app.plot_IntegrationTrace.ValueChangedFcn = createCallbackFcn(app, @plot_OthersParameterChanged, true);
+            app.plot_IntegrationTrace.FontSize = 11;
+            app.plot_IntegrationTrace.Layout.Row = 2;
+            app.plot_IntegrationTrace.Layout.Column = 1;
+            app.plot_IntegrationTrace.Value = 10;
+
+            % Create plot_IntegrationTimeLabel
+            app.plot_IntegrationTimeLabel = uilabel(app.plot_IntegrationGrid);
+            app.plot_IntegrationTimeLabel.VerticalAlignment = 'bottom';
+            app.plot_IntegrationTimeLabel.FontSize = 10;
+            app.plot_IntegrationTimeLabel.Layout.Row = 1;
+            app.plot_IntegrationTimeLabel.Layout.Column = 2;
+            app.plot_IntegrationTimeLabel.Text = 'Tempo médio escrita:';
+
+            % Create plot_IntegrationTime
+            app.plot_IntegrationTime = uieditfield(app.plot_IntegrationGrid, 'numeric');
+            app.plot_IntegrationTime.Limits = [3 100];
+            app.plot_IntegrationTime.RoundFractionalValues = 'on';
+            app.plot_IntegrationTime.ValueDisplayFormat = '%d';
+            app.plot_IntegrationTime.ValueChangedFcn = createCallbackFcn(app, @plot_OthersParameterChanged, true);
+            app.plot_IntegrationTime.FontSize = 11;
+            app.plot_IntegrationTime.Layout.Row = 2;
+            app.plot_IntegrationTime.Layout.Column = 2;
+            app.plot_IntegrationTime.Value = 10;
+
+            % Create Folders_Grid
+            app.Folders_Grid = uigridlayout(app.DocumentGrid);
+            app.Folders_Grid.ColumnWidth = {'1x'};
+            app.Folders_Grid.RowHeight = {22, 5, '1x', 1};
+            app.Folders_Grid.RowSpacing = 0;
+            app.Folders_Grid.Padding = [0 0 0 0];
+            app.Folders_Grid.Layout.Row = 1;
+            app.Folders_Grid.Layout.Column = 4;
+            app.Folders_Grid.BackgroundColor = [1 1 1];
+
+            % Create config_FolderMapLabel
+            app.config_FolderMapLabel = uilabel(app.Folders_Grid);
+            app.config_FolderMapLabel.VerticalAlignment = 'bottom';
+            app.config_FolderMapLabel.FontSize = 10;
+            app.config_FolderMapLabel.Layout.Row = 1;
+            app.config_FolderMapLabel.Layout.Column = 1;
+            app.config_FolderMapLabel.Text = 'MAPEAMENTO DE PASTAS';
+
+            % Create config_FolderMapPanel
+            app.config_FolderMapPanel = uipanel(app.Folders_Grid);
+            app.config_FolderMapPanel.AutoResizeChildren = 'off';
+            app.config_FolderMapPanel.Layout.Row = 3;
+            app.config_FolderMapPanel.Layout.Column = 1;
+
+            % Create config_FolderMapGrid
+            app.config_FolderMapGrid = uigridlayout(app.config_FolderMapPanel);
+            app.config_FolderMapGrid.ColumnWidth = {'1x', 20};
+            app.config_FolderMapGrid.RowHeight = {17, 22, 17, 22, '1x'};
+            app.config_FolderMapGrid.ColumnSpacing = 5;
+            app.config_FolderMapGrid.RowSpacing = 5;
+            app.config_FolderMapGrid.BackgroundColor = [1 1 1];
+
+            % Create config_Folder_userPathLabel
+            app.config_Folder_userPathLabel = uilabel(app.config_FolderMapGrid);
+            app.config_Folder_userPathLabel.VerticalAlignment = 'bottom';
+            app.config_Folder_userPathLabel.FontSize = 10;
+            app.config_Folder_userPathLabel.Layout.Row = 1;
+            app.config_Folder_userPathLabel.Layout.Column = 1;
+            app.config_Folder_userPathLabel.Text = 'Pasta do usuário:';
+
+            % Create config_Folder_userPath
+            app.config_Folder_userPath = uieditfield(app.config_FolderMapGrid, 'text');
+            app.config_Folder_userPath.Editable = 'off';
+            app.config_Folder_userPath.FontSize = 11;
+            app.config_Folder_userPath.Layout.Row = 2;
+            app.config_Folder_userPath.Layout.Column = 1;
+
+            % Create config_Folder_userPathButton
+            app.config_Folder_userPathButton = uiimage(app.config_FolderMapGrid);
+            app.config_Folder_userPathButton.ImageClickedFcn = createCallbackFcn(app, @config_getFolder, true);
+            app.config_Folder_userPathButton.Tag = 'userPath';
+            app.config_Folder_userPathButton.Layout.Row = 2;
+            app.config_Folder_userPathButton.Layout.Column = 2;
+            app.config_Folder_userPathButton.ImageSource = 'OpenFile_36x36.png';
+
+            % Create config_Folder_tempPathLabel
+            app.config_Folder_tempPathLabel = uilabel(app.config_FolderMapGrid);
+            app.config_Folder_tempPathLabel.VerticalAlignment = 'bottom';
+            app.config_Folder_tempPathLabel.FontSize = 10;
+            app.config_Folder_tempPathLabel.Layout.Row = 3;
+            app.config_Folder_tempPathLabel.Layout.Column = 1;
+            app.config_Folder_tempPathLabel.Text = 'Pasta temporária:';
+
+            % Create config_Folder_tempPath
+            app.config_Folder_tempPath = uieditfield(app.config_FolderMapGrid, 'text');
+            app.config_Folder_tempPath.Editable = 'off';
+            app.config_Folder_tempPath.FontSize = 11;
+            app.config_Folder_tempPath.Layout.Row = 4;
+            app.config_Folder_tempPath.Layout.Column = 1;
+
+            % Create ToolbarGrid
+            app.ToolbarGrid = uigridlayout(app.GridLayout);
+            app.ToolbarGrid.ColumnWidth = {22, '1x'};
+            app.ToolbarGrid.RowHeight = {'1x'};
+            app.ToolbarGrid.ColumnSpacing = 5;
+            app.ToolbarGrid.Padding = [1 7 5 7];
+            app.ToolbarGrid.Layout.Row = 2;
+            app.ToolbarGrid.Layout.Column = 1;
+
+            % Create tool_LeftPanelVisibility
+            app.tool_LeftPanelVisibility = uiimage(app.ToolbarGrid);
+            app.tool_LeftPanelVisibility.ImageClickedFcn = createCallbackFcn(app, @tool_LeftPanelVisibilityImageClicked, true);
+            app.tool_LeftPanelVisibility.Layout.Row = 1;
+            app.tool_LeftPanelVisibility.Layout.Column = 1;
+            app.tool_LeftPanelVisibility.ImageSource = 'ArrowLeft_32.png';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';

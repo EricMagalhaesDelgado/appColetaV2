@@ -1,8 +1,8 @@
 {
-    "version": 0.01,
+    "version": 0.02,
     "operationMode": {
         "Debug": false,
-        "Dock": false,
+        "Dock": true,
         "Simulation": false
     },
     "computerName": {
@@ -60,10 +60,10 @@
             "Fcn": "image",
             "Decimation": "auto",
             "MeshStyle": "both",
-            "Colormap": "winter",
+            "Colormap": "hot",
             "Colorbar": "off",
             "LevelLimits": [0, 1],
-            "Depth": 512
+            "Depth": 64
         }
     },
     "stationInfo": {

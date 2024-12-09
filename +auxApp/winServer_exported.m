@@ -5,10 +5,8 @@ classdef winServer_exported < matlab.apps.AppBase
         UIFigure              matlab.ui.Figure
         GridLayout            matlab.ui.container.GridLayout
         MainPanelGrid         matlab.ui.container.GridLayout
+        UITable               matlab.ui.control.Table
         general_refresh       matlab.ui.control.Image
-        general_TablePanel    matlab.ui.container.Panel
-        general_TableGrid     matlab.ui.container.GridLayout
-        general_Table         ccTools.Table
         general_versionPanel  matlab.ui.container.Panel
         general_versionGrid   matlab.ui.container.GridLayout
         general_version       matlab.ui.control.HTML
@@ -16,6 +14,7 @@ classdef winServer_exported < matlab.apps.AppBase
         Tab1_Title            matlab.ui.control.Label
         Tab1_Image            matlab.ui.control.Image
         toolGrid              matlab.ui.container.GridLayout
+        jsBackDoor            matlab.ui.control.HTML
         toolButton_edit       matlab.ui.control.Button
         toolLampLabel         matlab.ui.control.Label
         toolLamp              matlab.ui.control.Lamp
@@ -30,20 +29,76 @@ classdef winServer_exported < matlab.apps.AppBase
         CallingApp
         rootFolder
 
+        timerObj
+
         tcpServer
     end
 
 
     methods (Access = private)
         %-----------------------------------------------------------------%
-        function startupGeneral(app)
-            app.tcpServer = app.CallingApp.tcpServer;
+        % JSBACKDOOR
+        %-----------------------------------------------------------------%
+        function jsBackDoor_Initialization(app)
+            app.jsBackDoor.HTMLSource = ccTools.fcn.jsBackDoorHTMLSource;
+        end
+
+        %-----------------------------------------------------------------%
+        function jsBackDoor_Customizations(app)
+            % Customizações dos componentes...
+            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
+                                                                                   'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
+                                                                                                       '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
+                                                                                                       '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
+
+            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
+                                                                                   'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+        end
+    end
+    
+
+    methods (Access = private)
+        %-----------------------------------------------------------------%
+        % INICIALIZAÇÃO
+        %-----------------------------------------------------------------%
+        function startup_timerCreation(app)            
+            % A criação desse timer tem como objetivo garantir uma renderização 
+            % mais rápida dos componentes principais da GUI, possibilitando a 
+            % visualização da sua tela inicialpelo usuário. Trata-se de aspecto 
+            % essencial quando o app é compilado como webapp.
+
+            app.timerObj = timer("ExecutionMode", "fixedSpacing", ...
+                                 "StartDelay",    1.5,            ...
+                                 "Period",        .1,             ...
+                                 "TimerFcn",      @(~,~)app.startup_timerFcn);
+            start(app.timerObj)
+        end
+
+        %-----------------------------------------------------------------%
+        function startup_timerFcn(app)
+            if ccTools.fcn.UIFigureRenderStatus(app.UIFigure)
+                stop(app.timerObj)
+                delete(app.timerObj)
+
+                startup_Controller(app)
+            end
+        end
+
+        %-----------------------------------------------------------------%
+        function startup_Controller(app)
+            drawnow
+
+            % Customiza as aspectos estéticos de alguns dos componentes da GUI 
+            % (diretamente em JS).
+            jsBackDoor_Customizations(app)
+            
             Layout(app)
         end
 
-
         %-----------------------------------------------------------------%
         function Layout(app)
+            app.tcpServer = app.CallingApp.tcpServer;
+
             if isempty(app.tcpServer)
                 app.general_version.HTMLSource = ' ';
                 app.general_refresh.Visible = 0;
@@ -51,7 +106,9 @@ classdef winServer_exported < matlab.apps.AppBase
                 app.toolLamp.Color = [.64 .08 .18];
                 app.toolLampLabel.Text = 'Servidor não está em execução.';
 
-                app.general_Table.Data = table;
+                app.UITable.Data = table('Size', [0, 8],                                                                                    ...
+                                               'VariableTypes', {'string', 'string', 'double', 'string', 'string', 'string', 'double', 'string'}, ...
+                                               'VariableNames', {'Timestamp', 'ClientAddress', 'ClientPort', 'Message', 'ClientName', 'Request', 'NumBytesWritten', 'Status'});
                 set(app.toolButton_edit, Text='Iniciar servidor', Icon='play_32.png')
 
             elseif isempty(app.tcpServer.Server)
@@ -61,7 +118,7 @@ classdef winServer_exported < matlab.apps.AppBase
                 app.toolLamp.Color = [.5 .5 .5];
                 app.toolLampLabel.Text = sprintf('Servidor ainda não está em execução, apesar do objeto "class.tcpServerLib" já ter sido criado. Será realizada uma nova tentativa para executá-lo a cada %d segundos.', class.Constants.tcpServerPeriod);
 
-                app.general_Table.Data = app.tcpServer.LOG;
+                app.UITable.Data = app.tcpServer.LOG;
                 set(app.toolButton_edit, Text='Excluir objeto', Icon='Delete_32Red.png')
 
             else
@@ -83,7 +140,7 @@ classdef winServer_exported < matlab.apps.AppBase
                 app.toolLamp.Color = [.47 .67 .19];
                 app.toolLampLabel.Text = sprintf('Servidor em execução desde %s.', char(app.tcpServer.Time));
 
-                app.general_Table.Data = app.tcpServer.LOG;
+                app.UITable.Data = app.tcpServer.LOG;
                 set(app.toolButton_edit, Text='Parar servidor', Icon='stop_32.png')
             end
         end
@@ -99,13 +156,15 @@ classdef winServer_exported < matlab.apps.AppBase
             app.CallingApp = mainapp;
             app.rootFolder = app.CallingApp.rootFolder;
 
+            jsBackDoor_Initialization(app)
+
             if app.isDocked
                 app.GridLayout.Padding(4) = 21;
+                startup_Controller(app)
             else
                 appUtil.winPosition(app.UIFigure)
+                startup_timerCreation(app)
             end
-
-            startupGeneral(app)
             
         end
 
@@ -131,14 +190,14 @@ classdef winServer_exported < matlab.apps.AppBase
                 app.CallingApp.tcpServer = [];
             end
 
-            startupGeneral(app)
+            Layout(app)
 
         end
 
         % Image clicked function: general_refresh
         function general_refreshImageClicked(app, event)
             
-            startupGeneral(app)
+            Layout(app)
 
         end
     end
@@ -183,7 +242,7 @@ classdef winServer_exported < matlab.apps.AppBase
 
             % Create toolGrid
             app.toolGrid = uigridlayout(app.GridLayout);
-            app.toolGrid.ColumnWidth = {18, '1x', 110};
+            app.toolGrid.ColumnWidth = {18, '1x', 22, 110};
             app.toolGrid.RowHeight = {'1x'};
             app.toolGrid.ColumnSpacing = 5;
             app.toolGrid.Padding = [5 6 5 6];
@@ -213,12 +272,17 @@ classdef winServer_exported < matlab.apps.AppBase
             app.toolButton_edit.BackgroundColor = [1 1 1];
             app.toolButton_edit.FontSize = 11;
             app.toolButton_edit.Layout.Row = 1;
-            app.toolButton_edit.Layout.Column = 3;
+            app.toolButton_edit.Layout.Column = 4;
             app.toolButton_edit.Text = 'Iniciar servidor';
+
+            % Create jsBackDoor
+            app.jsBackDoor = uihtml(app.toolGrid);
+            app.jsBackDoor.Layout.Row = 1;
+            app.jsBackDoor.Layout.Column = 3;
 
             % Create MainPanelGrid
             app.MainPanelGrid = uigridlayout(app.GridLayout);
-            app.MainPanelGrid.ColumnWidth = {325, '1x', 18};
+            app.MainPanelGrid.ColumnWidth = {325, '1x', 16};
             app.MainPanelGrid.RowHeight = {22, 128, 22, '1x'};
             app.MainPanelGrid.RowSpacing = 5;
             app.MainPanelGrid.Padding = [5 5 5 5];
@@ -273,29 +337,6 @@ classdef winServer_exported < matlab.apps.AppBase
             app.general_version.Layout.Row = 1;
             app.general_version.Layout.Column = 1;
 
-            % Create general_TablePanel
-            app.general_TablePanel = uipanel(app.MainPanelGrid);
-            app.general_TablePanel.AutoResizeChildren = 'off';
-            app.general_TablePanel.Layout.Row = 4;
-            app.general_TablePanel.Layout.Column = [1 3];
-
-            % Create general_TableGrid
-            app.general_TableGrid = uigridlayout(app.general_TablePanel);
-            app.general_TableGrid.ColumnWidth = {'1x'};
-            app.general_TableGrid.RowHeight = {'1x'};
-            app.general_TableGrid.Padding = [0 0 0 0];
-            app.general_TableGrid.BackgroundColor = [1 1 1];
-
-            % Create general_Table
-            app.general_Table = ccTools.Table(app.general_TableGrid);
-            app.general_Table.ColumnName = {'Instante', 'IP', 'Porta', 'Mensagem', 'Cliente', 'Requisição', 'Bytes enviados', 'Estado'};
-            app.general_Table.hFontSize = 11;
-            app.general_Table.hFontColor = 'black';
-            app.general_Table.hCapitalLetter = true;
-            app.general_Table.BackgroundColor = [0.749 0.749 0.749];
-            app.general_Table.Layout.Row = 1;
-            app.general_Table.Layout.Column = 1;
-
             % Create general_refresh
             app.general_refresh = uiimage(app.MainPanelGrid);
             app.general_refresh.ImageClickedFcn = createCallbackFcn(app, @general_refreshImageClicked, true);
@@ -304,6 +345,14 @@ classdef winServer_exported < matlab.apps.AppBase
             app.general_refresh.HorizontalAlignment = 'left';
             app.general_refresh.VerticalAlignment = 'bottom';
             app.general_refresh.ImageSource = 'Refresh_18.png';
+
+            % Create UITable
+            app.UITable = uitable(app.MainPanelGrid);
+            app.UITable.ColumnName = {'INSTANTE'; 'IP'; 'PORTA'; 'MENSAGEM'; 'CLIENTE'; 'REQUISIÇÃO'; 'BYTES'; 'ESTADO'};
+            app.UITable.RowName = {};
+            app.UITable.Layout.Row = 4;
+            app.UITable.Layout.Column = [1 3];
+            app.UITable.FontSize = 10;
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
