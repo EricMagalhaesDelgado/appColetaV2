@@ -2,9 +2,9 @@ classdef (Abstract) Constants
 
     properties (Constant)
         %-----------------------------------------------------------------%
-        appName         = 'appColetaV2'
-        appRelease      = 'R2023a'
-        appVersion      = '1.56'
+        appName         = 'appColeta'
+        appRelease      = 'R2024a'
+        appVersion      = '1.60'
 
         windowSize      = [1244, 660]
         windowMinSize   = [ 750, 660]

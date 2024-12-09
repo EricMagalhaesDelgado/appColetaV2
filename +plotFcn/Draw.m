@@ -28,7 +28,7 @@ function Draw(app, ii, jj)
             downYLim = upYLim - class.Constants.yMaxLimRange;
         end
 
-        colormap(app.axes2, app.General.Waterfall.Colormap);
+        colormap(app.axes2, app.General.Plot.Waterfall.Colormap);
         set(app.axes2, XLim=[FreqStart, FreqStop], YLim=[1, app.specObj(ii).Band(jj).Waterfall.Depth], View=[0, 90], CLim=[downYLim, upYLim]);
         ylabel(app.axes2, 'Amostras');
 
@@ -48,7 +48,7 @@ function Draw(app, ii, jj)
             end
     
             % ClearWrite, MinHold, Average and MaxHold
-            app.line_ClrWrite = plot(app.axes1, xArray, newArray, Color=app.General.Colors(4,:), Tag='ClrWrite');
+            app.line_ClrWrite = plot(app.axes1, xArray, newArray, Color=app.General.Plot.ClearWrite.Color, Tag='ClrWrite');
             plotFcn.DataTipModel(app.line_ClrWrite, LevelUnit)
             
             if app.Button_MinHold.Value
@@ -76,7 +76,7 @@ function Draw(app, ii, jj)
             set(app.axes1, XLim=[FreqStart, FreqStop], YLim=[.1, 100], YScale='log')
 
             KK = 100/app.specObj(ii).Band(jj).Mask.Validations;
-            app.line_ClrWrite = plot(app.axes1, xArray, KK .* app.specObj(ii).Band(jj).Mask.BrokenArray, Color=app.General.Colors(4,:), Tag='MaskPlot');
+            app.line_ClrWrite = plot(app.axes1, xArray, KK .* app.specObj(ii).Band(jj).Mask.BrokenArray, Color=app.General.Plot.ClearWrite.Color, Tag='MaskPlot');
             plotFcn.DataTipModel(app.line_ClrWrite, '%%')
         end
 

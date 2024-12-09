@@ -52,7 +52,7 @@ classdef ReceiverLib < handle
         %-----------------------------------------------------------------%
         function obj = ReceiverLib(RootFolder)
             obj.Config = struct2table(jsondecode(fileread(fullfile(RootFolder, 'Settings', 'ReceiverLib.json'))));
-            obj.List   = obj.FileRead(RootFolder);
+            obj.List   = FileRead(obj, RootFolder);
         end
 
 
