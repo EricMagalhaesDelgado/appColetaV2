@@ -1499,15 +1499,6 @@ classdef winAppColeta_exported < matlab.apps.AppBase
                         end
 
                     case {'auxApp.dockTracking',  'auxApp.dockTracking_exported'}
-                        
-                        % Esse ramo do switch trata chamados de módulos auxiliares dos 
-                        % modos "REPORT" e "MISCELLANEOUS". Algumas das funcionalidades 
-                        % desses módulos requerem atualização do appAnalise:
-                        % (a) REPORT: atualização do painel de algoritmos.
-                        % (b) MISCELLANEOUS: atualização da visualização da árvore (e 
-                        %     aspectos decorrentes desta atualização, como painel de 
-                        %     metadados e plots).
-
                         % O flag "updateFlag" provê essa atualização, e o flag "returnFlag" 
                         % evita que o módulo seja "fechado" (por meio da invisibilidade do 
                         % app.popupContainerGrid).
@@ -1534,7 +1525,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             end
 
             % Caso um app auxiliar esteja em modo DOCK, o progressDialog do
-            % app auxiliar coincide com o do appAnalise. Força-se, portanto, 
+            % app auxiliar coincide com o do appColeta. Força-se, portanto, 
             % a condição abaixo para evitar possível bloqueio da tela.
             app.progressDialog.Visible = 'hidden';
         end
@@ -2041,7 +2032,7 @@ classdef winAppColeta_exported < matlab.apps.AppBase
             app.UIFigure.AutoResizeChildren = 'off';
             app.UIFigure.Position = [100 100 1244 660];
             app.UIFigure.Name = 'appColeta R2024a';
-            app.UIFigure.Icon = fullfile(pathToMLAPP, 'Icons', 'icon_32.png');
+            app.UIFigure.Icon = fullfile(pathToMLAPP, 'Icons', 'icon_48.png');
             app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @closeFcn, true);
 
             % Create GridLayout

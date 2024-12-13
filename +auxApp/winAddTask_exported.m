@@ -1976,7 +1976,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
                 app.UIFigure = uifigure('Visible', 'off');
                 app.UIFigure.AutoResizeChildren = 'off';
                 app.UIFigure.Position = [300 180 1045 540];
-                app.UIFigure.Name = 'appAnalise';
+                app.UIFigure.Name = 'appColeta';
                 app.UIFigure.Icon = 'icon_48.png';
                 app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @closeFcn, true);
 
