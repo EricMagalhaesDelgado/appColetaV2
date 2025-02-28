@@ -220,7 +220,7 @@ classdef EB500Lib < handle
         
                             if typecast(specDatagram(jj).Data(end:-1:end-1), 'uint16') == 2000
                                 if Points == DataPoints+1
-                                    newArray(idx1:idx2-1) = single(flip(typecast(specDatagram(jj).Data((end-2):-1:81), 'int16')))./10;
+                                    newArray(idx1:idx2-1) = single(flip(typecast(specDatagram(jj).Data((end-2):-1:(end-2*(idx2-idx1)-1)), 'int16')))./10;
                                     Flag_success = true;
                                     break
                                 else
@@ -229,7 +229,7 @@ classdef EB500Lib < handle
                                 end
                             else
                                 udpFlag = 1;
-                                newArray(idx1:idx2) = single(flip(typecast(specDatagram(jj).Data(end:-1:81), 'int16')))./10;                                    
+                                newArray(idx1:idx2) = single(flip(typecast(specDatagram(jj).Data(end:-1:(end-2*(idx2-idx1)-1)), 'int16')))./10;
                             end
                         end
                     end
