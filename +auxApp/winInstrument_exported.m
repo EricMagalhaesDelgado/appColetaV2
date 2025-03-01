@@ -69,7 +69,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
         Container
         isDocked = false
 
-        CallingApp
+        mainApp
         rootFolder
 
         timerObj
@@ -89,29 +89,32 @@ classdef winInstrument_exported < matlab.apps.AppBase
 
     methods (Access = private)
         %-----------------------------------------------------------------%
-        % JSBACKDOOR
+        % JSBACKDOOR: CUSTOMIZAÇÃO GUI (ESTÉTICA/COMPORTAMENTAL)
         %-----------------------------------------------------------------%
         function jsBackDoor_Initialization(app)
-            app.jsBackDoor.HTMLSource = ccTools.fcn.jsBackDoorHTMLSource;
+            if app.isDocked
+                delete(app.jsBackDoor)
+                app.jsBackDoor = app.mainApp.jsBackDoor;
+            else
+                app.jsBackDoor.HTMLSource = appUtil.jsBackDoorHTMLSource();
+            end            
         end
 
         %-----------------------------------------------------------------%
         function jsBackDoor_Customizations(app)
-            % Cria um ProgressDialog...
             if app.isDocked
-                app.progressDialog = app.CallingApp.progressDialog;
+                app.progressDialog = app.mainApp.progressDialog;
             else
                 app.progressDialog = ccTools.ProgressDialog(app.jsBackDoor);
+
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
+                                                                                       'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
+                                                                                                           '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
+                                                                                                           '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
+    
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
+                                                                                       'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
             end
-
-            % Customizações dos componentes...
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
-                                                                                   'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
-                                                                                                       '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
-                                                                                                       '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
-
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
-                                                                                   'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
 
             ccTools.compCustomizationV2(app.jsBackDoor, app.ButtonGroupPanel, 'backgroundColor', 'transparent')
         end
@@ -153,8 +156,8 @@ classdef winInstrument_exported < matlab.apps.AppBase
             % (diretamente em JS).
             jsBackDoor_Customizations(app)
 
-            app.receiverObj = app.CallingApp.receiverObj;
-            app.gpsObj      = app.CallingApp.gpsObj;
+            app.receiverObj = app.mainApp.receiverObj;
+            app.gpsObj      = app.mainApp.gpsObj;
 
             % Não é lido o arquivo "instrumentList.json", sendo aproveitada
             % a versão do winAppColetaV2.
@@ -523,7 +526,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
             end
 
             % Fecha o módulo auxiliar "auxApp.winAddTask.mlapp", caso aberto.
-            appBackDoor(app.CallingApp, app, 'closeFcn', 'TASK:ADD')
+            appBackDoor(app.mainApp, app, 'closeFcn', 'TASK:ADD')
         end
 
         %-----------------------------------------------------------------%
@@ -563,13 +566,13 @@ classdef winInstrument_exported < matlab.apps.AppBase
     methods (Access = private)
 
         % Code that executes after component creation
-        function startupFcn(app, mainapp)
+        function startupFcn(app, mainApp)
             
             % A razão de ser deste app é possibilitar visualização/edição 
             % do arquivo "instrumentList.json".
             
-            app.CallingApp = mainapp;
-            app.rootFolder = app.CallingApp.rootFolder;
+            app.mainApp    = mainApp;
+            app.rootFolder = mainApp.rootFolder;
 
             jsBackDoor_Initialization(app)
             app.Tab1_Grid.ColumnWidth{end} = 0;
@@ -587,7 +590,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
         % Close request function: UIFigure
         function closeFcn(app, event)
             
-            appBackDoor(app.CallingApp, app, 'closeFcn', 'INSTRUMENT')
+            appBackDoor(app.mainApp, app, 'closeFcn', 'INSTRUMENT')
             delete(app)
             
         end
@@ -925,7 +928,7 @@ classdef winInstrument_exported < matlab.apps.AppBase
         % Button pushed function: toolButton_export
         function toolButtonPushed_export(app, event)
             
-            Folder = uigetdir(app.CallingApp.General.fileFolder.userPath, 'Escolha o diretório em que será salva a lista de instrumentos');
+            Folder = uigetdir(app.mainApp.General.fileFolder.userPath, 'Escolha o diretório em que será salva a lista de instrumentos');
             figure(app.UIFigure)
 
             if Folder

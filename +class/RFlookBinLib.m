@@ -317,7 +317,7 @@ classdef RFlookBinLib
 
 
         %-----------------------------------------------------------------%
-        % ## RFlookBin v.2/1 e RFlookBin v.2/2 ##
+        % ## RFlookBin v.2/3 e RFlookBin v.2/4 ##
         %-----------------------------------------------------------------%
         function v2_WriteHeader(fileID, specObj, idx)
             Script        = specObj.Task.Script;
@@ -384,9 +384,9 @@ classdef RFlookBinLib
             meta2File = unicode2native(jsonencode(meta2File), 'UTF-8');
         
             if ~contains(specObj.Task.Type, 'Drive-test (Level+Azimuth)')
-                formatName = 'RFlookBin v.2/1';
+                formatName = 'RFlookBin v.2/3';
             else
-                formatName = 'RFlookBin v.2/2';
+                formatName = 'RFlookBin v.2/4';
             end
 
             fwrite(fileID, formatName, 'char*1');
@@ -436,7 +436,7 @@ classdef RFlookBinLib
                 fwrite(fileID, RefLevel, 'int16');
             end
         
-            fwrite(fileID, matlabCommunity.CompressLib.compress(processedArray));            
+            fwrite(fileID, matlabCommunity.CompressLib.compress(processedArray, false));            
             fwrite(fileID, 'StOp', 'char*1');        
         end
 

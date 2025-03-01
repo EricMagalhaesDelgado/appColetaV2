@@ -110,7 +110,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
         Container
         isDocked = false
         
-        CallingApp
+        mainApp
         rootFolder
 
         timerObj
@@ -122,22 +122,28 @@ classdef winTaskList_exported < matlab.apps.AppBase
 
     methods (Access = private)
         %-----------------------------------------------------------------%
-        % JSBACKDOOR
+        % JSBACKDOOR: CUSTOMIZAÇÃO GUI (ESTÉTICA/COMPORTAMENTAL)
         %-----------------------------------------------------------------%
         function jsBackDoor_Initialization(app)
-            app.jsBackDoor.HTMLSource = ccTools.fcn.jsBackDoorHTMLSource;
+            if app.isDocked
+                delete(app.jsBackDoor)
+                app.jsBackDoor = app.mainApp.jsBackDoor;
+            else
+                app.jsBackDoor.HTMLSource = appUtil.jsBackDoorHTMLSource();
+            end            
         end
 
         %-----------------------------------------------------------------%
         function jsBackDoor_Customizations(app)
-            % Customizações dos componentes...
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
-                                                                                   'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
-                                                                                                       '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
-                                                                                                       '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
-
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
-                                                                                   'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+            if ~app.isDocked
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
+                                                                                       'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
+                                                                                                           '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
+                                                                                                           '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
+    
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
+                                                                                       'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+            end
 
             ccTools.compCustomizationV2(app.jsBackDoor, app.ButtonGroupPanel, 'backgroundColor', 'transparent')
         end
@@ -277,7 +283,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
             else
                 set(app.Tab2_PanelGrid.Children,        'Enable', 1)
 
-                if numel(app.Tree.SelectedNodes.UserData) == 1
+                if isscalar(app.Tree.SelectedNodes.UserData)
                     set(app.BandSpecificInfo_Grid.Children, 'Enable', 1)
 
                     switch app.ObservationType.Value
@@ -459,10 +465,10 @@ classdef winTaskList_exported < matlab.apps.AppBase
             saveNewFile(app, fullfile(app.rootFolder, 'Settings'), false)
 
             % Atualiza a propriedade do app...
-            app.CallingApp.taskList = class.taskList.file2raw(fullfile(app.rootFolder, 'Settings', 'taskList.json'), 'winAppColetaV2');
+            app.mainApp.taskList = class.taskList.file2raw(fullfile(app.rootFolder, 'Settings', 'taskList.json'), 'winAppColetaV2');
 
             % Fecha o módulo auxiliar "auxApp.winAddTask.mlapp", caso aberto.
-            appBackDoor(app.CallingApp, app, 'closeFcn', 'TASK:ADD')
+            appBackDoor(app.mainApp, app, 'closeFcn', 'TASK:ADD')
         end
 
         %-----------------------------------------------------------------%
@@ -485,13 +491,13 @@ classdef winTaskList_exported < matlab.apps.AppBase
     methods (Access = private)
 
         % Code that executes after component creation
-        function startupFcn(app, mainapp)
+        function startupFcn(app, mainApp)
             
             % A razão de ser deste app é possibilitar visualização/edição 
             % do arquivo "taskList.json".
             
-            app.CallingApp = mainapp;
-            app.rootFolder = app.CallingApp.rootFolder;
+            app.mainApp    = mainApp;
+            app.rootFolder = mainApp.rootFolder;
 
             jsBackDoor_Initialization(app)
             app.Tab1_Grid.ColumnWidth{end} = 0;
@@ -509,7 +515,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
         % Close request function: UIFigure
         function closeFcn(app, event)
             
-            appBackDoor(app.CallingApp, app, 'closeFcn', 'TASK:EDIT')
+            appBackDoor(app.mainApp, app, 'closeFcn', 'TASK:EDIT')
             delete(app)
             
         end
@@ -845,7 +851,7 @@ classdef winTaskList_exported < matlab.apps.AppBase
         % Button pushed function: toolButton_export
         function toolButton_exportPushed(app, event)
             
-            Folder = uigetdir(app.CallingApp.General.fileFolder.userPath, 'Escolha o diretório em que será salva a lista de tarefas');
+            Folder = uigetdir(app.mainApp.General.fileFolder.userPath, 'Escolha o diretório em que será salva a lista de tarefas');
             figure(app.UIFigure)
 
             if Folder

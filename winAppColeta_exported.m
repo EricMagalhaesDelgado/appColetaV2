@@ -1588,13 +1588,15 @@ classdef winAppColeta_exported < matlab.apps.AppBase
         % Close request function: UIFigure
         function closeFcn(app, event)
             
-            % RUNNING TASK CHECK
+            % Especificidade "winMonitorRNI":
+            % - Impede que o app seja fechado caso exista tarefa em execução.
             if app.Flag_running
                 appUtil.modalWindow(app.UIFigure, 'warning', 'Existe uma tarefa em execução...');
                 return
             end
 
-            % STARTUP SPECOBJ
+            % - Atualiza informações p/ inicialização, atualiza "GeneralSettings.json" 
+            % e deleta o servidor, caso aplicável.
             if app.General.startupInfo
                 RegularTask_specObjSave(app)
             else
@@ -1603,32 +1605,18 @@ classdef winAppColeta_exported < matlab.apps.AppBase
                 end
             end
 
-            % GENERAL SETTINGS
-            if strcmp(app.General.stationInfo.Type, 'Mobile')
+            if app.General.stationInfo.Type == "Mobile"
                 fcn.GeneralSettings(app.General, app.rootFolder)
             end
 
-            % TIMER
-            h = timerfindall;
-            if ~isempty(h)
-                stop(h); delete(h); clear h
-            end
 
-            % PROGRESS DIALOG
-            delete(app.progressDialog)
-
-            % DELETE SERVER
             if ~isempty(app.tcpServer)
                 delete(app.tcpServer.Server)
             end
 
-            % DELETE APPS
-            if isdeployed
-                delete(findall(groot, 'Type', 'Figure'))
-            else
-                delete(app.tabGroupController)    
-                delete(app)
-            end
+            % Aspectos gerais (carregar em todos os apps):
+            appUtil.beforeDeleteApp(app.progressDialog, app.General_I.fileFolder.tempPath, app.tabGroupController, app.executionMode)
+            delete(app)
             
         end
 

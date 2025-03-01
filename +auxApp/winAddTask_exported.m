@@ -150,7 +150,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
         Container
         isDocked = false
 
-        CallingApp
+        mainApp
         rootFolder
 
         taskList
@@ -175,29 +175,39 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
     methods (Access = private)
         %-----------------------------------------------------------------%
+        % JSBACKDOOR: CUSTOMIZAÇÃO GUI (ESTÉTICA/COMPORTAMENTAL)
+        %-----------------------------------------------------------------%
         function jsBackDoor_Initialization(app)
-            app.jsBackDoor.HTMLSource = ccTools.fcn.jsBackDoorHTMLSource;
+            if app.isDocked
+                delete(app.jsBackDoor)
+                app.jsBackDoor = app.mainApp.jsBackDoor;
+            else
+                app.jsBackDoor.HTMLSource = appUtil.jsBackDoorHTMLSource();
+            end            
         end
 
         %-----------------------------------------------------------------%
         function jsBackDoor_Customizations(app)
-            % Cria um ProgressDialog...
             if app.isDocked
-                app.progressDialog = app.CallingApp.progressDialog;
+                app.progressDialog = app.mainApp.progressDialog;
             else
                 app.progressDialog = ccTools.ProgressDialog(app.jsBackDoor);
+
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
+                                                                                       'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
+                                                                                                           '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
+                                                                                                           '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
+    
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
+                                                                                       'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
             end
-
-            % Customizações dos componentes...
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
-                                                                                   'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
-                                                                                                       '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
-                                                                                                       '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
-
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
-                                                                                   'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
         end
+    end
 
+    
+    methods (Access = private)
+        %-----------------------------------------------------------------%
+        % INICIALIZAÇÃO
         %-----------------------------------------------------------------%
         function startup_Layout(app)
             % PAINEL À ESQUERDA 2: "INSTRUMENTOS"
@@ -211,8 +221,8 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
             receiverFlag = false;
             if strcmp(app.infoEdition.type, 'edit')    
-                selectedReceiverSocket = InstrumentSocket(app, app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Selection.Parameters{1});
-                selectedReceiverName   = sprintf('%s - %s', app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Selection.Name{1}, selectedReceiverSocket);
+                selectedReceiverSocket = InstrumentSocket(app, app.mainApp.specObj(app.infoEdition.idx).Task.Receiver.Selection.Parameters{1});
+                selectedReceiverName   = sprintf('%s - %s', app.mainApp.specObj(app.infoEdition.idx).Task.Receiver.Selection.Name{1}, selectedReceiverSocket);
                 selectedReceiverIndex  = find(contains(app.Receiver_List.Items, selectedReceiverName), 1);
 
                 if ~isempty(selectedReceiverIndex)
@@ -225,8 +235,8 @@ classdef winAddTask_exported < matlab.apps.AppBase
             % A tarefa padrão é a primeira. Exceto caso se trate da edição
             % de uma tarefa, cujo nome da tarefa consta na lista app.taskList.
             app.TaskName.Items = {app.taskList.Name};
-            if strcmp(app.infoEdition.type, 'edit') && ismember(app.CallingApp.specObj(app.infoEdition.idx).Task.Script.Name, app.TaskName.Items)
-                app.TaskName.Value = app.CallingApp.specObj(app.infoEdition.idx).Task.Script.Name;
+            if strcmp(app.infoEdition.type, 'edit') && ismember(app.mainApp.specObj(app.infoEdition.idx).Task.Script.Name, app.TaskName.Items)
+                app.TaskName.Value = app.mainApp.specObj(app.infoEdition.idx).Task.Script.Name;
             end
             General_Task(app)
 
@@ -240,14 +250,14 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
             % (b) Tipo de tarefa:
             if strcmp(app.infoEdition.type, 'edit')
-                app.TaskType.Value = extractBefore(app.CallingApp.specObj(app.infoEdition.idx).Task.Type, ' (PRÉVIA)');
-                if contains(app.CallingApp.specObj(app.infoEdition.idx).Task.Type, '(PRÉVIA)')                    
+                app.TaskType.Value = replace(app.mainApp.specObj(app.infoEdition.idx).Task.Type, ' (PRÉVIA)', '');
+                if contains(app.mainApp.specObj(app.infoEdition.idx).Task.Type, '(PRÉVIA)')                    
                     app.PreviewTaskCheckbox.Value = true;
                 end                
                 General_TaskType(app)
 
                 if strcmp(app.TaskType.Value, 'Rompimento de Máscara Espectral')
-                    set(app.MaskFile_Button, 'Enable', 1, 'Tooltip', {app.CallingApp.specObj(app.infoEdition.idx).Task.MaskFile})
+                    set(app.MaskFile_Button, 'Enable', 1, 'Tooltip', {app.mainApp.specObj(app.infoEdition.idx).Task.MaskFile})
                 end
             end
 
@@ -261,10 +271,10 @@ classdef winAddTask_exported < matlab.apps.AppBase
                 % arquivos externos editáveis.
 
                 try
-                    app.Receiver_RstCommand.Value = app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Reset;
-                    app.Receiver_SyncRef.Value    = app.CallingApp.specObj(app.infoEdition.idx).Task.Receiver.Sync;
+                    app.Receiver_RstCommand.Value = app.mainApp.specObj(app.infoEdition.idx).Task.Receiver.Reset;
+                    app.Receiver_SyncRef.Value    = app.mainApp.specObj(app.infoEdition.idx).Task.Receiver.Sync;
 
-                    gpsMetaData = app.CallingApp.specObj(app.infoEdition.idx).Task.Script.GPS;
+                    gpsMetaData = app.mainApp.specObj(app.infoEdition.idx).Task.Script.GPS;
                     if strcmp(gpsMetaData.Type, 'Manual')
                         app.GPS_List.Value            = 'ID 0: Manual';
                         GPS_instrSelection(app)
@@ -273,13 +283,13 @@ classdef winAddTask_exported < matlab.apps.AppBase
                         app.GPS_manualLongitude.Value = gpsMetaData.Longitude;
                     end
 
-                    switchMetaData = app.CallingApp.specObj(app.infoEdition.idx).Task.Antenna.Switch;
+                    switchMetaData = app.mainApp.specObj(app.infoEdition.idx).Task.Antenna.Switch;
                     if app.AntennaSwitch_Mode.Enable && ~isempty(switchMetaData.Name)
                         app.AntennaSwitch_Mode.Value = 1;
                         AntennaSwitch_ModeSelection(app)
                     end
 
-                    antennaMetaData = app.CallingApp.specObj(app.infoEdition.idx).Task.Antenna.MetaData;
+                    antennaMetaData = app.mainApp.specObj(app.infoEdition.idx).Task.Antenna.MetaData;
                     if ismember(antennaMetaData.Name, app.AntennaName.Items)
                         app.AntennaName.Value = antennaMetaData.Name;
                         AntennaConfig_Selection(app)
@@ -311,9 +321,9 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
             % (b) Visibilidade do botão "Pin", que possibilita importação
             %     das coordenadas geográficas da estação.
-            if strcmp(app.CallingApp.General.stationInfo.Type, 'Fixed')  && ...
-                    (app.CallingApp.General.stationInfo.Latitude  ~= -1) && ...
-                    (app.CallingApp.General.stationInfo.Longitude ~= -1)
+            if strcmp(app.mainApp.General.stationInfo.Type, 'Fixed')  && ...
+                    (app.mainApp.General.stationInfo.Latitude  ~= -1) && ...
+                    (app.mainApp.General.stationInfo.Longitude ~= -1)
                 app.Tab2_Panel.ColumnWidth{2} = 22;
             else
                 app.Tab2_Panel.ColumnWidth{2} = 0;
@@ -879,12 +889,12 @@ classdef winAddTask_exported < matlab.apps.AppBase
                             % valores foram ajustados diretamente no EB500 GUI 
                             % porque o manual parece estar desatualizado.
 
-                            spanIdx   = find(app.CallingApp.EB500Obj.FFMSpanStepMap.Span == FreqSpan, 1);
+                            spanIdx   = find(app.mainApp.EB500Obj.FFMSpanStepMap.Span == FreqSpan, 1);
                             if isempty(spanIdx)
                                 jj = [jj, ii];
                             else
-                                minStep = app.CallingApp.EB500Obj.FFMSpanStepMap.minStepWidth(spanIdx);
-                                maxStep = app.CallingApp.EB500Obj.FFMSpanStepMap.maxStepWidth(spanIdx);
+                                minStep = app.mainApp.EB500Obj.FFMSpanStepMap.minStepWidth(spanIdx);
+                                maxStep = app.mainApp.EB500Obj.FFMSpanStepMap.maxStepWidth(spanIdx);
 
                                 if (StepWidth < minStep) || (StepWidth > maxStep)
                                     jj = [jj, ii];
@@ -993,10 +1003,10 @@ classdef winAddTask_exported < matlab.apps.AppBase
     methods (Access = private)
 
         % Code that executes after component creation
-        function startupFcn(app, mainapp, InfoEdition)
+        function startupFcn(app, mainApp, InfoEdition)
             
-            app.CallingApp  = mainapp;
-            app.rootFolder  = app.CallingApp.rootFolder;
+            app.mainApp    = mainApp;
+            app.rootFolder = mainApp.rootFolder;
 
             app.Tab1_Panel.ColumnWidth(2:3) = {0, 0};
             jsBackDoor_Initialization(app)
@@ -1008,10 +1018,10 @@ classdef winAddTask_exported < matlab.apps.AppBase
             end
 
             % READ ONLY VARIABLES:            
-            app.receiverObj = app.CallingApp.receiverObj;
-            app.gpsObj      = app.CallingApp.gpsObj;
-            app.EMSatObj    = app.CallingApp.EMSatObj;
-            app.EB500Map    = app.CallingApp.EB500Obj.SelectivityMap;            
+            app.receiverObj = mainApp.receiverObj;
+            app.gpsObj      = mainApp.gpsObj;
+            app.EMSatObj    = mainApp.EMSatObj;
+            app.EB500Map    = mainApp.EB500Obj.SelectivityMap;            
             app.switchList  = struct2table(jsondecode(fileread(fullfile(app.rootFolder, 'Settings', 'switchList.json'))));
             startup_tgtList(app)
 
@@ -1022,10 +1032,10 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.infoEdition = InfoEdition;
             switch app.infoEdition.type
                 case 'new'
-                    app.taskList = app.CallingApp.taskList;
+                    app.taskList = mainApp.taskList;
                     app.MainButton.Text = 'Inclui tarefa';
                 case 'edit'
-                    app.taskList = class.taskList.app2raw(app.CallingApp.specObj(app.infoEdition.idx).Task.Script);
+                    app.taskList = class.taskList.app2raw(mainApp.specObj(app.infoEdition.idx).Task.Script);
                     app.MainButton.Text = 'Edita tarefa';
             end
             
@@ -1037,7 +1047,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
         % Close request function: UIFigure
         function closeFcn(app, event)
             
-            appBackDoor(app.CallingApp, app, 'closeFcn', 'TASK:ADD')
+            appBackDoor(app.mainApp, app, 'closeFcn', 'TASK:ADD')
             delete(app)
             
         end
@@ -1737,7 +1747,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             
             % Tentativa de atualizar lista de alvos (EMSat), montando, ao
             % final, uma tabela com todos os registros (tgtTable_new).
-            FullFileName = fullfile(app.CallingApp.General.userPath, 'EMSatLib.json');
+            FullFileName = fullfile(app.mainApp.General.userPath, 'EMSatLib.json');
             [antList, tgtList] = TargetListUpdate(app.EMSatObj, FullFileName);
 
             logSummary = {antList.LOG};
@@ -1882,9 +1892,9 @@ classdef winAddTask_exported < matlab.apps.AppBase
                 % STREAMING (UDP SOCKET)
                 hStreaming = [];
                 if ismember(app.receiverObj.Config.connectFlag(idx2), [2, 3])
-                    [app.CallingApp.udpPortArray, udpIndex] = fcn.udpSockets(app.CallingApp.udpPortArray, app.CallingApp.EB500Obj.udpPort);
+                    [app.mainApp.udpPortArray, udpIndex] = fcn.udpSockets(app.mainApp.udpPortArray, app.mainApp.EB500Obj.udpPort);
                     if ~isempty(udpIndex)
-                        hStreaming = app.CallingApp.udpPortArray{udpIndex};
+                        hStreaming = app.mainApp.udpPortArray{udpIndex};
                     end
                 end
 
@@ -1946,7 +1956,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             newTask.Antenna(1).Switch   = struct('Name', app.AntennaSwitch_Name.Value, 'OutputPort', app.switchList.SwitchOutputPort(switchIndex));
             newTask.Antenna.MetaData    = antennaMetaData;
 
-            appBackDoor(app.CallingApp, app, 'AddOrEditTask', 'TASK:ADD', app.infoEdition, newTask)
+            appBackDoor(app.mainApp, app, 'AddOrEditTask', 'TASK:ADD', app.infoEdition, newTask)
 
         end
 
@@ -1954,8 +1964,8 @@ classdef winAddTask_exported < matlab.apps.AppBase
         function GPS_FixedStationButtonPushed(app, event)
             
             app.GPS_List.Value            = 'ID 0: Manual';
-            app.GPS_manualLatitude.Value  = app.CallingApp.General.stationInfo.Latitude;
-            app.GPS_manualLongitude.Value = app.CallingApp.General.stationInfo.Longitude;
+            app.GPS_manualLatitude.Value  = app.mainApp.General.stationInfo.Latitude;
+            app.GPS_manualLongitude.Value = app.mainApp.General.stationInfo.Longitude;
 
             GPS_instrSelection(app)
 
@@ -2330,7 +2340,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
             app.Tab2_Image.Layout.Row = 1;
             app.Tab2_Image.Layout.Column = [1 2];
             app.Tab2_Image.HorizontalAlignment = 'left';
-            app.Tab2_Image.ImageSource = 'Playback_32.png';
+            app.Tab2_Image.ImageSource = 'Connect_18.png';
 
             % Create Tab2_Panel
             app.Tab2_Panel = uigridlayout(app.LeftPanel_Grid);

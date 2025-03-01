@@ -26,7 +26,7 @@ classdef winServer_exported < matlab.apps.AppBase
         Container
         isDocked = false
         
-        CallingApp
+        mainApp
         rootFolder
 
         timerObj
@@ -37,22 +37,28 @@ classdef winServer_exported < matlab.apps.AppBase
 
     methods (Access = private)
         %-----------------------------------------------------------------%
-        % JSBACKDOOR
+        % JSBACKDOOR: CUSTOMIZAÇÃO GUI (ESTÉTICA/COMPORTAMENTAL)
         %-----------------------------------------------------------------%
         function jsBackDoor_Initialization(app)
-            app.jsBackDoor.HTMLSource = ccTools.fcn.jsBackDoorHTMLSource;
+            if app.isDocked
+                delete(app.jsBackDoor)
+                app.jsBackDoor = app.mainApp.jsBackDoor;
+            else
+                app.jsBackDoor.HTMLSource = appUtil.jsBackDoorHTMLSource();
+            end            
         end
 
         %-----------------------------------------------------------------%
         function jsBackDoor_Customizations(app)
-            % Customizações dos componentes...
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
-                                                                                   'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
-                                                                                                       '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
-                                                                                                       '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
-
-            sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
-                                                                                   'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+            if ~app.isDocked
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-theme-light',                                                   ...
+                                                                                       'classAttributes', ['--mw-backgroundColor-dataWidget-selected: rgb(180 222 255 / 45%); ' ...
+                                                                                                           '--mw-backgroundColor-selected: rgb(180 222 255 / 45%); '            ...
+                                                                                                           '--mw-backgroundColor-selectedFocus: rgb(180 222 255 / 45%);']));
+    
+                sendEventToHTMLSource(app.jsBackDoor, 'htmlClassCustomization', struct('className',        '.mw-default-header-cell', ...
+                                                                                       'classAttributes',  'font-size: 10px; white-space: pre-wrap; margin-bottom: 5px;'));
+            end
         end
     end
     
@@ -97,7 +103,7 @@ classdef winServer_exported < matlab.apps.AppBase
 
         %-----------------------------------------------------------------%
         function Layout(app)
-            app.tcpServer = app.CallingApp.tcpServer;
+            app.tcpServer = app.mainApp.tcpServer;
 
             if isempty(app.tcpServer)
                 app.general_version.HTMLSource = ' ';
@@ -151,10 +157,10 @@ classdef winServer_exported < matlab.apps.AppBase
     methods (Access = private)
 
         % Code that executes after component creation
-        function startupFcn(app, mainapp)
+        function startupFcn(app, mainApp)
             
-            app.CallingApp = mainapp;
-            app.rootFolder = app.CallingApp.rootFolder;
+            app.mainApp    = mainApp;
+            app.rootFolder = mainApp.rootFolder;
 
             jsBackDoor_Initialization(app)
 
@@ -171,7 +177,7 @@ classdef winServer_exported < matlab.apps.AppBase
         % Close request function: UIFigure
         function closeFcn(app, event)
 
-            appBackDoor(app.CallingApp, app, 'closeFcn', 'SERVER')
+            appBackDoor(app.mainApp, app, 'closeFcn', 'SERVER')
             delete(app)
             
         end
@@ -179,15 +185,15 @@ classdef winServer_exported < matlab.apps.AppBase
         % Button pushed function: toolButton_edit
         function toolButtonPushed_edit(app, event)
             
-            if isempty(app.CallingApp.tcpServer)
-                app.CallingApp.tcpServer = class.tcpServerLib(app.CallingApp);
+            if isempty(app.mainApp.tcpServer)
+                app.mainApp.tcpServer = class.tcpServerLib(app.mainApp);
             
             else
-                stop(app.CallingApp.tcpServer.Timer)
-                delete(app.CallingApp.tcpServer.Timer)
-                delete(app.CallingApp.tcpServer.Server)
+                stop(app.mainApp.tcpServer.Timer)
+                delete(app.mainApp.tcpServer.Timer)
+                delete(app.mainApp.tcpServer.Server)
                 
-                app.CallingApp.tcpServer = [];
+                app.mainApp.tcpServer = [];
             end
 
             Layout(app)
