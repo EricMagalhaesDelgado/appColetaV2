@@ -2584,7 +2584,7 @@ classdef winAddTask_exported < matlab.apps.AppBase
 
             % Create AntennaName
             app.AntennaName = uidropdown(app.Tab3_Panel);
-            app.AntennaName.Items = {'', 'CRFS Low Band (10 MHz - 1.2 GHz)', 'CRFS High Band (750 MHz - 6 GHz)', 'Rohde & Schwarz ADDx07 (EB500 GUI Auto)', 'Rohde & Schwarz ADD107 (20 MHz - 1.3 GHz)', 'Rohde & Schwarz ADD207 (600 MHz - 6 GHz)', 'Telescopic', 'Unlisted (Omni)', 'Unlisted (Directional)'};
+            app.AntennaName.Items = {'', 'CRFS Low Band (10 MHz - 1.2 GHz)', 'CRFS High Band (750 MHz - 6 GHz)', 'Rohde & Schwarz ADDx07 (EB500 GUI Auto)', 'Rohde & Schwarz ADD107 (20 MHz - 1.3 GHz)', 'Rohde & Schwarz ADD207 (600 MHz - 6 GHz)', 'Rohde & Schwarz ADD295 (20 MHz - 3 GHz)', 'Telescopic', 'Unlisted (Omni)', 'Unlisted (Directional)'};
             app.AntennaName.ValueChangedFcn = createCallbackFcn(app, @AntennaConfig_Selection, true);
             app.AntennaName.Tag = 'task_Editable';
             app.AntennaName.FontSize = 11;
